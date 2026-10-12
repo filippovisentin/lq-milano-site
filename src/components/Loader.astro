@@ -2,9 +2,24 @@
 // Intro: the shop sign switching on. Shown once per browser session, never
 // blocks the page underneath (content is already rendered and focusable),
 // skippable by click/tap/any key, short under reduced motion.
+import { getImage } from 'astro:assets';
 import NeonLogo from './NeonLogo.astro';
+import { media } from '../lib/media';
+import site from '../data/site.json';
+
+// Background: Google Street View of via Venini when PUBLIC_GOOGLE_MAPS_KEY is
+// set (Street View Static API; restrict the key to the site's domain), else
+// the shop window photo. Either way it slowly drifts behind the neon.
+const key = import.meta.env.PUBLIC_GOOGLE_MAPS_KEY as string | undefined;
+const place = encodeURIComponent(`${site.address.street}, ${site.address.postcode} ${site.address.city}`);
+const street = key
+  ? `https://maps.googleapis.com/maps/api/streetview?size=640x400&scale=2&location=${place}&fov=85&pitch=6&source=outdoor&return_error_code=true&key=${key}`
+  : null;
+const fallback = (await getImage({ src: media.storefront, width: 1140, format: 'webp', quality: 70 })).src;
 ---
 <div class="loader" id="loader" aria-hidden="true">
+  <div class="loader-bg" style={`background-image:url('${street ?? fallback}'), url('${fallback}')`}></div>
+  {street && <span class="loader-credit">Immagini © Google</span>}
   <div class="loader-inner">
     <NeonLogo size="xl" animated />
     <p class="loader-sub">Concept store · NoLo, Milano</p>
@@ -14,7 +29,7 @@ import NeonLogo from './NeonLogo.astro';
 
 <style>
   .loader {
-    position: fixed; inset: 0; z-index: var(--z-loader);
+    position: fixed; inset: 0; z-index: var(--z-loader); overflow: hidden;
     display: grid; place-items: center; padding: 24px;
     background:
       radial-gradient(60% 50% at 50% 48%, rgba(255, 91, 36, 0.10), transparent 70%),
@@ -23,7 +38,15 @@ import NeonLogo from './NeonLogo.astro';
     transition: opacity 520ms var(--ease-out), visibility 0s linear 520ms;
     cursor: pointer;
   }
-  .loader-inner { display: grid; justify-items: center; gap: 28px; transform: translateY(-2vh); }
+  .loader-bg {
+    position: absolute; inset: -4%; background-size: cover; background-position: center;
+    filter: grayscale(0.35) brightness(0.32) contrast(1.1) blur(1.5px);
+    animation: drift 3.2s var(--ease-out) forwards;
+  }
+  .loader-bg::after { content: ''; position: absolute; inset: 0; background: radial-gradient(60% 55% at 50% 48%, transparent, rgba(23, 20, 17, 0.85)); }
+  @keyframes drift { from { transform: scale(1.12) translateX(1.5%); } to { transform: scale(1.02) translateX(0); } }
+  .loader-credit { position: absolute; right: 12px; bottom: 10px; font-size: 0.7rem; color: rgba(255, 255, 255, 0.55); }
+  .loader-inner { position: relative; z-index: 2; display: grid; justify-items: center; gap: 28px; transform: translateY(-2vh); }
   .loader-sub {
     margin: 0; color: var(--on-night-2); font-size: 0.8rem; letter-spacing: 0.32em; text-transform: uppercase;
     opacity: 0; animation: sub-in 600ms 1.25s var(--ease-out) forwards;
@@ -31,14 +54,14 @@ import NeonLogo from './NeonLogo.astro';
   @keyframes sub-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
   /* the wall lights up with the sign */
   .loader::before {
-    content: ''; position: absolute; inset: 0; pointer-events: none;
+    content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
     background: radial-gradient(45% 35% at 50% 46%, rgba(255, 91, 36, 0.22), transparent 70%);
     opacity: 0; animation: wall 1.4s 0.35s steps(1, end) forwards;
   }
   @keyframes wall { 0% { opacity: 0; } 20% { opacity: 0.7; } 28% { opacity: 0.1; } 45% { opacity: 1; } 100% { opacity: 1; } }
   .loader.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
   :global(html.intro-seen) .loader { display: none; }
-  @media (prefers-reduced-motion: reduce) { .loader-sub { opacity: 1; animation: none; } .loader::before { animation: none; opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .loader-bg { animation: none; } .loader-sub { opacity: 1; animation: none; } .loader::before { animation: none; opacity: 1; } }
 </style>
 
 <script is:inline>

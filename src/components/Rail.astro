@@ -1,0 +1,84 @@
+---
+// "La stella": garments hanging on a brass shop rail, each with a cardboard
+// price tag. Uses the cut-outs produced for the 3D view, so new products
+// appear here automatically once their photos are uploaded.
+import Icon from './Icon.astro';
+import { productUrl, euro, era, modelBase, type Product } from '../lib/catalog';
+interface Props { products: Product[] }
+const { products } = Astro.props;
+---
+<div class="rail-wrap">
+  <div class="rail-bar" aria-hidden="true"></div>
+  <ul class="rail" data-rail>
+    {products.map((p, i) => (
+      <li class="hang" style={`--tilt:${((i * 37) % 7) - 3}deg; --delay:${(i % 5) * 0.12}s`}>
+        <a href={productUrl(p.slug)} class="hang-link">
+          <svg class="hanger" viewBox="0 0 120 70" aria-hidden="true">
+            <path d="M60 4c-6 0-10 4-10 9 0 4 3 6 7 8l3 2v6L6 62c-3 2-2 6 2 6h104c4 0 5-4 2-6L60 29" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <img src={`${modelBase(p)}/front.webp?v=${p.model3d.version}`} alt={p.title} width="1024" height="1024" loading="lazy" decoding="async" />
+          <span class="tag">
+            <span class="tag-hole" aria-hidden="true"></span>
+            <span class="tag-price tabular">{euro(p.price)}</span>
+            <span class="tag-name">{p.title}</span>
+            <span class="tag-meta">{[p.size && `Tg. ${p.size}`, era(p.details.anni)].filter(Boolean).join(' · ')}</span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+  <div class="rail-nav">
+    <button type="button" class="icon-btn rail-btn" data-rail-prev aria-label="Capi precedenti"><Icon name="chevron-left" /></button>
+    <button type="button" class="icon-btn rail-btn" data-rail-next aria-label="Capi successivi"><Icon name="chevron" /></button>
+  </div>
+</div>
+
+<style>
+  .rail-wrap { position: relative; }
+  .rail-bar {
+    position: absolute; left: 0; right: 0; top: 22px; height: 10px; border-radius: 6px; z-index: 0;
+    background: linear-gradient(180deg, #f3dc9c 0%, #c9a24b 45%, #8a6a24 100%);
+    box-shadow: 0 6px 14px rgba(60, 40, 10, 0.25);
+  }
+  .rail {
+    list-style: none; margin: 0; padding: 4px var(--gutter) 24px; display: flex; gap: clamp(8px, 2vw, 20px);
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); scrollbar-width: none; position: relative; z-index: 1;
+  }
+  .rail::-webkit-scrollbar { display: none; }
+  .hang { flex: 0 0 clamp(200px, 26vw, 300px); scroll-snap-align: start; }
+  .hang-link { display: block; position: relative; text-decoration: none; color: var(--ink); transform-origin: 50% 8px; transform: rotate(calc(var(--tilt) * 0.3)); transition: transform 700ms var(--ease-out); }
+  .hanger { display: block; width: 46%; margin: 0 auto -4px; color: #5b4630; position: relative; z-index: 2; }
+  .hang-link img { width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; margin-top: -19%; filter: drop-shadow(0 18px 18px rgba(40, 25, 10, 0.22)); transition: transform 600ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .hang-link:hover { transform: rotate(var(--tilt)); }
+    .hang-link:hover img { transform: translateY(-4px); }
+  }
+  .hang-link:focus-visible { outline-offset: 6px; }
+  .tag {
+    position: absolute; right: 6%; top: 34%; width: 118px; padding: 16px 10px 10px; display: grid; gap: 2px;
+    background: #efe2c4; color: var(--ink); border-radius: 4px 4px 4px 4px; font-size: 0.78rem; line-height: 1.3;
+    clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%, 0 14px);
+    box-shadow: 0 6px 12px rgba(40, 25, 10, 0.18); transform: rotate(6deg);
+    background-image: repeating-linear-gradient(90deg, rgba(120, 90, 40, 0.05) 0 2px, transparent 2px 5px);
+  }
+  @media (max-width: 640px) { .tag { width: 92px; padding: 14px 8px 8px; font-size: 0.68rem; top: 40%; right: 2%; } .tag-price { font-size: 0.95rem; } .tag-meta { display: none; } }
+  .tag-hole { position: absolute; top: 5px; left: 50%; width: 7px; height: 7px; margin-left: -3.5px; border-radius: 50%; background: var(--paper-2); box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.3); }
+  .tag-price { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; }
+  .tag-name { font-weight: 600; }
+  .tag-meta { color: var(--ink-2); }
+  .rail-nav { display: none; }
+  @media (hover: hover) and (pointer: fine) {
+    .rail-nav { display: flex; gap: 8px; justify-content: flex-end; padding-inline: var(--gutter); }
+    .rail-btn { border: 1.5px solid var(--line-strong); }
+  }
+  @media (prefers-reduced-motion: reduce) { .hang-link, .hang-link:hover { transform: none; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-rail]').forEach((rail) => {
+    const wrap = rail.parentElement!;
+    const step = () => rail.clientWidth * 0.8;
+    wrap.querySelector('[data-rail-prev]')?.addEventListener('click', () => rail.scrollBy({ left: -step(), behavior: 'smooth' }));
+    wrap.querySelector('[data-rail-next]')?.addEventListener('click', () => rail.scrollBy({ left: step(), behavior: 'smooth' }));
+  });
+</script>

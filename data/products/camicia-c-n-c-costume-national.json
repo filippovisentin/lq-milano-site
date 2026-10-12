@@ -1,0 +1,60 @@
+{
+  "slug": "camicia-c-n-c-costume-national",
+  "title": "Camicia C'N'C (Costume National)",
+  "price": 55,
+  "size": "50",
+  "category": "Camicie",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 22,
+  "description": "Capo dall'anima urban e contemporanea .\r\n\r\nMade in Italy (prodotto da Ittierre)",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 52 cm",
+      "Larghezza torace: 54 cm",
+      "Lunghezza capo: 77 cm",
+      "Lunghezza manica: 69 cm"
+    ],
+    "materiale": [
+      "69% cotone",
+      "19% poliammide",
+      "9% acetato",
+      "3% altre fibre"
+    ],
+    "stato": "Ottimo",
+    "anni": "2004-2010"
+  },
+  "images": [
+    {
+      "id": "c1818034f8ac",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "5b0285d9aa72",
+      "w": 2400,
+      "h": 1600
+    },
+    {
+      "id": "608e158df163",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "05de14e6bd5d",
+      "w": 2229,
+      "h": 1672
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 2,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841335307,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

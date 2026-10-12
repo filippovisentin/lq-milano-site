@@ -1,0 +1,18 @@
+{
+  "slug": "aperitivo-e-tarocchi",
+  "title": "Aperitivo e Tarocchi",
+  "start": "2026-05-22T16:00:00.000Z",
+  "end": "2026-05-22T19:00:00.000Z",
+  "poster": {
+    "id": "ad397639ca49",
+    "w": 1080,
+    "h": 1920
+  },
+  "venue": "Via Giulio e Corrado Venini, 54",
+  "registration": "chiusa",
+  "registrationUrl": null,
+  "tagline": null,
+  "description": "L’ evento si svolgerà nel nostro negozio , puoi prenotare la tua seduta ( offerta libera ) di lettura dei tarocchi .\r\n\r\nL’ aperitivo lo offriamo noi .",
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

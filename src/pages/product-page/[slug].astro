@@ -1,120 +1,76 @@
 ---
-import { Picture, getImage } from 'astro:assets';
-import { render } from 'astro:content';
-import { readFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
-import { PROJECT_ROOT } from '../../lib/root';
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
 import ProductCard from '../../components/ProductCard.astro';
-import { getProducts, productUrl, inStock, has3d, type Product } from '../../lib/products';
-import { euro } from '../../lib/nav';
+import { getProduct, listProducts, productUrl, inStock, has3d, euro, imgUrl, srcset, modelBase, era, paragraphs } from '../../lib/catalog';
 import site from '../../data/site.json';
 
-export async function getStaticPaths() {
-  const products = await getProducts();
-  return products.map((p) => ({ params: { slug: p.id }, props: { product: p, all: products } }));
-}
-interface Props { product: Product; all: Product[] }
-const { product, all } = Astro.props;
-const d = product.data;
-const { Content } = await render(product);
-const url = new URL(productUrl(product.id), Astro.site).href;
-const available = inStock(product);
-const with3d = has3d(product);
-const meta3d = with3d ? JSON.parse(readFileSync(join(PROJECT_ROOT, 'public/3d', product.id, 'meta.json'), 'utf8')) : null;
-
-const thumbs = await Promise.all(d.images.map((img) => getImage({ src: img, width: 200, format: 'webp' })));
-const large = await Promise.all(d.images.map((img) => getImage({ src: img, width: 1800, format: 'webp', quality: 86 })));
-const cartThumb = await getImage({ src: d.images[0], width: 240, format: 'webp' });
-const ogImg = await getImage({ src: d.images[0], width: 1200, format: 'jpg' });
+export const prerender = false;
+const p = getProduct(decodeURIComponent(Astro.params.slug ?? ''));
+if (!p) return new Response(null, { status: 404, statusText: 'Not found' });
+const all = listProducts();
+const url = new URL(productUrl(p.slug), Astro.site).href;
+const available = inStock(p);
+const with3d = has3d(p);
 const related = all
-  .filter((p) => p.id !== product.id && inStock(p))
-  .sort((a, b) => Number(b.data.category === d.category) - Number(a.data.category === d.category))
+  .filter((x) => x.slug !== p.slug && inStock(x))
+  .sort((a, b) => Number(b.category === p.category) - Number(a.category === p.category))
   .slice(0, 4);
-const description = product.body?.trim().split('\n').filter(Boolean)[0] ?? d.title;
-const waText = encodeURIComponent(`Ciao LQ Milano! Vorrei informazioni su: ${d.title} (${url})`);
-const shareText = encodeURIComponent(`${d.title} · LQ Milano`);
+const paras = paragraphs(p.description);
+const description = paras[0] ?? p.title;
+const waText = encodeURIComponent(`Ciao LQ Milano! Vorrei informazioni su: ${p.title} (${url})`);
+const shareText = encodeURIComponent(`${p.title} · LQ Milano`);
 const shareUrl = encodeURIComponent(url);
+const og = p.images[0] ? new URL(imgUrl('products', p.slug, p.images[0], 960), Astro.site).href : undefined;
 const productLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Product',
-  name: d.title,
-  description,
-  image: new URL(ogImg.src, Astro.site).href,
-  sku: product.id,
-  itemCondition: 'https://schema.org/UsedCondition',
-  ...(d.size ? { size: d.size } : {}),
-  offers: {
-    '@type': 'Offer',
-    url,
-    priceCurrency: 'EUR',
-    price: d.price.toFixed(2),
-    availability: available ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
-  },
+  '@context': 'https://schema.org', '@type': 'Product', name: p.title, description, image: og, sku: p.slug,
+  itemCondition: 'https://schema.org/UsedCondition', ...(p.size ? { size: p.size } : {}),
+  offers: { '@type': 'Offer', url, priceCurrency: 'EUR', price: p.price.toFixed(2), availability: available ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut' },
 };
 const crumbsLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
+  '@context': 'https://schema.org', '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: new URL('/', Astro.site).href },
     { '@type': 'ListItem', position: 2, name: 'Shop', item: new URL('/shop', Astro.site).href },
-    { '@type': 'ListItem', position: 3, name: d.title, item: url },
+    { '@type': 'ListItem', position: 3, name: p.title, item: url },
   ],
 };
-const anni = d.details.anni?.replace(/^'/, '’');
+const anni = era(p.details.anni);
+const base3d = modelBase(p);
 ---
-<Base title={d.title} description={d.seoDescription ?? `${description} ${euro(d.price)}${d.size ? ` · Taglia ${d.size}` : ''}. Vintage selezionato da LQ Milano.`} image={ogImg.src} type="product" jsonLd={[productLd, crumbsLd]}>
+<Base title={p.title} description={p.seoDescription ?? `${description} ${euro(p.price)}${p.size ? ` · Taglia ${p.size}` : ''}. Vintage selezionato da LQ Milano.`} image={og} type="product" jsonLd={[productLd, crumbsLd]}>
   <div class="container pdp">
     <nav aria-label="Percorso">
       <ol class="breadcrumb">
         <li><a href="/">Home</a></li>
         <li><a href="/shop" data-back-to-shop>Shop</a></li>
-        <li aria-current="page">{d.title}</li>
+        <li aria-current="page">{p.title}</li>
       </ol>
     </nav>
 
     <div class="pdp-grid">
-      <!-- ============ Media ============ -->
       <section class="media" aria-label="Immagini del prodotto">
         <div class="stage" data-stage>
           {with3d && (
-            <div
-              class="pane pane-3d is-active"
-              data-pane="3d"
-              data-viewer
-              data-base={`/3d/${product.id}`}
-              data-has-back={meta3d?.hasBack ? '1' : '0'}
-            >
-              <div
-                class="v-host"
-                data-v-host
-                tabindex="0"
-                role="img"
-                aria-roledescription="vista 3D"
-                aria-label={`${d.title}: vista 3D rotante. Trascina o usa le frecce sinistra e destra per ruotarlo.`}
-              >
-                <img class="poster" src={`/3d/${product.id}/front.webp`} alt="" width="1024" height="1024" fetchpriority="high" />
+            <div class="pane pane-3d is-active" data-pane="3d" data-viewer data-base={base3d} data-version={p.model3d.version}>
+              <div class="v-host" data-v-host tabindex="0" role="img" aria-roledescription="vista 3D"
+                aria-label={`${p.title}: vista 3D rotante. Trascina o usa le frecce sinistra e destra per ruotarlo.`}>
+                <img class="poster" src={`${base3d}/front.webp?v=${p.model3d.version}`} alt="" width="1024" height="1024" fetchpriority="high" />
               </div>
               <div class="v-loading" data-v-loading><span class="spinner"></span> Carico la vista 3D…</div>
               <div class="v-controls" data-v-controls hidden>
                 <button type="button" class="v-btn" data-v-auto aria-pressed="true"><Icon name="pause" class="icon-sm" /><span>Pausa</span></button>
                 <button type="button" class="v-btn" data-v-face="front">Fronte</button>
+                <button type="button" class="v-btn" data-v-face="side">Lato</button>
                 <button type="button" class="v-btn" data-v-face="back">Retro</button>
               </div>
               <p class="v-hint" data-v-hint hidden><Icon name="rotate" class="icon-sm" /> Trascina per ruotare</p>
             </div>
           )}
-          {d.images.map((img, i) => (
+          {p.images.map((img, i) => (
             <div class:list={['pane', 'pane-photo', !with3d && i === 0 && 'is-active']} data-pane={`p${i}`} hidden={with3d || i > 0}>
-              <Picture
-                src={img}
-                alt={`${d.title}, foto ${i + 1} di ${d.images.length}`}
-                widths={[600, 900, 1200, 1600]}
-                sizes="(min-width: 1024px) 56vw, 100vw"
-                formats={['avif']} fallbackFormat="webp"
-                loading={!with3d && i === 0 ? 'eager' : 'lazy'}
-              />
+              <img src={imgUrl('products', p.slug, img, 960)} srcset={srcset('products', p.slug, img)} sizes="(min-width: 1024px) 56vw, 100vw"
+                alt={`${p.title}, foto ${i + 1} di ${p.images.length}`} width={img.w} height={img.h} loading={!with3d && i === 0 ? 'eager' : 'lazy'} decoding="async" />
               <button type="button" class="zoom-btn" data-zoom={i}><Icon name="zoom" class="icon-sm" /><span>Ingrandisci</span></button>
             </div>
           ))}
@@ -122,78 +78,60 @@ const anni = d.details.anni?.replace(/^'/, '’');
 
         <div class="thumbs" role="tablist" aria-label="Scegli la vista">
           {with3d && (
-            <button type="button" role="tab" class="thumb thumb-3d" aria-selected="true" data-show="3d" aria-controls="stage">
-              <Icon name="cube" />
-              <span>3D</span>
-            </button>
+            <button type="button" role="tab" class="thumb thumb-3d" aria-selected="true" data-show="3d"><Icon name="cube" /><span>3D</span></button>
           )}
-          {thumbs.map((t, i) => (
+          {p.images.map((img, i) => (
             <button type="button" role="tab" class="thumb" aria-selected={!with3d && i === 0 ? 'true' : 'false'} data-show={`p${i}`}>
-              <img src={t.src} alt={`Foto ${i + 1}`} width="100" height="125" loading="lazy" decoding="async" />
+              <img src={imgUrl('products', p.slug, img, 480)} alt={`Foto ${i + 1}`} width="100" height="125" loading="lazy" decoding="async" />
             </button>
           ))}
         </div>
       </section>
 
-      <!-- ============ Purchase panel ============ -->
       <section class="panel" aria-labelledby="pdp-title">
-        <p class="eyebrow">{d.category}{anni && ` · Anni ${anni}`}</p>
-        <h1 id="pdp-title" class="pdp-title">{d.title}</h1>
-        <p class="pdp-price tabular">{euro(d.price)} <span class="vat">IVA inclusa</span></p>
+        <p class="eyebrow">{p.category}{anni && ` · Anni ${anni}`}</p>
+        <h1 id="pdp-title" class="pdp-title">{p.title}</h1>
+        <p class="pdp-price tabular">{euro(p.price)} <span class="vat">IVA inclusa</span></p>
 
         <ul class="facts" aria-label="In breve">
-          {d.quantity === 1 && available && <li><Icon name="sparkle" class="icon-sm" /> Pezzo unico</li>}
-          {d.details.stato && <li><Icon name="check" class="icon-sm" /> Stato: {d.details.stato}</li>}
+          {p.quantity === 1 && available && <li><Icon name="sparkle" class="icon-sm" /> Pezzo unico</li>}
+          {p.details.stato && <li><Icon name="check" class="icon-sm" /> Stato: {p.details.stato}</li>}
           {anni && <li><Icon name="clock" class="icon-sm" /> Anni {anni}</li>}
         </ul>
 
-        <form class="buy" data-buy novalidate
-          data-id={product.id}
-          data-title={d.title}
-          data-price={d.price}
-          data-image={cartThumb.src}
-          data-url={productUrl(product.id)}
-          data-max={available ? d.quantity : 0}
-        >
-          {d.size && (
+        <form class="buy" data-buy novalidate data-id={p.slug} data-title={p.title} data-price={p.price}
+          data-image={p.images[0] ? imgUrl('products', p.slug, p.images[0], 480) : ''} data-url={productUrl(p.slug)} data-max={available ? p.quantity : 0}>
+          {p.size && (
             <fieldset class="sizes">
               <legend class="label">Taglia <span class="req" aria-hidden="true">*</span></legend>
               <div class="size-opts">
-                <label class="size-opt">
-                  <input type="radio" name="size" value={d.size} checked required />
-                  <span>{d.size}</span>
-                </label>
+                <label class="size-opt"><input type="radio" name="size" value={p.size} checked required /><span>{p.size}</span></label>
               </div>
               <p class="hint">Taglia unica disponibile per questo capo. Controlla le misure qui sotto: le taglie vintage possono vestire diversamente.</p>
             </fieldset>
           )}
-
           {available ? (
             <>
-              <button class="btn btn-lg btn-block add-btn" type="submit" data-add>
-                <Icon name="bag" class="icon-sm" /><span data-add-label>Aggiungi al carrello</span>
-              </button>
+              <button class="btn btn-lg btn-block add-btn" type="submit" data-add><Icon name="bag" class="icon-sm" /><span data-add-label>Aggiungi al carrello</span></button>
               <p class="buy-status" data-buy-status role="status"></p>
             </>
           ) : (
             <p class="notice"><Icon name="info" class="icon-sm" /> Questo capo è già stato venduto. Scrivici: potremmo avere qualcosa di simile.</p>
           )}
-          <a class="btn btn-ghost btn-block" href={`${site.whatsapp}?text=${waText}`} target="_blank" rel="noopener">
-            <Icon name="whatsapp" class="icon-sm" /> Chiedi info su WhatsApp
-          </a>
+          <a class="btn btn-ghost btn-block" href={`${site.whatsapp}?text=${waText}`} target="_blank" rel="noopener"><Icon name="whatsapp" class="icon-sm" /> Chiedi info su WhatsApp</a>
         </form>
 
         <div class="accordions">
           <details open>
             <summary>Descrizione <Icon name="chevron-down" class="icon-sm" /></summary>
-            <div class="acc-body prose"><Content /></div>
+            <div class="acc-body prose">{paras.map((t) => <p>{t}</p>)}</div>
           </details>
-          <details open={d.details.misure.length > 0}>
+          <details open={p.details.misure.length > 0}>
             <summary>Misure <Icon name="chevron-down" class="icon-sm" /></summary>
             <div class="acc-body">
-              {d.details.misure.length ? (
+              {p.details.misure.length ? (
                 <dl class="measures">
-                  {d.details.misure.map((m) => {
+                  {p.details.misure.map((m) => {
                     const [k, ...v] = m.split(':');
                     return v.length ? <div><dt>{k.trim()}</dt><dd class="tabular">{v.join(':').trim()}</dd></div> : <div><dd>{m}</dd></div>;
                   })}
@@ -204,18 +142,18 @@ const anni = d.details.anni?.replace(/^'/, '’');
               <p class="hint">Misure prese a capo disteso.</p>
             </div>
           </details>
-          {d.details.materiale.length > 0 && (
+          {p.details.materiale.length > 0 && (
             <details>
               <summary>Materiale <Icon name="chevron-down" class="icon-sm" /></summary>
-              <div class="acc-body"><ul class="plain">{d.details.materiale.map((m) => <li>{m}</li>)}</ul></div>
+              <div class="acc-body"><ul class="plain">{p.details.materiale.map((m) => <li>{m}</li>)}</ul></div>
             </details>
           )}
-          {(d.details.stato || anni) && (
+          {(p.details.stato || anni) && (
             <details>
               <summary>Stato ed epoca <Icon name="chevron-down" class="icon-sm" /></summary>
               <div class="acc-body">
                 <dl class="measures">
-                  {d.details.stato && <div><dt>Stato</dt><dd>{d.details.stato}</dd></div>}
+                  {p.details.stato && <div><dt>Stato</dt><dd>{p.details.stato}</dd></div>}
                   {anni && <div><dt>Anni</dt><dd>{anni}</dd></div>}
                 </dl>
               </div>
@@ -249,29 +187,26 @@ const anni = d.details.anni?.replace(/^'/, '’');
           <div><p class="eyebrow">Continua a cercare</p><h2 id="rel-title">Potrebbero piacerti</h2></div>
           <a class="link-arrow" href="/shop"><span>Tutto lo shop</span><Icon name="arrow" class="icon-sm" /></a>
         </div>
-        <div class="grid related">{related.map((p) => <ProductCard product={p} />)}</div>
+        <div class="grid related">{related.map((r) => <ProductCard product={r} />)}</div>
       </div>
     </section>
   )}
 
   {available && (
     <div class="sticky-buy" data-sticky-buy aria-hidden="true">
-      <div>
-        <strong class="s-title">{d.title}</strong>
-        <span class="tabular">{euro(d.price)}{d.size && ` · Taglia ${d.size}`}</span>
-      </div>
+      <div><strong class="s-title">{p.title}</strong><span class="tabular">{euro(p.price)}{p.size && ` · Taglia ${p.size}`}</span></div>
       <button class="btn" type="button" tabindex="-1" data-sticky-add>Aggiungi</button>
     </div>
   )}
 
-  <dialog class="lightbox" data-lightbox aria-label={`Foto di ${d.title}`}>
+  <dialog class="lightbox" data-lightbox aria-label={`Foto di ${p.title}`}>
     <img data-lb-img alt="" />
     <p class="lb-count tabular" data-lb-count aria-live="polite"></p>
     <button class="lb-btn lb-close" type="button" data-lb-close aria-label="Chiudi"><Icon name="close" /></button>
     <button class="lb-btn lb-prev" type="button" data-lb-prev aria-label="Foto precedente"><Icon name="chevron-left" /></button>
     <button class="lb-btn lb-next" type="button" data-lb-next aria-label="Foto successiva"><Icon name="chevron" /></button>
   </dialog>
-  <script type="application/json" id="lb-data" set:html={JSON.stringify(large.map((l, i) => ({ src: l.src, alt: `${d.title}, foto ${i + 1}` })))} />
+  <script type="application/json" id="lb-data" set:html={JSON.stringify(p.images.map((img, i) => ({ src: imgUrl('products', p.slug, img, 1600), alt: `${p.title}, foto ${i + 1}` })))} />
 </Base>
 
 <style>
@@ -292,7 +227,7 @@ const anni = d.details.anni?.replace(/^'/, '’');
   @media (max-width: 959px) { .stage { aspect-ratio: 4 / 5; margin-inline: calc(var(--gutter) * -1); border-radius: 0; } }
   .pane { position: absolute; inset: 0; }
   .pane-photo { background: #fff; }
-  .pane-photo :global(img) { width: 100%; height: 100%; object-fit: contain; }
+  .pane-photo img { width: 100%; height: 100%; object-fit: contain; }
   .v-host { position: absolute; inset: 0; cursor: grab; outline-offset: -4px; }
   .v-host:global(.is-grabbing) { cursor: grabbing; }
   .v-host :global(canvas) { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
@@ -434,7 +369,7 @@ const anni = d.details.anni?.replace(/^'/, '’');
     const start = async () => {
       try {
         const { mountViewer } = await import('../../scripts/garment-viewer');
-        viewer = await mountViewer(host.querySelector<HTMLElement>('[data-v-host]')!, { base: host.dataset.base!, hasBack: host.dataset.hasBack === '1', label: '' });
+        viewer = await mountViewer(host.querySelector<HTMLElement>('[data-v-host]')!, { base: host.dataset.base!, version: host.dataset.version });
         host.classList.add('is-ready');
         host.querySelector<HTMLElement>('[data-v-loading]')!.hidden = true;
         host.querySelector<HTMLElement>('[data-v-controls]')!.hidden = false;
@@ -458,11 +393,9 @@ const anni = d.details.anni?.replace(/^'/, '’');
       viewer.setAuto(on); setAutoBtn(on);
     });
     host.querySelectorAll<HTMLButtonElement>('[data-v-face]').forEach((b) =>
-      b.addEventListener('click', () => viewer?.face(b.dataset.vFace as 'front' | 'back')));
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); start(); } }, { rootMargin: '200px' });
-      io.observe(host);
-    } else start();
+      b.addEventListener('click', () => viewer?.face(b.dataset.vFace as 'front' | 'back' | 'side')));
+    // the stage is the first thing on the page: start right away
+    start();
   }
 
   // ---------- lightbox ----------

@@ -3,13 +3,14 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import EventCard from '../components/EventCard.astro';
 import Icon from '../components/Icon.astro';
-import { getEvents } from '../lib/products';
+import { listEvents, isPast } from '../lib/catalog';
 import { media } from '../lib/media';
 import site from '../data/site.json';
 
-// Grouped at build time and re-grouped in the browser, so an event that ends
-// after the last deploy still moves to "Eventi passati" on its own.
-const events = await getEvents();
+export const prerender = false;
+const events = listEvents();
+const upcoming = events.filter((e) => !isPast(e)).reverse();
+const past = events.filter(isPast);
 ---
 <Base title="Eventi" description="Eventi e workshop da LQ Milano a NoLo: editoriali di moda dal vivo, live painting, serate. Programma ed eventi passati.">
   <PageHero
@@ -24,8 +25,8 @@ const events = await getEvents();
   <section class="section" aria-labelledby="up-title">
     <div class="container">
       <h2 id="up-title">In programma</h2>
-      <div class="grid evs" data-upcoming></div>
-      <div class="empty" data-up-empty>
+      <div class="grid evs">{upcoming.map((e) => <EventCard event={e} />)}</div>
+      <div class="empty" hidden={upcoming.length > 0}>
         <Icon name="calendar" />
         <div>
           <p><strong>Al momento non ci sono eventi in programma.</strong> I prossimi appuntamenti vengono annunciati su Instagram: seguici per non perderli.</p>
@@ -38,14 +39,14 @@ const events = await getEvents();
     </div>
   </section>
 
-  <section class="section paper-2" aria-labelledby="past-title" data-past-section>
-    <div class="container">
-      <h2 id="past-title">Eventi passati</h2>
-      <div class="grid evs" data-past>
-        {events.map((e) => <EventCard event={e} />)}
+  {past.length > 0 && (
+    <section class="section paper-2" aria-labelledby="past-title">
+      <div class="container">
+        <h2 id="past-title">Eventi passati</h2>
+        <div class="grid evs">{past.map((e) => <EventCard event={e} />)}</div>
       </div>
-    </div>
-  </section>
+    </section>
+  )}
 </Base>
 
 <style>
@@ -57,21 +58,3 @@ const events = await getEvents();
   .empty > :global(svg) { color: var(--gold-ink); flex: none; }
   .empty-cta { display: flex; flex-wrap: wrap; gap: 10px; }
 </style>
-
-<script>
-  const up = document.querySelector<HTMLElement>('[data-upcoming]')!;
-  const past = document.querySelector<HTMLElement>('[data-past]')!;
-  const now = Date.now();
-  const cards = [...document.querySelectorAll<HTMLElement>('[data-event]')];
-  // upcoming: soonest first; past: most recent first (server order)
-  cards
-    .filter((c) => new Date(c.dataset.end!).getTime() >= now)
-    .reverse()
-    .forEach((c) => up.append(c));
-  cards.filter((c) => new Date(c.dataset.end!).getTime() < now).forEach((c) => {
-    const s = c.querySelector('[data-ev-status]');
-    if (s) { s.textContent = 'Concluso'; s.className = 'badge'; }
-  });
-  document.querySelector<HTMLElement>('[data-up-empty]')!.hidden = up.children.length > 0;
-  document.querySelector<HTMLElement>('[data-past-section]')!.hidden = past.children.length === 0;
-</script>

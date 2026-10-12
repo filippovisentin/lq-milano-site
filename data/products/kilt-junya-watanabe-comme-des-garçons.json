@@ -1,0 +1,60 @@
+{
+  "slug": "kilt-junya-watanabe-comme-des-garçons",
+  "title": "Kilt Junya Watanabe Comme Des Garçons",
+  "price": 580,
+  "size": null,
+  "category": "Pantaloni e gonne",
+  "available": true,
+  "quantity": 1,
+  "featured": true,
+  "order": 15,
+  "description": "Non il solito pantalone, ma un pezzo d'arte da indossare.\r\n\r\nCapo che gioca con le simmetrie e i volumi tipici dell'avanguardia giapponese.\r\n\r\nMade in Japan",
+  "details": {
+    "misure": [
+      "Larghezza vita: 48 cm",
+      "Lunghezza capo: 66 cm"
+    ],
+    "materiale": [
+      "100% lana"
+    ],
+    "stato": "Ottimo",
+    "anni": "2007"
+  },
+  "images": [
+    {
+      "id": "04b062f93089",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "f5560addef9a",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "8abd0beb172f",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "88e8e12706ae",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "2c0d1e44e56d",
+      "w": 2400,
+      "h": 1800
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 3,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841410794,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

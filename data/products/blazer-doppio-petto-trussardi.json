@@ -1,0 +1,57 @@
+{
+  "slug": "blazer-doppio-petto-trussardi",
+  "title": "Blazer Doppio Petto Trussardi",
+  "price": 120,
+  "size": "48",
+  "category": "Capispalla",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 19,
+  "description": "Capo sartoriale dal fascino intramontabile e dal taglio strutturato ed elegante.\r\n\r\nCollezione da viaggio\r\n\r\nMade in Italy",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 45,5 cm",
+      "Larghezza torace: 50 cm",
+      "Lunghezza capo: 75 cm",
+      "Lunghezza manica: 62 cm"
+    ],
+    "materiale": [
+      "Misto cotone/nylon"
+    ],
+    "stato": "Ottimo",
+    "anni": "2010"
+  },
+  "images": [
+    {
+      "id": "581fd5fd273b",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "46a3f71e5c53",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "15688164a0ad",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "44a95fe73488",
+      "w": 1422,
+      "h": 2400
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 2,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841300297,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

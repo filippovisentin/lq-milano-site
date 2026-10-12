@@ -1,0 +1,62 @@
+{
+  "slug": "polo-sergio-tacchini",
+  "title": "Polo Sergio Tacchini",
+  "price": 90,
+  "size": "50",
+  "category": "Maglieria e polo",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 13,
+  "description": "Capo che incarna perfettamente lo stile sportivo, combinando un design d'ispirazione retro/tennis.\r\n\r\nMade In Italy",
+  "details": {
+    "misure": [
+      "Larghezza spalla: 62 cm",
+      "Larghezza torace: 52 cm",
+      "Lunghezza capo: 65 cm",
+      "Lunghezza manica: 17 cm"
+    ],
+    "materiale": [
+      "100% cotone"
+    ],
+    "stato": "Nuovo con cartellino",
+    "anni": "'70"
+  },
+  "images": [
+    {
+      "id": "bd8edb178cd2",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "3c1a1777eb98",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "b7611da89b0c",
+      "w": 1728,
+      "h": 2131
+    },
+    {
+      "id": "0b39148e59f5",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "111cb21f5b7b",
+      "w": 2400,
+      "h": 2039
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 3,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841443067,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

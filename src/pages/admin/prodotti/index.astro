@@ -1,0 +1,93 @@
+---
+import Admin from '../../../layouts/Admin.astro';
+import Icon from '../../../components/Icon.astro';
+import { listProducts, euro, imgUrl, has3d, inStock, productUrl } from '../../../lib/catalog';
+export const prerender = false;
+const products = listProducts();
+const deleted = Astro.url.searchParams.get('eliminato');
+const stats = {
+  total: products.length,
+  live: products.filter(inStock).length,
+  sold: products.filter((p) => !inStock(p)).length,
+  no3d: products.filter((p) => !has3d(p)).length,
+};
+---
+<Admin title="Prodotti" section="prodotti">
+  <div class="a-title">
+    <h1>Prodotti</h1>
+    <a class="btn btn-lg" href="/admin/prodotti/nuovo"><Icon name="plus" class="icon-sm" /> Nuovo prodotto</a>
+  </div>
+  {deleted && <p class="notice notice-ok" role="status">Prodotto “{deleted}” eliminato.</p>}
+
+  <ul class="stats">
+    <li><strong>{stats.total}</strong> nel catalogo</li>
+    <li><strong>{stats.live}</strong> in vendita</li>
+    <li><strong>{stats.sold}</strong> venduti / non disponibili</li>
+    <li><strong>{stats.no3d}</strong> senza vista 3D</li>
+  </ul>
+
+  <div class="a-card">
+    <label class="sr-only" for="filter">Cerca un prodotto</label>
+    <input class="input" id="filter" type="search" placeholder="Cerca per nome, categoria, taglia…" data-filter />
+    <ul class="plist" data-plist>
+      {products.map((p) => (
+        <li data-row={`${p.title} ${p.category} ${p.size ?? ''}`.toLowerCase()}>
+          <a class="row" href={`/admin/prodotti/${encodeURIComponent(p.slug)}`}>
+            <span class="thumb">{p.images[0] && <img src={imgUrl('products', p.slug, p.images[0], 480)} alt="" loading="lazy" width="64" height="80" />}</span>
+            <span class="info">
+              <strong>{p.title}</strong>
+              <span class="muted">{p.category}{p.size && ` · Tg. ${p.size}`} · ordine {p.order}</span>
+            </span>
+            <span class="price tabular">{euro(p.price)}</span>
+            <span class="flags">
+              {inStock(p) ? <span class="badge badge-ok">In vendita</span> : <span class="badge badge-dark">Venduto</span>}
+              {has3d(p) ? <span class="badge badge-3d"><Icon name="cube" class="icon-xs" /> 3D</span> : <span class="badge badge-warn">No 3D</span>}
+              {p.featured && <span class="badge badge-gold">In evidenza</span>}
+            </span>
+            <Icon name="chevron" class="icon-sm chev" />
+          </a>
+          <a class="view" href={productUrl(p.slug)} target="_blank" rel="noopener" aria-label={`Apri ${p.title} sul sito`}>↗</a>
+        </li>
+      ))}
+    </ul>
+    <p class="muted" data-none hidden>Nessun prodotto trovato.</p>
+  </div>
+</Admin>
+
+<style>
+  .stats { list-style: none; padding: 0; margin: 0 0 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .stats li { padding: 8px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 0.92rem; }
+  .plist { list-style: none; margin: 16px 0 0; padding: 0; }
+  .plist li { display: flex; align-items: center; border-top: 1px solid var(--line); }
+  .row { flex: 1; display: grid; grid-template-columns: 64px 1fr auto; gap: 6px 16px; align-items: center; padding: 12px 4px; text-decoration: none; color: inherit; min-width: 0; }
+  .row:hover strong { text-decoration: underline; }
+  .thumb { width: 64px; height: 80px; background: #fff; border-radius: 6px; overflow: hidden; grid-row: span 2; }
+  .thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .info { display: grid; min-width: 0; }
+  .info .muted { font-size: 0.88rem; }
+  .price { font-weight: 600; }
+  .flags { display: flex; flex-wrap: wrap; gap: 6px; grid-column: 2 / -1; }
+  .chev { display: none; }
+  .view { width: 44px; height: 44px; display: grid; place-items: center; text-decoration: none; color: var(--ink-2); border-radius: 50%; }
+  .view:hover { background: var(--paper-2); }
+  @media (min-width: 860px) {
+    .row { grid-template-columns: 64px 1fr auto auto 20px; }
+    .thumb { grid-row: auto; }
+    .flags { grid-column: auto; }
+    .chev { display: block; color: var(--ink-2); }
+  }
+  :global(.badge-ok) { background: #e1ede0; color: #234d2a; }
+  :global(.badge-warn) { background: #f6e3cf; color: #7a3d0c; }
+  :global(.badge-3d) { background: rgba(23, 20, 17, 0.9); color: #ffd9c7; }
+</style>
+
+<script>
+  const input = document.querySelector<HTMLInputElement>('[data-filter]')!;
+  const rows = [...document.querySelectorAll<HTMLElement>('[data-row]')];
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    let n = 0;
+    rows.forEach((r) => { const ok = !q || r.dataset.row!.includes(q); r.hidden = !ok; if (ok) n++; });
+    document.querySelector<HTMLElement>('[data-none]')!.hidden = n > 0;
+  });
+</script>

@@ -2,17 +2,17 @@
 import Base from '../layouts/Base.astro';
 import ProductCard from '../components/ProductCard.astro';
 import Icon from '../components/Icon.astro';
-import { getProducts } from '../lib/products';
-import { CATEGORIES } from '../content.config';
+import { listProducts, CATEGORIES } from '../lib/catalog';
 
-const products = await getProducts();
-const usedCats = CATEGORIES.filter((c) => products.some((p) => p.data.category === c));
+export const prerender = false;
+const products = listProducts();
+const usedCats = CATEGORIES.filter((c) => products.some((p) => p.category === c));
 const sizeOrder = (s: string) => {
   const letters = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
   const i = letters.indexOf(s.toUpperCase());
   return i >= 0 ? i : 100 + Number.parseFloat(s) || 999;
 };
-const sizes = [...new Set(products.map((p) => p.data.size).filter(Boolean) as string[])].sort((a, b) => sizeOrder(a) - sizeOrder(b));
+const sizes = [...new Set(products.map((p) => p.size).filter(Boolean) as string[])].sort((a, b) => sizeOrder(a) - sizeOrder(b));
 const PAGE = 12;
 ---
 <Base title="Shop" description={`Shop online di LQ Milano: ${products.length} capi vintage selezionati a mano, dagli anni ’60 ai 2000. Pezzi unici con misure e stato verificati.`}>

@@ -1,0 +1,57 @@
+{
+  "slug": "maglia-antonio-marras",
+  "title": "Maglia Antonio Marras",
+  "price": 95,
+  "size": "M",
+  "category": "Maglieria e polo",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 12,
+  "description": "Capo che unisce il comfort di un taglio classico ad un'estetica ricercata.\r\n\r\nMade in Italy",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 54 cm",
+      "Larghezza torace: 61 cm",
+      "Lunghezza capo: 73 cm",
+      "Lunghezza maniche: 66 cm"
+    ],
+    "materiale": [
+      "100% cotone"
+    ],
+    "stato": "Ottimo",
+    "anni": "'2000"
+  },
+  "images": [
+    {
+      "id": "09ebbabf7dd4",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "916ae1e1114e",
+      "w": 1678,
+      "h": 2400
+    },
+    {
+      "id": "4ff6521c402b",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "508728752cba",
+      "w": 1468,
+      "h": 1190
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 2,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841417168,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

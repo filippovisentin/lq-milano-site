@@ -1,0 +1,53 @@
+{
+  "slug": "giacca-impermeabile-monguzzi-m-milano",
+  "title": "Giacca Impermeabile Monguzzi M. Milano",
+  "price": 280,
+  "size": "L",
+  "category": "Capispalla",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 6,
+  "description": "Capo con taglio doppiopetto per chi non vuole confondersi tra la folla.\r\n\r\nMade in Italy",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 54 cm",
+      "Larghezza torace: 56 cm",
+      "Lunghezza capo: 75 cm",
+      "Lunghezza maniche: 62 cm"
+    ],
+    "materiale": [
+      "Vera pelle",
+      "Fodera: tessuto caldo"
+    ],
+    "stato": "Ottimo",
+    "anni": "'60"
+  },
+  "images": [
+    {
+      "id": "b7461dacf2c9",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "3890c5340854",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "e13709e452d9",
+      "w": 2106,
+      "h": 1759
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 1,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841379229,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

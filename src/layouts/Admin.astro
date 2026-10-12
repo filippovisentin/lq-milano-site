@@ -1,0 +1,64 @@
+---
+import '../styles/global.css';
+import NeonLogo from '../components/NeonLogo.astro';
+interface Props { title: string; section?: 'prodotti' | 'eventi' | null }
+const { title, section = null } = Astro.props;
+const user = Astro.locals.admin?.user;
+---
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title} · Admin LQ Milano</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="admin">
+    <a class="skip-link" href="#main">Vai al contenuto</a>
+    {user && (
+      <header class="a-head night">
+        <div class="a-bar">
+          <a href="/admin/prodotti" class="a-brand" aria-label="Pannello LQ Milano"><NeonLogo size="sm" /><span>Pannello</span></a>
+          <nav aria-label="Pannello">
+            <a href="/admin/prodotti" aria-current={section === 'prodotti' ? 'page' : undefined}>Prodotti</a>
+            <a href="/admin/eventi" aria-current={section === 'eventi' ? 'page' : undefined}>Eventi</a>
+            <a href="/" target="_blank" rel="noopener">Vedi il sito ↗</a>
+          </nav>
+          <form method="post" action="/api/admin/logout" class="a-out">
+            <span class="a-user">{user}</span>
+            <button class="btn btn-ghost" type="submit">Esci</button>
+          </form>
+        </div>
+      </header>
+    )}
+    <main id="main" class="a-main">
+      <slot />
+    </main>
+    <div class="toast-region" aria-live="polite" data-toasts></div>
+  </body>
+</html>
+
+<style is:global>
+  body.admin { background: #f3efe6; }
+  .a-head { position: sticky; top: 0; z-index: 30; }
+  .a-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; padding: 10px clamp(16px, 3vw, 32px); }
+  .a-brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--on-night-2); font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; }
+  .a-brand .neon-logo { --fs: 1.15rem; text-transform: none; letter-spacing: 0; }
+  .a-bar nav { display: flex; gap: 4px; flex: 1; flex-wrap: wrap; }
+  .a-bar nav a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; color: var(--on-night-2); text-decoration: none; }
+  .a-bar nav a:hover { color: var(--on-night); background: rgba(244, 236, 221, 0.08); }
+  .a-bar nav a[aria-current='page'] { background: rgba(244, 236, 221, 0.12); color: var(--on-night); }
+  .a-out { display: flex; align-items: center; gap: 10px; }
+  .a-user { color: var(--on-night-2); font-size: 0.9rem; }
+  .a-out .btn { min-height: 40px; padding: 8px 16px; }
+  .a-main { max-width: 1280px; margin: 0 auto; padding: clamp(20px, 3vw, 40px) clamp(16px, 3vw, 32px) 80px; }
+  .a-title { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
+  .a-title h1 { font-size: clamp(1.8rem, 1.4rem + 1.5vw, 2.6rem); margin: 0; }
+  .a-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: clamp(16px, 2.5vw, 28px); }
+  .a-card + .a-card { margin-top: 20px; }
+  .a-card h2 { font-size: 1.35rem; margin-bottom: 14px; }
+  .toast-region { position: fixed; z-index: 90; left: 50%; bottom: 16px; transform: translateX(-50%); display: grid; gap: 8px; width: min(460px, calc(100vw - 32px)); }
+  .toast { display: flex; gap: 10px; align-items: center; padding: 12px 16px; border-radius: 12px; background: var(--night); color: var(--on-night); box-shadow: var(--shadow-2); }
+  .toast p { margin: 0; }
+</style>

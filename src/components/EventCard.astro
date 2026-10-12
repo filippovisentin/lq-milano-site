@@ -1,28 +1,27 @@
 ---
-import { Picture } from 'astro:assets';
 import Icon from './Icon.astro';
-import { eventUrl, fmtDay, fmtMonth, fmtYear, fmtTime, eventEnd, type Event } from '../lib/products';
-interface Props { event: Event; headingLevel?: 'h2' | 'h3' }
-const { event, headingLevel = 'h3' } = Astro.props;
-const d = event.data;
+import { eventUrl, fmtDay, fmtMonth, fmtYear, fmtTime, eventEnd, isPast, imgUrl, srcset, type LqEvent } from '../lib/catalog';
+interface Props { event: LqEvent; headingLevel?: 'h2' | 'h3' }
+const { event: e, headingLevel = 'h3' } = Astro.props;
 const H = headingLevel;
-const past = eventEnd(event).getTime() < Date.now();
-const status = past ? 'Concluso' : d.registration === 'aperta' ? 'Iscrizioni aperte' : d.registration === 'esaurita' ? 'Posti esauriti' : 'Iscrizioni chiuse';
+const start = new Date(e.start);
+const past = isPast(e);
+const status = past ? 'Concluso' : e.registration === 'aperta' ? 'Iscrizioni aperte' : e.registration === 'esaurita' ? 'Posti esauriti' : 'Iscrizioni chiuse';
 ---
-<article class="ev" data-event data-end={eventEnd(event).toISOString()} data-reg={d.registration}>
-  <a href={eventUrl(event.id)} class="ev-link">
+<article class="ev" data-event data-end={eventEnd(e).toISOString()}>
+  <a href={eventUrl(e.slug)} class="ev-link">
     <div class="ev-media">
-      <Picture src={d.poster} alt={`Locandina di ${d.title}`} widths={[360, 560, 800]} sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 92vw" formats={['avif']} fallbackFormat="webp" loading="lazy" />
-      <time class="ev-date" datetime={d.start.toISOString()}>
-        <span class="d">{fmtDay(d.start)}</span><span class="m">{fmtMonth(d.start)}</span><span class="y">{fmtYear(d.start)}</span>
+      {e.poster && <img src={imgUrl('events', e.slug, e.poster, 960)} srcset={srcset('events', e.slug, e.poster)} sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 92vw" alt={`Locandina di ${e.title}`} width={e.poster.w} height={e.poster.h} loading="lazy" decoding="async" />}
+      <time class="ev-date" datetime={start.toISOString()}>
+        <span class="d">{fmtDay(start)}</span><span class="m">{fmtMonth(start)}</span><span class="y">{fmtYear(start)}</span>
       </time>
     </div>
     <div class="ev-body">
-      <span class:list={['badge', past ? '' : d.registration === 'aperta' ? 'badge-gold' : '']} data-ev-status>{status}</span>
-      <H class="ev-title">{d.title}</H>
-      {d.tagline && <p class="ev-tag">{d.tagline}</p>}
-      <p class="ev-meta"><Icon name="clock" class="icon-sm" /> {fmtTime(d.start)}{d.end && `–${fmtTime(d.end)}`}</p>
-      <p class="ev-meta"><Icon name="pin" class="icon-sm" /> {d.venue}</p>
+      <span class:list={['badge', !past && e.registration === 'aperta' && 'badge-gold']}>{status}</span>
+      <H class="ev-title">{e.title}</H>
+      {e.tagline && <p class="ev-tag">{e.tagline}</p>}
+      <p class="ev-meta"><Icon name="clock" class="icon-sm" /> {fmtTime(start)}{e.end && `–${fmtTime(new Date(e.end))}`}</p>
+      <p class="ev-meta"><Icon name="pin" class="icon-sm" /> {e.venue}</p>
       <span class="link-arrow"><span>Dettagli dell’evento</span><Icon name="arrow" class="icon-sm" /></span>
     </div>
   </a>
@@ -32,11 +31,8 @@ const status = past ? 'Concluso' : d.registration === 'aperta' ? 'Iscrizioni ape
   .ev-link { display: grid; height: 100%; text-decoration: none; color: inherit; background: var(--surface); border-radius: 6px; overflow: hidden; box-shadow: var(--shadow-1); transition: transform var(--t-med) var(--ease-out), box-shadow var(--t-med); }
   .ev-link:hover { transform: translateY(-3px); box-shadow: var(--shadow-2); }
   .ev-media { position: relative; aspect-ratio: 4 / 3; background: var(--night); overflow: hidden; }
-  .ev-media :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
-  .ev-date {
-    position: absolute; top: 12px; left: 12px; display: grid; justify-items: center; min-width: 62px; padding: 8px 10px 6px; border-radius: 8px;
-    background: var(--surface); color: var(--ink); line-height: 1; box-shadow: var(--shadow-1);
-  }
+  .ev-media img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
+  .ev-date { position: absolute; top: 12px; left: 12px; display: grid; justify-items: center; min-width: 62px; padding: 8px 10px 6px; border-radius: 8px; background: var(--surface); color: var(--ink); line-height: 1; box-shadow: var(--shadow-1); }
   .ev-date .d { font-family: var(--font-display); font-size: 1.7rem; }
   .ev-date .m { text-transform: uppercase; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; margin-top: 4px; }
   .ev-date .y { font-size: 0.72rem; color: var(--ink-2); margin-top: 2px; }

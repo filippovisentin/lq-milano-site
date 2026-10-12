@@ -1,0 +1,54 @@
+{
+  "slug": "cappotto-schneiders-salzburg",
+  "title": "Cappotto Schneiders Salzburg",
+  "price": 140,
+  "size": "52",
+  "category": "Capispalla",
+  "available": true,
+  "quantity": 1,
+  "featured": true,
+  "order": 1,
+  "description": "Capo di sartoria alla qualità eccezionale, con classico taglio Loden che unisce eleganza senza tempo, calore e resistenza.\r\n\r\nMade in Austria",
+  "details": {
+    "misure": [],
+    "materiale": [
+      "65% modal",
+      "35% poliestere",
+      "Fodera: 100% viscosa"
+    ],
+    "stato": "Ottimo",
+    "anni": "'80-'90"
+  },
+  "images": [
+    {
+      "id": "dac15f556a4b",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "9995d5ef0b3c",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "df1cb7ddda81",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "6aac6b100dd3",
+      "w": 1800,
+      "h": 2400
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 2,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841354758,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

@@ -1,0 +1,69 @@
+{
+  "slug": "giacca-con-cappuccio-trussarci",
+  "title": "Giacca Con Cappuccio Trussarci",
+  "price": 120,
+  "size": "46",
+  "category": "Capispalla",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 17,
+  "description": "Capo versatile ideale per le giornate di transizione.\r\n\r\nPensato per chi cerca praticità senza rinunciare a un'impronta di stile decisa e firmata.\r\n\r\nCapo reversibile\r\n\r\nMade in Italy",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 44 cm",
+      "Larghezza torace: 50 cm",
+      "Lunghezza capo: 76 cm",
+      "Lunghezza manica: 64 cm"
+    ],
+    "materiale": [
+      "55% lino",
+      "45% cotone",
+      "Interno: 100% nylon"
+    ],
+    "stato": "Ottimo",
+    "anni": "90'-2000"
+  },
+  "images": [
+    {
+      "id": "19e05a2d6ce1",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "4fa5d066ec1c",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "26ebe5749a8d",
+      "w": 1800,
+      "h": 2400
+    },
+    {
+      "id": "2a72c76cb969",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "2523895ae9fd",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "e80f70c8e582",
+      "w": 1600,
+      "h": 2400
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 1,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841373201,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

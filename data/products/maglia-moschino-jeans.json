@@ -1,0 +1,57 @@
+{
+  "slug": "maglia-moschino-jeans",
+  "title": "Maglia Moschino Jeans",
+  "price": 65,
+  "size": null,
+  "category": "Maglieria e polo",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 9,
+  "description": "Capo dallo spirito ribelle fedele al DNA provocatorio del brand.\r\n\r\nMade in Italy",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 46 cm",
+      "Larghezza torace: 49 cm",
+      "Lunghezza capo: 64 cm",
+      "Lunghezza maniche: 64 cm"
+    ],
+    "materiale": [
+      "100% cotone"
+    ],
+    "stato": "Ottimo",
+    "anni": "'90"
+  },
+  "images": [
+    {
+      "id": "cb160b8e4ae8",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "060e2ad7d184",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "fc75faea2b94",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "aa2c3219b233",
+      "w": 1093,
+      "h": 417
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 1,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841422341,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

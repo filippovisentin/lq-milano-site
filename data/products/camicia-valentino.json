@@ -1,0 +1,57 @@
+{
+  "slug": "camicia-valentino",
+  "title": "Camicia Valentino",
+  "price": 85,
+  "size": "43",
+  "category": "Camicie",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 21,
+  "description": "Capo dal taglio pulito e il colletto strutturato, progettato per mantenere una piega perfetta tutto il giorno.\r\n\r\nMade in Italy",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 54 cm",
+      "Larghezza torace: 60 cm",
+      "Lunghezza capo: 83 cm",
+      "Lunghezza manica: 66 cm"
+    ],
+    "materiale": [
+      "100% cotone"
+    ],
+    "stato": "Ottimo",
+    "anni": "2010"
+  },
+  "images": [
+    {
+      "id": "df94e5d3a22d",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "97a2d1d12208",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "2b19972d7c8b",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "fe9eee3476ed",
+      "w": 2133,
+      "h": 1097
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 2,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841341435,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

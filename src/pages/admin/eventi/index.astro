@@ -1,0 +1,38 @@
+---
+import Admin from '../../../layouts/Admin.astro';
+import Icon from '../../../components/Icon.astro';
+import { listEvents, imgUrl, isPast, fmtDate, fmtTime } from '../../../lib/catalog';
+export const prerender = false;
+const events = listEvents();
+const deleted = Astro.url.searchParams.get('eliminato');
+---
+<Admin title="Eventi" section="eventi">
+  <div class="a-title">
+    <h1>Eventi</h1>
+    <a class="btn btn-lg" href="/admin/eventi/nuovo"><Icon name="plus" class="icon-sm" /> Nuovo evento</a>
+  </div>
+  {deleted && <p class="notice notice-ok" role="status">Evento “{deleted}” eliminato.</p>}
+  <div class="a-card">
+    {events.length === 0 && <p class="muted">Nessun evento. Crea il primo!</p>}
+    <ul class="elist">
+      {events.map((e) => (
+        <li>
+          <a href={`/admin/eventi/${encodeURIComponent(e.slug)}`}>
+            {e.poster && <img src={imgUrl('events', e.slug, e.poster, 480)} alt="" width="56" height="70" loading="lazy" />}
+            <span><strong>{e.title}</strong><span class="muted">{fmtDate(new Date(e.start))}, {fmtTime(new Date(e.start))}</span></span>
+            <span class:list={['badge', !isPast(e) && 'badge-gold']}>{isPast(e) ? 'Passato' : 'In programma'}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Admin>
+<style>
+  .elist { list-style: none; margin: 0; padding: 0; }
+  .elist li + li { border-top: 1px solid var(--line); }
+  .elist a { display: grid; grid-template-columns: 56px 1fr auto; gap: 14px; align-items: center; padding: 12px 4px; text-decoration: none; color: inherit; }
+  .elist a:hover strong { text-decoration: underline; }
+  .elist img { width: 56px; height: 70px; object-fit: cover; border-radius: 4px; }
+  .elist a > span:nth-child(2) { display: grid; }
+  .elist .muted { font-size: 0.9rem; }
+</style>

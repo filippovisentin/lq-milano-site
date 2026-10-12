@@ -1,0 +1,63 @@
+{
+  "slug": "giacca-satin-k-brand",
+  "title": "Giacca Satin K-Brand",
+  "price": 65,
+  "size": "M",
+  "category": "Capispalla",
+  "available": true,
+  "quantity": 1,
+  "featured": true,
+  "order": 4,
+  "description": "Capo lucido, audace,impossibile da non notare.\r\n\r\nMade in U.S.A.",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 60 cm",
+      "Larghezza torace: 60 cm",
+      "Lunghezza capo: 67 cm",
+      "Lunghezza maniche: 74 cm"
+    ],
+    "materiale": [
+      "100% nylon",
+      "Interno: 85% acetato 15% nylon"
+    ],
+    "stato": "Ottimo",
+    "anni": "'80"
+  },
+  "images": [
+    {
+      "id": "984d3cb8032c",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "b3b815d2efaa",
+      "w": 1526,
+      "h": 1808
+    },
+    {
+      "id": "1615f62f9433",
+      "w": 2400,
+      "h": 1600
+    },
+    {
+      "id": "99475371451b",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "96706acc27ba",
+      "w": 2033,
+      "h": 1525
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 3,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841395499,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

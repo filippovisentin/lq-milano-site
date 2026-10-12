@@ -1,0 +1,52 @@
+{
+  "slug": "polo-trussardi",
+  "title": "Polo Trussardi",
+  "price": 50,
+  "size": "M",
+  "category": "Maglieria e polo",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 10,
+  "description": "Capo che punta tutto sulla texture.\r\n\r\nMade in Italy",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 47 cm",
+      "Larghezza torace: 42 cm",
+      "Lunghezza capo: 72 cm",
+      "Lunghezza maniche: 33 cm"
+    ],
+    "materiale": [
+      "Misto lino (lavorazione in maglia traforata)"
+    ],
+    "stato": "Ottimo",
+    "anni": "'90"
+  },
+  "images": [
+    {
+      "id": "fcf983a37bd6",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "cb8a18f8d030",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "9118d9582982",
+      "w": 2250,
+      "h": 445
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 1,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841449008,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

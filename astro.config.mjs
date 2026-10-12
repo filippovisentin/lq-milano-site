@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import node from '@astrojs/node';
 import { fileURLToPath } from 'node:url';
 
 // Absolute project root, so build-time file checks (public/3d) work no matter
@@ -13,6 +14,10 @@ export default defineConfig({
   // Wix URLs have no trailing slash; keep them identical.
   trailingSlash: 'ignore',
   build: { format: 'directory' },
+  // Static pages are prerendered; shop, products, events, media and the admin
+  // panel run on demand on the Node server (they read the live catalogue).
+  adapter: node({ mode: 'standalone' }),
+  security: { checkOrigin: true },
   image: {
     responsiveStyles: false,
   },

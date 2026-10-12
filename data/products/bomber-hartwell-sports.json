@@ -1,0 +1,57 @@
+{
+  "slug": "bomber-hartwell-sports",
+  "title": "Bomber Hartwell Sports",
+  "price": 65,
+  "size": "M",
+  "category": "Capispalla",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 2,
+  "description": "Capo di puro stile varsity americano che unisce un'estetica preppy-sportiva a una vestibilità d'epoca inconfondibile.\r\n\r\nMade in U.S.A.",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 45 cm",
+      "Larghezza torace: 60 cm",
+      "Lunghezza capo: 69 cm",
+      "Lunghezza maniche: 70 cm"
+    ],
+    "materiale": [
+      "100% nylon"
+    ],
+    "stato": "Ottimo",
+    "anni": "'80"
+  },
+  "images": [
+    {
+      "id": "204a271bb34f",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "d064f231b941",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "cba1e7bf4383",
+      "w": 1493,
+      "h": 1120
+    },
+    {
+      "id": "6a58e3680d19",
+      "w": 1600,
+      "h": 2400
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 3,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841308812,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

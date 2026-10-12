@@ -1,0 +1,46 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import NeonLogo from '../../components/NeonLogo.astro';
+import Icon from '../../components/Icon.astro';
+export const prerender = false;
+if (Astro.locals.admin) return Astro.redirect('/admin/prodotti');
+const e = Astro.url.searchParams.get('e');
+const out = Astro.url.searchParams.has('out');
+const next = Astro.url.searchParams.get('next') ?? '/admin/prodotti';
+---
+<Admin title="Accedi">
+  <div class="login night">
+    <form class="login-card" method="post" action="/api/admin/login">
+      <NeonLogo size="md" />
+      <h1 class="h3">Pannello del negozio</h1>
+      {e === '1' && <p class="notice notice-error" role="alert"><Icon name="alert" class="icon-sm" /> Utente o password non corretti.</p>}
+      {e === 'wait' && <p class="notice notice-error" role="alert"><Icon name="alert" class="icon-sm" /> Troppi tentativi: riprova tra 15 minuti.</p>}
+      {out && <p class="notice notice-ok" role="status">Sei uscito dal pannello.</p>}
+      <input type="hidden" name="next" value={next} />
+      <div class="field"><label for="user">Utente</label><input class="input" id="user" name="user" autocomplete="username" required autofocus /></div>
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="pw"><input class="input" id="password" name="password" type="password" autocomplete="current-password" required /><button type="button" class="icon-btn" data-pw aria-label="Mostra password" aria-pressed="false"><Icon name="eye" /></button></div>
+      </div>
+      <button class="btn btn-gold btn-lg btn-block" type="submit">Accedi</button>
+    </form>
+  </div>
+</Admin>
+<style>
+  .login { min-height: 100svh; margin: calc(clamp(20px, 3vw, 40px) * -1) calc(clamp(16px, 3vw, 32px) * -1) -80px; display: grid; place-items: center; padding: 24px;
+    background: radial-gradient(50% 40% at 50% 30%, rgba(255, 91, 36, 0.14), transparent 70%), var(--night); }
+  .login-card { width: min(400px, 100%); display: grid; gap: 16px; justify-items: stretch; background: rgba(255, 252, 246, 0.04); border: 1px solid rgba(244, 236, 221, 0.12); border-radius: 16px; padding: 32px 24px; }
+  .login-card :global(.neon-logo) { justify-self: center; }
+  .login-card h1 { text-align: center; margin: 0; color: var(--on-night); }
+  .login-card label { color: var(--on-night); }
+  .pw { position: relative; }
+  .pw .input { padding-right: 52px; }
+  .pw .icon-btn { position: absolute; right: 2px; top: 2px; color: var(--ink); }
+</style>
+<script>
+  document.querySelector<HTMLButtonElement>('[data-pw]')!.addEventListener('click', (e) => {
+    const b = e.currentTarget as HTMLButtonElement, i = b.previousElementSibling as HTMLInputElement;
+    const show = i.type === 'password'; i.type = show ? 'text' : 'password';
+    b.setAttribute('aria-pressed', String(show)); b.setAttribute('aria-label', show ? 'Nascondi password' : 'Mostra password');
+  });
+</script>

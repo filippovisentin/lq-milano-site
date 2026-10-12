@@ -1,0 +1,57 @@
+{
+  "slug": "t-shirt-iceberg-ice-history",
+  "title": "T-Shirt Iceberg Ice History",
+  "price": 100,
+  "size": "L",
+  "category": "Maglieria e polo",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 11,
+  "description": "Questo capo non è una semplice t-shirt ma una pezzo da collezione.\r\n\r\nMade In Italy",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 48 cm",
+      "Larghezza torace: 58 cm",
+      "Lunghezza capo: 72 cm",
+      "Lunghezza maniche: 27 cm"
+    ],
+    "materiale": [
+      "100% cotone"
+    ],
+    "stato": "Ottimo",
+    "anni": "'90"
+  },
+  "images": [
+    {
+      "id": "f8669efbc652",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "c6189b4c5cb5",
+      "w": 1728,
+      "h": 2117
+    },
+    {
+      "id": "f150cb38b45b",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "675f470933fd",
+      "w": 2359,
+      "h": 992
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 2,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841457354,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

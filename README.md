@@ -1,22 +1,40 @@
-# LQ Milano — sito
+# LQ Milano — sito + pannello
 
-Astro 7, statico. Contenuti originali (testi, 23 prodotti, 3 eventi, foto master Wix).
+Astro 7 su Node (`@astrojs/node`). Le pagine di contenuto sono statiche; shop, prodotti, eventi, home e pannello leggono il catalogo vivo in `data/`, quindi ogni modifica dal pannello è subito online, senza rebuild.
 
-## Comandi
-- `npm run dev` → http://localhost:4321 (genera prima il 3D)
-- `npm run build` → `dist/` (deploy su Cloudflare Pages: build `npm run build`, output `dist`)
-- `npm run 3d -- --force` → rigenera tutti i modelli 3D
+## Avvio
+```bash
+npm install
+npm run admin:create        # crea utente admin -> .env + ADMIN-CREDENZIALI.txt (non in git)
+npm run dev                 # sviluppo: http://localhost:4321
+npm run build && npm start  # produzione (PORT, HOST)
+```
 
-## Aggiungere prodotti / eventi
-- Pannello: `/admin` (Sveltia CMS). In locale con Chrome/Edge: "Lavora con repository locale" → cartella `site/`. Online: impostare `repo` in `public/admin/config.yml`.
-- Oppure a mano: un file `.md` in `src/content/products/` o `src/content/events/`.
-- Foto prodotto: 1ª = fronte, 2ª = retro, su sfondo chiaro uniforme → la vista 3D si crea da sola.
+## Pannello amministratore — `/admin`
+- **Prodotti**: foto (trascina o scegli, anche da telefono), riordino, scelta *Fronte 3D* / *Retro 3D*, prezzo, taglia, categoria, stato, epoca, misure, materiale, disponibilità, in evidenza, posizione. Al salvataggio la **vista 3D si genera da sola**; anteprima rotante nel pannello, slider *Sensibilità sfondo* e *Rigenera 3D*.
+- **Eventi**: titolo, date (ora di Milano), locandina, iscrizioni aperte/chiuse/esaurite + link.
+- Sicurezza: password scrypt, cookie firmato HttpOnly/SameSite=Strict (12 h), blocco dopo 8 tentativi, controllo Origin sulle modifiche.
+- Cambiare password: `npm run admin:create -- <utente> <nuova-password>` e riavviare.
 
 ## Vista 3D
-`scripts/build-3d.mjs` ritaglia fronte/retro dallo sfondo e ricava una mappa di profondità dalla sagoma; `src/scripts/garment-viewer.ts` (three.js, caricato solo quando serve) la ruota. Override per prodotto: `model3d.front/back/disabled`.
+`scripts/lib/garment3d.mjs`: sfondo stimato dai bordi e rimosso; **una sola sagoma** condivisa da fronte e retro (il retro viene adattato riga per riga); profondità dalla sagoma. `src/scripts/garment-viewer.ts` costruisce **un solido chiuso** (guscio frontale + posteriore + parete laterale cucita lungo il contorno): niente spazi vuoti tra i due lati. Rigenerare tutto dopo modifiche all'algoritmo: `npm run 3d:all`.
+
+Foto ideali: capo intero, centrato, sfondo chiaro e uniforme, fronte e retro con la stessa inquadratura.
+
+## Dati
+- `data/products/*.json`, `data/events/*.json` — catalogo
+- `data/uploads/` — foto (master 2400 px + 480/960/1600 WebP)
+- `data/3d/` — modelli 3D generati
+In produzione `data/` deve stare su un **disco persistente** (o `LQ_DATA_DIR`) e va incluso nei backup.
+
+## Hosting
+Serve un hosting Node con disco persistente (es. Render, Railway, Fly.io, un VPS). Cloudflare Pages da solo non basta più: il pannello riceve upload e genera il 3D sul server.
 
 ## E-commerce
-Modalità **demo** dichiarata: carrello reale in locale, checkout di anteprima senza pagamento. Per andare live implementare un provider in `src/lib/commerce/provider.ts` (Wix Headless, Stripe o Shopify) e impostare `PUBLIC_COMMERCE_PROVIDER`. Form contatti: `PUBLIC_CONTACT_ENDPOINT` (vedi `.env.example`).
+Modalità **demo** dichiarata (carrello reale, checkout di anteprima senza pagamento). Per andare live: implementare un provider in `src/lib/commerce/provider.ts` (Wix Headless, Stripe o Shopify).
+
+## Schermata di caricamento
+Con `PUBLIC_GOOGLE_MAPS_KEY` usa Street View di via Venini come sfondo; senza chiave usa la foto della vetrina.
 
 ## Da verificare con la proprietaria
-CAP 20125/20127, email reale, orari, policy (resi, privacy, spedizioni), account clienti.
+CAP 20125/20127, email reale, orari, policy (resi, privacy, spedizioni).

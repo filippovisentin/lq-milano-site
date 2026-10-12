@@ -1,0 +1,85 @@
+---
+import Admin from '../../../layouts/Admin.astro';
+import Icon from '../../../components/Icon.astro';
+import { getEvent, imgUrl, eventUrl } from '../../../lib/catalog';
+export const prerender = false;
+const slug = decodeURIComponent(Astro.params.slug ?? '');
+const isNew = slug === 'nuovo';
+const e = isNew ? null : getEvent(slug);
+if (!isNew && !e) return Astro.redirect('/admin/eventi');
+const saved = Astro.url.searchParams.has('salvato');
+// ISO with offset -> "YYYY-MM-DDTHH:mm" in Milan time for <input type=datetime-local>
+const local = (iso: string | null | undefined) => {
+  if (!iso) return '';
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Rome', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+    .formatToParts(new Date(iso)).map((p) => [p.type, p.value]));
+  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+};
+---
+<Admin title={isNew ? 'Nuovo evento' : e!.title} section="eventi">
+  <nav aria-label="Percorso"><ol class="breadcrumb"><li><a href="/admin/eventi">Eventi</a></li><li aria-current="page">{isNew ? 'Nuovo' : e!.title}</li></ol></nav>
+  <div class="a-title">
+    <h1>{isNew ? 'Nuovo evento' : e!.title}</h1>
+    {!isNew && <a class="btn btn-ghost" href={eventUrl(e!.slug)} target="_blank" rel="noopener">Vedi sul sito ↗</a>}
+  </div>
+  {saved && <p class="notice notice-ok" role="status"><Icon name="check" class="icon-sm" /> Salvato. L’evento è già online.</p>}
+  <form class="a-card ev-form" data-ev novalidate data-slug={e?.slug ?? ''}>
+    <input type="hidden" name="slug" value={e?.slug ?? ''} />
+    <div class="grid2">
+      <div class="field span2"><label for="title">Titolo <span class="req">*</span></label><input class="input" id="title" name="title" required value={e?.title} /></div>
+      <div class="field span2"><label for="tagline">Sottotitolo</label><input class="input" id="tagline" name="tagline" value={e?.tagline ?? ''} /></div>
+      <div class="field"><label for="start">Inizio <span class="req">*</span></label><input class="input" id="start" name="start" type="datetime-local" required value={local(e?.start)} /></div>
+      <div class="field"><label for="end">Fine</label><input class="input" id="end" name="end" type="datetime-local" value={local(e?.end)} /></div>
+      <div class="field span2"><label for="venue">Luogo</label><input class="input" id="venue" name="venue" value={e?.venue ?? 'Via Giulio e Corrado Venini, 54'} /></div>
+      <div class="field"><label for="registration">Iscrizioni</label>
+        <select class="select" id="registration" name="registration">
+          <option value="aperta" selected={e?.registration === 'aperta'}>Aperte</option>
+          <option value="chiusa" selected={!e || e.registration === 'chiusa'}>Chiuse</option>
+          <option value="esaurita" selected={e?.registration === 'esaurita'}>Posti esauriti</option>
+        </select></div>
+      <div class="field"><label for="registrationUrl">Link per iscriversi</label><input class="input" id="registrationUrl" name="registrationUrl" type="url" placeholder="https://…" value={e?.registrationUrl ?? ''} /><p class="hint">Il bottone appare solo con iscrizioni aperte.</p></div>
+      <div class="field span2"><label for="description">Descrizione</label><textarea class="textarea" id="description" name="description" rows="6">{e?.description}</textarea></div>
+      <div class="field span2">
+        <label for="poster">Locandina {isNew && <span class="req">*</span>}</label>
+        <div class="poster-row">
+          {e?.poster && <img src={imgUrl('events', e.slug, e.poster, 480)} alt="Locandina attuale" width="120" />}
+          <input id="poster" name="poster" type="file" accept="image/*" />
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-lg" type="submit" data-save>Salva evento</button>
+      {!isNew && <button class="btn btn-ghost danger" type="button" data-delete>Elimina</button>}
+      <p class="hint" data-status role="status" aria-live="polite"></p>
+    </div>
+  </form>
+</Admin>
+<style>
+  .grid2 { display: grid; gap: 16px; }
+  @media (min-width: 640px) { .grid2 { grid-template-columns: 1fr 1fr; } .span2 { grid-column: span 2; } }
+  .poster-row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .poster-row img { border-radius: 6px; }
+  .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 20px; }
+  .danger { color: var(--danger); }
+</style>
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-ev]')!;
+  const status = form.querySelector<HTMLElement>('[data-status]')!;
+  const btn = form.querySelector<HTMLButtonElement>('[data-save]')!;
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    btn.disabled = true; status.textContent = 'Salvo…';
+    try {
+      const res = await fetch('/api/admin/events', { method: 'POST', body: new FormData(form) });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error);
+      location.href = `/admin/eventi/${encodeURIComponent(data.slug)}?salvato=1`;
+    } catch (e) { status.textContent = (e as Error).message || 'Salvataggio non riuscito.'; btn.disabled = false; }
+  });
+  form.querySelector('[data-delete]')?.addEventListener('click', async () => {
+    const t = form.querySelector<HTMLInputElement>('#title')!.value;
+    if (!confirm(`Eliminare l’evento “${t}”?`)) return;
+    const res = await fetch(`/api/admin/events/${encodeURIComponent(form.dataset.slug!)}`, { method: 'DELETE' });
+    if (res.ok) location.href = `/admin/eventi?eliminato=${encodeURIComponent(t)}`;
+  });
+</script>

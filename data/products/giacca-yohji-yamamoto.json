@@ -1,0 +1,52 @@
+{
+  "slug": "giacca-yohji-yamamoto",
+  "title": "Giacca Yohji Yamamoto",
+  "price": 450,
+  "size": "L",
+  "category": "Capispalla",
+  "available": true,
+  "quantity": 1,
+  "featured": true,
+  "order": 18,
+  "description": "Capo ideale per chi ama sovrapposizioni e look dal carattere minimalista ma d'impatto.\r\n\r\nMade in Japan",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 50 cm",
+      "Larghezza torace: 59 cm",
+      "Lunghezza capo: 82 cm",
+      "Lunghezza manica: 66 cm"
+    ],
+    "materiale": [
+      "100% cotone"
+    ],
+    "stato": "Ottimo",
+    "anni": "'90"
+  },
+  "images": [
+    {
+      "id": "bb0c4ed9d415",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "9530dd60cb18",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "2dbe0dcf72ef",
+      "w": 1549,
+      "h": 1525
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 1,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841400699,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

@@ -1,0 +1,58 @@
+{
+  "slug": "bomber-u-s-force",
+  "title": "Bomber U.S Force",
+  "price": 130,
+  "size": "54",
+  "category": "Capispalla",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 5,
+  "description": "Capo concentrato di carattere, ispirazione aviatore, dettagli d'impatto e un'attitudine sfacciatamente Eighties.",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 46 cm",
+      "Larghezza torace: 54 cm",
+      "Lunghezza capo: 64 cm",
+      "Lunghezza maniche: 62 cm"
+    ],
+    "materiale": [
+      "Vera pelle",
+      "Fodera: 100% acetato"
+    ],
+    "stato": "Ottimo",
+    "anni": "'80-'90"
+  },
+  "images": [
+    {
+      "id": "88d287ffe279",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "fe97c26285f7",
+      "w": 2400,
+      "h": 1600
+    },
+    {
+      "id": "c4de31c39a82",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "3d487fd4d3d0",
+      "w": 1798,
+      "h": 1348
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 2,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841328848,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

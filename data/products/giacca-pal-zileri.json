@@ -1,0 +1,57 @@
+{
+  "slug": "giacca-pal-zileri",
+  "title": "Giacca Pal Zileri",
+  "price": 120,
+  "size": "54",
+  "category": "Capispalla",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 16,
+  "description": "Capo perfetto per chi non vuole scegliere tra formalità e carattere.\r\n\r\nVestibilità sfiancata (drop 8)\r\n\r\nPezzo d'autore per ridefinire il tuo guardaroba.\r\n\r\nMade in Italy",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 50 cm",
+      "Larghezza torace: 57 cm",
+      "Lunghezza capo: 81 cm",
+      "Lunghezza manica: 66 cm"
+    ],
+    "materiale": [
+      "100% lino"
+    ],
+    "stato": "Ottimo",
+    "anni": "2000-2010"
+  },
+  "images": [
+    {
+      "id": "04bd670d89da",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "8fec60fb5ada",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "5c1aced2e208",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "5c8755f63419",
+      "w": 1623,
+      "h": 2400
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 2,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841387845,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

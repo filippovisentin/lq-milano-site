@@ -1,0 +1,58 @@
+{
+  "slug": "polo-maniche-lunghe-armani-jeans",
+  "title": "Polo Maniche Lunghe Armani Jeans",
+  "price": 60,
+  "size": null,
+  "category": "Maglieria e polo",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 23,
+  "description": "Un classico dallo stile casual-chic, design minimalista impreziosito da un dettaglio geometrico frontale.\r\n\r\nMade in Italy",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 43 cm",
+      "Larghezza torace: 51 cm",
+      "Lunghezza capo: 84 cm",
+      "Lunghezza manica: 71 cm"
+    ],
+    "materiale": [
+      "50% canapa",
+      "50% lino"
+    ],
+    "stato": "Ottimo",
+    "anni": "'90-primi anni 2000"
+  },
+  "images": [
+    {
+      "id": "5a4fe375078c",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "d46ee5a8c977",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "db675d606cd3",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "117c51f0e31d",
+      "w": 1776,
+      "h": 2368
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 2,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841428912,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

@@ -1,0 +1,53 @@
+{
+  "slug": "bomber-spitfire",
+  "title": "Bomber Spitfire",
+  "price": 45,
+  "size": "L",
+  "category": "Capispalla",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 3,
+  "description": "Capo dall'estetica pulita, un po' hardcore e decisamente contemporanea.",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 46 cm",
+      "Larghezza torace: 56 cm",
+      "Lunghezza capo: 68 cm",
+      "Lunghezza maniche: 69 cm"
+    ],
+    "materiale": [
+      "100% nylon",
+      "Fodera: 100% poliestere"
+    ],
+    "stato": "Ottimo",
+    "anni": "'90-2000"
+  },
+  "images": [
+    {
+      "id": "5816bd88f677",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "5bfa142064d6",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "f7f7f7f62967",
+      "w": 2400,
+      "h": 1800
+    }
+  ],
+  "model3d": {
+    "front": 1,
+    "back": null,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841321595,
+    "hasBack": false
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

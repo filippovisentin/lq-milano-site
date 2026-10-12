@@ -1,50 +1,39 @@
 ---
-import { Picture, getImage } from 'astro:assets';
-import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
 import EventCard from '../../components/EventCard.astro';
-import { getEvents, eventUrl, fmtDate, fmtTime, eventEnd, type Event } from '../../lib/products';
+import { getEvent, listEvents, eventUrl, fmtDate, fmtTime, eventEnd, isPast, imgUrl, srcset, paragraphs } from '../../lib/catalog';
 import site from '../../data/site.json';
 
-export async function getStaticPaths() {
-  const events = await getEvents();
-  return events.map((e) => ({ params: { slug: e.id }, props: { event: e, all: events } }));
-}
-interface Props { event: Event; all: Event[] }
-const { event, all } = Astro.props;
-const d = event.data;
-const { Content } = await render(event);
-const url = new URL(eventUrl(event.id), Astro.site).href;
-const end = eventEnd(event);
-const past = end.getTime() < Date.now();
-const og = await getImage({ src: d.poster, width: 1200, format: 'jpg' });
+export const prerender = false;
+const ev = getEvent(decodeURIComponent(Astro.params.slug ?? ''));
+if (!ev) return new Response(null, { status: 404, statusText: 'Not found' });
+const d = { ...ev, start: new Date(ev.start), end: ev.end ? new Date(ev.end) : null };
+const url = new URL(eventUrl(ev.slug), Astro.site).href;
+const end = eventEnd(ev);
+const past = isPast(ev);
+const og = ev.poster ? new URL(imgUrl('events', ev.slug, ev.poster, 960), Astro.site).href : undefined;
 const fullAddress = `${d.venue}, ${site.address.postcode} ${site.address.city} ${site.address.province}, Italia`;
 const maps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
-const others = all.filter((e) => e.id !== event.id).slice(0, 3);
+const others = listEvents().filter((e) => e.slug !== ev.slug).slice(0, 3);
 const shareText = encodeURIComponent(`${d.title} · LQ Milano`);
 const shareUrl = encodeURIComponent(url);
 const ld = {
-  '@context': 'https://schema.org',
-  '@type': 'Event',
-  name: d.title,
-  startDate: d.start.toISOString(),
+  '@context': 'https://schema.org', '@type': 'Event', name: d.title, startDate: d.start.toISOString(),
   ...(d.end ? { endDate: d.end.toISOString() } : {}),
-  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-  eventStatus: 'https://schema.org/EventScheduled',
-  image: new URL(og.src, Astro.site).href,
-  location: { '@type': 'Place', name: 'LQ Milano', address: fullAddress },
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode', eventStatus: 'https://schema.org/EventScheduled',
+  image: og, location: { '@type': 'Place', name: 'LQ Milano', address: fullAddress },
   organizer: { '@type': 'Organization', name: 'LQ Milano', url: Astro.site?.href },
 };
 ---
-<Base title={d.title} description={`${d.title} da LQ Milano, ${fmtDate(d.start)} alle ${fmtTime(d.start)}, ${d.venue}, Milano.`} image={og.src} type="article" jsonLd={ld}>
+<Base title={d.title} description={`${d.title} da LQ Milano, ${fmtDate(d.start)} alle ${fmtTime(d.start)}, ${d.venue}, Milano.`} image={og} type="article" jsonLd={ld}>
   <div class="container ev-page">
     <nav aria-label="Percorso">
       <ol class="breadcrumb"><li><a href="/">Home</a></li><li><a href="/eventi">Eventi</a></li><li aria-current="page">{d.title}</li></ol>
     </nav>
     <div class="ev-grid">
       <figure class="poster">
-        <Picture src={d.poster} alt={`Locandina dell’evento ${d.title}`} widths={[480, 720, 1000, 1400]} sizes="(min-width: 900px) 42vw, 92vw" formats={['avif']} fallbackFormat="webp" loading="eager" />
+        {ev.poster && <img src={imgUrl('events', ev.slug, ev.poster, 960)} srcset={srcset('events', ev.slug, ev.poster)} sizes="(min-width: 900px) 42vw, 92vw" alt={`Locandina dell’evento ${d.title}`} width={ev.poster.w} height={ev.poster.h} />}
       </figure>
       <div class="ev-info">
         <span class:list={['badge', !past && d.registration === 'aperta' && 'badge-gold']} data-status data-end={end.toISOString()}>
@@ -69,7 +58,7 @@ const ld = {
         </div>
 
         <h2 class="h3">Info sull’evento</h2>
-        <div class="prose"><Content /></div>
+        <div class="prose">{paragraphs(ev.description).map((t) => <p>{t}</p>)}</div>
 
         <div class="share">
           <span class="label">Condividi questo evento</span>
@@ -87,7 +76,7 @@ const ld = {
     <section class="section paper-2" aria-labelledby="others-t">
       <div class="container">
         <div class="section-head"><div><h2 id="others-t">Altri eventi</h2></div><a class="link-arrow" href="/eventi"><span>Tutti gli eventi</span><Icon name="arrow" class="icon-sm" /></a></div>
-        <div class="grid others">{others.map((e) => <EventCard event={e} />)}</div>
+        <div class="grid others">{others.map((o) => <EventCard event={o} />)}</div>
       </div>
     </section>
   )}
@@ -98,7 +87,7 @@ const ld = {
   .ev-grid { display: grid; gap: 28px; align-items: start; }
   @media (min-width: 900px) { .ev-grid { grid-template-columns: 0.9fr 1.1fr; gap: clamp(32px, 5vw, 80px); } .poster { position: sticky; top: calc(var(--header-h) + 24px); } }
   .poster { margin: 0; }
-  .poster :global(img) { width: 100%; height: auto; border-radius: 6px; box-shadow: var(--shadow-2); }
+  .poster img { width: 100%; height: auto; border-radius: 6px; box-shadow: var(--shadow-2); }
   .ev-info h1 { margin: 14px 0 8px; }
   .tagline { font-size: 0.9rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-ink); font-weight: 600; }
   .when { margin: 24px 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
@@ -114,8 +103,3 @@ const ld = {
   @media (min-width: 640px) { .others { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (min-width: 1024px) { .others { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 </style>
-
-<script>
-  const s = document.querySelector<HTMLElement>('[data-status]');
-  if (s && new Date(s.dataset.end!).getTime() < Date.now()) { s.textContent = 'Evento concluso'; s.className = 'badge'; }
-</script>

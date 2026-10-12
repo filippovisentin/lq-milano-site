@@ -7,16 +7,17 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "3d": "node scripts/build-3d.mjs",
-    "predev": "node scripts/build-3d.mjs",
-    "dev": "astro dev",
-    "prebuild": "node scripts/build-3d.mjs",
-    "build": "astro build",
-    "preview": "astro preview",
+    "dev": "node scripts/page-images.mjs && astro dev",
+    "build": "node scripts/page-images.mjs && astro build",
+    "start": "node server.mjs",
+    "preview": "npm run build && npm start",
+    "admin:create": "node scripts/create-admin.mjs",
+    "3d:all": "node scripts/rebuild-3d.mjs",
     "media": "node scripts/normalize-media.mjs",
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/node": "11.1.6",
     "@fontsource-variable/inter": "^5.3.0",
     "@fontsource-variable/playfair-display": "^5.3.0",
     "@fontsource/damion": "^5.3.0",

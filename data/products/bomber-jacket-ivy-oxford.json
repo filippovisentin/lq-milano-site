@@ -1,0 +1,58 @@
+{
+  "slug": "bomber-jacket-ivy-oxford",
+  "title": "Bomber Jacket Ivy Oxford",
+  "price": 130,
+  "size": "XL",
+  "category": "Capispalla",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 7,
+  "description": "Capo che incarna la quintessenza del classico stile heritage ispirato ai capispalla d'aviazione.\r\n\r\nMade in Italy",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 54 cm",
+      "Larghezza torace: 63 cm",
+      "Lunghezza capo: 67 cm",
+      "Lunghezza maniche: 66 cm"
+    ],
+    "materiale": [
+      "Vera pelle",
+      "Fodera: 100% acetato"
+    ],
+    "stato": "Ottimo",
+    "anni": "'90"
+  },
+  "images": [
+    {
+      "id": "b3e7fa555f82",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "e90f800e55c3",
+      "w": 2400,
+      "h": 1600
+    },
+    {
+      "id": "f661cfe932d2",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "1ef706317953",
+      "w": 1223,
+      "h": 1721
+    }
+  ],
+  "model3d": {
+    "front": 0,
+    "back": 2,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841316246,
+    "hasBack": true
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

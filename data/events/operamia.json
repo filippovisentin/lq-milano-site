@@ -1,0 +1,18 @@
+{
+  "slug": "operamia",
+  "title": "Operamia",
+  "start": "2026-03-12T09:30:00.000Z",
+  "end": null,
+  "poster": {
+    "id": "b4eb7157c3b0",
+    "w": 1174,
+    "h": 1470
+  },
+  "venue": "Via Giulio e Corrado Venini, 54",
+  "registration": "chiusa",
+  "registrationUrl": null,
+  "tagline": "Live painting",
+  "description": "Live painting\r\n\r\nCapi e accessori dipinto dal vivo",
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}

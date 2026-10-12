@@ -1,0 +1,52 @@
+{
+  "slug": "capospalla-cividini",
+  "title": "Capospalla Cividini",
+  "price": 140,
+  "size": "50",
+  "category": "Capispalla",
+  "available": true,
+  "quantity": 1,
+  "featured": false,
+  "order": 8,
+  "description": "Capo dall'eleganza geometrica.\r\n\r\nMade in Italy",
+  "details": {
+    "misure": [
+      "Larghezza spalle: 48 c",
+      "Larghezza torace: 58 cm",
+      "Lunghezza capo: 78 cm",
+      "Lunghezza maniche: 66 cm"
+    ],
+    "materiale": [
+      "Misto seta"
+    ],
+    "stato": "Ottimo",
+    "anni": "'90"
+  },
+  "images": [
+    {
+      "id": "b21e1d9a32db",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "77857a3d233e",
+      "w": 1600,
+      "h": 2400
+    },
+    {
+      "id": "3ac46e10d0ee",
+      "w": 1700,
+      "h": 2400
+    }
+  ],
+  "model3d": {
+    "front": 1,
+    "back": null,
+    "tolerance": 22,
+    "disabled": false,
+    "version": 1791841346870,
+    "hasBack": false
+  },
+  "createdAt": "2026-10-12T21:41:33.075Z",
+  "updatedAt": "2026-10-12T21:41:33.075Z"
+}
