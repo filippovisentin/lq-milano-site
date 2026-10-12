@@ -1,0 +1,95 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { media } from '../lib/media';
+
+// Copy preserved verbatim from the original Servizi page; CTAs keep their
+// original destinations with clearer, service-specific labels.
+const services = [
+  {
+    id: 'consulenza-moda', title: 'Consulenza moda', icon: 'sparkle', img: media.sConsulenza, alt: 'Consulenza moda: capi selezionati su stand',
+    text: ['Che siate un brand emergente o un marchio affermato, LQ Vintage vi affianca nei vostri progetti con la consulenza di Lea Quattrocchi. Con un background pluriennale nel mondo degli showroom, Lea sarà la vostra alleata di fiducia per impostare campagne vendita e offrire consulenze stilistiche mirate, aiutandovi a far crescere e valorizzare il vostro brand.'],
+    cta: 'Richiedi una consulenza', href: '/contatti?motivo=consulenza',
+  },
+  {
+    id: 'noleggio', title: 'Noleggio per cinema e spettacolo', icon: 'film', img: media.sNoleggio, alt: 'Abiti vintage d’epoca disponibili per il noleggio',
+    text: ['Cerchi abiti vintage per un film, uno spettacolo teatrale, uno shooting fotografico o un video?', 'Offriamo il noleggio di capi e accessori unici e di tutte le epoche, perfetti per dare carattere e autenticità ai tuoi progetti.'],
+    cta: 'Parliamo del tuo progetto', href: '/contatti?motivo=noleggio',
+  },
+  {
+    id: 'concept-store', title: 'Concept store', icon: 'store', img: media.sConcept, alt: 'La vetrina del concept store LQ Milano',
+    text: ['Ci troviamo nel cuore di Nolo - Milano. Il nostro è più di un negozio, è un viaggio nella moda vintage con una proposta di capi iconici, pezzi d’archivio unici e dettagli senza tempo. Tutto selezionato con cura per chi ama distinguersi.'],
+    cta: 'Visita il concept store', href: '/concept-store',
+  },
+  {
+    id: 'workshop', title: 'Workshop', icon: 'ticket', img: media.sEventi, alt: 'Uno spazio del negozio allestito per un evento',
+    text: ['Da LQ Milano Vintage ci impegniamo a dare spazio ai giovani talenti offrendo l’opportunità a creativi e artisti emergenti di allestire uno spazio dedicato all’interno del nostro negozio per presentare il proprio brand e i propri prodotti.', 'Gli eventi si svolgono generalmente in una singola giornata, offrendo un’occasione unica per far conoscere il proprio lavoro esponendolo al pubblico.'],
+    cta: 'Esplora eventi e workshop', href: '/eventi',
+  },
+  {
+    id: 'upcycling', title: 'Upcycling', icon: 'recycle', img: media.sUpcycling, alt: 'Capo vintage trasformato con tessuti di recupero',
+    text: ['Riuso creativo. Diamo nuova anima a capi vintage trasformandoli o reinventandoli aggiungendo tessuti di recupero, che li rendono ancora più unici. Crediamo fermamente nella moda sostenibile e nel riciclo degli abiti. Dare nuova vita al passato è la nostra missione.'],
+    extra: { label: 'Orli, ritocchi e stampa personalizzata: scopri l’Angolo Creativo', href: '/concept-store#angolo-creativo' },
+    cta: 'Personalizza un capo', href: '/contatti?motivo=upcycling',
+  },
+  {
+    id: 'pellicce-vintage', title: 'Pellicce vintage', icon: 'hanger', img: media.sPellicce, alt: 'Pelliccia vintage su manichino',
+    text: ['LQ Milano Vintage offre la possibilità ai rivenditori l’opportunità di acquistare pellicce vintage all’ingrosso, da proporre nei propri store.', 'Ogni capo è accuratamente scelto e catalogato in base all’anno di produzione, per garantire autenticità e qualità a chi cerca pezzi unici dal fascino intramontabile.'],
+    cta: 'Scopri la fornitura', href: '/fornitura',
+  },
+];
+---
+<Base title="Servizi" description="Consulenza moda, noleggio per cinema e spettacolo, concept store, workshop, upcycling e pellicce vintage all’ingrosso: i servizi di LQ Milano.">
+  <PageHero
+    title="Servizi"
+    eyebrow="Per privati, brand e professionisti"
+    lead="Dalla consulenza per brand al noleggio per il set, dalla sartoria al riuso creativo: sei modi di lavorare con LQ Milano."
+    image={media.servicesBanner}
+    imageAlt="Cravatte vintage colorate esposte in negozio"
+  >
+    <nav class="jump" aria-label="Vai al servizio">
+      {services.map((s) => <a href={`#${s.id}`}>{s.title}</a>)}
+    </nav>
+  </PageHero>
+
+  <section class="section">
+    <div class="container">
+      <ol class="services">
+        {services.map((s, i) => (
+          <li class="svc reveal" id={s.id}>
+            <div class="svc-media">
+              <Picture src={s.img} alt={s.alt} widths={[320, 520, 800]} sizes="(min-width: 1100px) 340px, (min-width: 700px) 42vw, 80vw" formats={['avif']} fallbackFormat="webp" loading={i < 2 ? 'eager' : 'lazy'} />
+            </div>
+            <div class="svc-body">
+              <p class="svc-n tabular"><Icon name={s.icon} class="icon-sm" /> 0{i + 1}</p>
+              <h2 class="h3">{s.title}</h2>
+              {s.text.map((t) => <p>{t}</p>)}
+              {s.extra && <p><a href={s.extra.href}>{s.extra.label}</a></p>}
+              <a class="btn" href={s.href}>{s.cta} <Icon name="arrow" class="icon-sm" /></a>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+  .jump a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(244, 236, 221, 0.3); color: var(--on-night); text-decoration: none; font-size: 0.9rem; }
+  .jump a:hover { background: rgba(244, 236, 221, 0.1); }
+  .services { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
+  @media (min-width: 700px) { .services { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; } }
+  @media (min-width: 1100px) { .services { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .svc { display: grid; grid-template-rows: auto 1fr; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; scroll-margin-top: calc(var(--header-h) + 20px); }
+  .svc:target { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .svc-media { aspect-ratio: 16 / 10; display: grid; place-items: center; background: radial-gradient(70% 70% at 50% 50%, #fff, var(--paper-2)); padding: 18px; }
+  .svc-media :global(img) { max-height: 100%; width: auto; aspect-ratio: 1; object-fit: contain; border-radius: 50%; }
+  .svc-body { padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 4px; }
+  .svc-body p { color: var(--ink-2); margin-bottom: 10px; }
+  .svc-body .btn { margin-top: auto; align-self: flex-start; }
+  .svc-n { display: inline-flex; gap: 8px; align-items: center; color: var(--gold-ink) !important; font-weight: 700; font-size: 0.82rem; margin-bottom: 6px !important; }
+  .svc h2 { margin-bottom: 10px; }
+</style>

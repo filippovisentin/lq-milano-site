@@ -1,0 +1,96 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CartDrawer from '../components/CartDrawer.astro';
+import Loader from '../components/Loader.astro';
+import site from '../data/site.json';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'product' | 'article';
+  jsonLd?: object | object[];
+  noindex?: boolean;
+}
+const {
+  title,
+  description = `${site.tagline} ${site.taglineSecond} Vintage, sartoria, noleggio ed eventi in NoLo, Milano.`,
+  image,
+  type = 'website',
+  jsonLd,
+  noindex = false,
+} = Astro.props;
+const fullTitle = title === 'Home' ? 'LQ Milano · Vintage concept store a NoLo, Milano' : `${title} · LQ Milano`;
+const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', Astro.site);
+const ogImage = image ? new URL(image, Astro.site).href : undefined;
+const store = {
+  '@context': 'https://schema.org',
+  '@type': 'ClothingStore',
+  name: 'LQ Milano',
+  url: Astro.site?.href,
+  telephone: site.phone,
+  email: site.email,
+  vatID: `IT${site.vat}`,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.street,
+    postalCode: site.address.postcode,
+    addressLocality: site.address.city,
+    addressRegion: site.address.province,
+    addressCountry: 'IT',
+  },
+  sameAs: Object.values(site.social),
+};
+const ld = [store, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])];
+---
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#171411" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:site_name" content="LQ Milano" />
+    <meta property="og:locale" content="it_IT" />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      try { if (sessionStorage.getItem('lq-intro')) document.documentElement.classList.add('intro-seen'); } catch (e) {}
+    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Vai al contenuto</a>
+    <Loader />
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <CartDrawer />
+    <script>
+      // Reveal-on-scroll for elements marked .reveal (content is visible without JS).
+      const io = 'IntersectionObserver' in window
+        ? new IntersectionObserver((entries) => entries.forEach((e) => {
+            if (e.isIntersecting) { e.target.classList.add('is-in'); io?.unobserve(e.target); }
+          }), { rootMargin: '0px 0px -8% 0px' })
+        : null;
+      document.querySelectorAll('.reveal').forEach((el, i) => {
+        (el as HTMLElement).style.transitionDelay = `${Math.min(i % 4, 3) * 50}ms`;
+        io ? io.observe(el) : el.classList.add('is-in');
+      });
+    </script>
+  </body>
+</html>

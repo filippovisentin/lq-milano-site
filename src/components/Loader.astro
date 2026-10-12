@@ -1,0 +1,61 @@
+---
+// Intro: the shop sign switching on. Shown once per browser session, never
+// blocks the page underneath (content is already rendered and focusable),
+// skippable by click/tap/any key, short under reduced motion.
+import NeonLogo from './NeonLogo.astro';
+---
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader-inner">
+    <NeonLogo size="xl" animated />
+    <p class="loader-sub">Concept store · NoLo, Milano</p>
+  </div>
+  <span class="loader-buzz"></span>
+</div>
+
+<style>
+  .loader {
+    position: fixed; inset: 0; z-index: var(--z-loader);
+    display: grid; place-items: center; padding: 24px;
+    background:
+      radial-gradient(60% 50% at 50% 48%, rgba(255, 91, 36, 0.10), transparent 70%),
+      radial-gradient(120% 90% at 50% 120%, #2a221b, transparent 60%),
+      var(--night);
+    transition: opacity 520ms var(--ease-out), visibility 0s linear 520ms;
+    cursor: pointer;
+  }
+  .loader-inner { display: grid; justify-items: center; gap: 28px; transform: translateY(-2vh); }
+  .loader-sub {
+    margin: 0; color: var(--on-night-2); font-size: 0.8rem; letter-spacing: 0.32em; text-transform: uppercase;
+    opacity: 0; animation: sub-in 600ms 1.25s var(--ease-out) forwards;
+  }
+  @keyframes sub-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  /* the wall lights up with the sign */
+  .loader::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(45% 35% at 50% 46%, rgba(255, 91, 36, 0.22), transparent 70%);
+    opacity: 0; animation: wall 1.4s 0.35s steps(1, end) forwards;
+  }
+  @keyframes wall { 0% { opacity: 0; } 20% { opacity: 0.7; } 28% { opacity: 0.1; } 45% { opacity: 1; } 100% { opacity: 1; } }
+  .loader.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
+  :global(html.intro-seen) .loader { display: none; }
+  @media (prefers-reduced-motion: reduce) { .loader-sub { opacity: 1; animation: none; } .loader::before { animation: none; opacity: 1; } }
+</style>
+
+<script is:inline>
+  (function () {
+    var el = document.getElementById('loader');
+    if (!el || document.documentElement.classList.contains('intro-seen')) { el && el.remove(); return; }
+    try { sessionStorage.setItem('lq-intro', '1'); } catch (e) {}
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var done = false;
+    function finish() {
+      if (done) return; done = true;
+      el.classList.add('is-done');
+      setTimeout(function () { el.remove(); }, 600);
+      window.removeEventListener('keydown', finish);
+    }
+    el.addEventListener('click', finish);
+    window.addEventListener('keydown', finish);
+    setTimeout(finish, reduce ? 500 : 2300);
+  })();
+</script>

@@ -1,0 +1,73 @@
+---
+// A live rotating garment for landing sections (home). Lazy: three.js loads
+// only when the block approaches the viewport.
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { PROJECT_ROOT } from '../lib/root';
+import Icon from './Icon.astro';
+import type { Product } from '../lib/products';
+import { productUrl } from '../lib/products';
+import { euro } from '../lib/nav';
+interface Props { product: Product }
+const { product } = Astro.props;
+const d = product.data;
+const meta = JSON.parse(readFileSync(join(PROJECT_ROOT, 'public/3d', product.id, 'meta.json'), 'utf8'));
+const anni = d.details.anni?.replace(/^'/, '’');
+---
+<section class="spot night" aria-labelledby="spot-title">
+  <div class="container spot-grid">
+    <div class="spot-copy reveal">
+      <p class="eyebrow">Gira il capo · vista 3D</p>
+      <h2 id="spot-title">Guardalo da ogni lato, prima di sceglierlo.</h2>
+      <p class="lead">Nei capi con il badge 3D puoi ruotare il pezzo a 360°, poi passare alle foto per i dettagli: etichetta, tessuto, cuciture.</p>
+      <div class="spot-product">
+        <p class="sp-name">{d.title}</p>
+        <p class="sp-meta tabular">{euro(d.price)}{d.size && ` · Taglia ${d.size}`}{anni && ` · Anni ${anni}`}</p>
+      </div>
+      <a class="btn btn-gold btn-lg" href={productUrl(product.id)}>Scopri il capo <Icon name="arrow" class="icon-sm" /></a>
+    </div>
+    <div class="spot-stage">
+      <div class="spot-viewer" data-spot data-base={`/3d/${product.id}`} data-has-back={meta.hasBack ? '1' : '0'} tabindex="0" role="img" aria-label={`${d.title}, vista 3D rotante: trascina o usa le frecce per ruotarlo`}>
+        <img class="poster" src={`/3d/${product.id}/front.webp`} alt="" width="1024" height="1024" loading="lazy" />
+      </div>
+      <p class="spot-hint"><Icon name="rotate" class="icon-sm" /> Trascina per ruotare</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .spot { position: relative; overflow: hidden; padding-block: clamp(56px, 8vw, 112px); }
+  .spot::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(40% 55% at 72% 50%, rgba(255, 91, 36, 0.16), transparent 70%), radial-gradient(60% 50% at 10% 100%, rgba(216, 183, 90, 0.08), transparent 70%);
+  }
+  .spot-grid { position: relative; display: grid; gap: 24px; align-items: center; }
+  @media (min-width: 900px) { .spot-grid { grid-template-columns: 1fr 1.1fr; gap: 56px; } }
+  .spot-copy h2 { max-width: 16ch; }
+  .spot-product { margin: 24px 0; padding: 16px 0; border-top: 1px solid rgba(244, 236, 221, 0.14); border-bottom: 1px solid rgba(244, 236, 221, 0.14); }
+  .sp-name { font-family: var(--font-display); font-size: 1.4rem; margin: 0 0 2px; }
+  .sp-meta { margin: 0; color: var(--on-night-2); }
+  .spot-stage { position: relative; }
+  .spot-viewer { position: relative; aspect-ratio: 1; cursor: grab; border-radius: 50%; outline-offset: 8px; }
+  .spot-viewer :global(canvas) { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+  .spot-viewer:global(.is-grabbing) { cursor: grabbing; }
+  .poster { position: absolute; inset: 9%; width: 82%; height: 82%; object-fit: contain; transition: opacity 400ms; }
+  .spot-viewer:global(.is-ready) .poster { opacity: 0; }
+  .spot-hint { display: flex; justify-content: center; gap: 6px; align-items: center; margin: 0; color: var(--on-night-2); font-size: 0.88rem; }
+</style>
+
+<script>
+  const host = document.querySelector<HTMLElement>('[data-spot]');
+  if (host) {
+    const io = new IntersectionObserver(async ([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      try {
+        const { mountViewer } = await import('../scripts/garment-viewer');
+        await mountViewer(host, { base: host.dataset.base!, hasBack: host.dataset.hasBack === '1', label: '' });
+        host.classList.add('is-ready');
+      } catch { /* poster stays */ }
+    }, { rootMargin: '300px' });
+    io.observe(host);
+  }
+</script>

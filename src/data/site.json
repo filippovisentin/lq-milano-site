@@ -1,0 +1,40 @@
+{
+  "name": "LQ Milano",
+  "tagline": "Un Concept Store dove il vintage prende parola.",
+  "taglineSecond": "Ogni acquisto è una storia da indossare.",
+  "phone": "+39 338 561 9378",
+  "phoneHref": "tel:+393385619378",
+  "whatsapp": "https://wa.me/393385619378",
+  "email": "lqlqmilano@gmail.com",
+  "address": {
+    "street": "Via Giulio e Corrado Venini, 54",
+    "postcode": "20127",
+    "city": "Milano",
+    "province": "MI",
+    "country": "Italia",
+    "area": "NoLo"
+  },
+  "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Via+Giulio+e+Corrado+Venini+54+Milano",
+  "vat": "10159460962",
+  "openingHours": [],
+  "social": {
+    "instagram": "https://www.instagram.com/lq_milano/",
+    "tiktok": "https://www.tiktok.com/@lq.milano",
+    "vinted": "https://www.vinted.it/member/49809037-lqmilano"
+  },
+  "ownerChecks": [
+    "CAP: il sito originale riporta sia 20125 (pagina Contatti) sia 20127 (footer e mappa). Qui si usa 20127: da confermare.",
+    "Email: il sito originale mostra lqlqmilano@gmail.com ma il link puntava a info@mysite.com. Qui il link usa l'indirizzo mostrato: da confermare.",
+    "Orari di apertura: non presenti sul sito originale, non vengono mostrati finché non sono forniti."
+  ],
+  "partners": [
+    {
+      "name": "Switch Magazine",
+      "url": "https://www.calameo.com/read/007419622ed403e1f4abb"
+    },
+    {
+      "name": "Green Planner",
+      "url": "https://www.greenplanner.it/"
+    }
+  ]
+}

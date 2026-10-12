@@ -1,0 +1,121 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import EventCard from '../../components/EventCard.astro';
+import { getEvents, eventUrl, fmtDate, fmtTime, eventEnd, type Event } from '../../lib/products';
+import site from '../../data/site.json';
+
+export async function getStaticPaths() {
+  const events = await getEvents();
+  return events.map((e) => ({ params: { slug: e.id }, props: { event: e, all: events } }));
+}
+interface Props { event: Event; all: Event[] }
+const { event, all } = Astro.props;
+const d = event.data;
+const { Content } = await render(event);
+const url = new URL(eventUrl(event.id), Astro.site).href;
+const end = eventEnd(event);
+const past = end.getTime() < Date.now();
+const og = await getImage({ src: d.poster, width: 1200, format: 'jpg' });
+const fullAddress = `${d.venue}, ${site.address.postcode} ${site.address.city} ${site.address.province}, Italia`;
+const maps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
+const others = all.filter((e) => e.id !== event.id).slice(0, 3);
+const shareText = encodeURIComponent(`${d.title} · LQ Milano`);
+const shareUrl = encodeURIComponent(url);
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: d.title,
+  startDate: d.start.toISOString(),
+  ...(d.end ? { endDate: d.end.toISOString() } : {}),
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  eventStatus: 'https://schema.org/EventScheduled',
+  image: new URL(og.src, Astro.site).href,
+  location: { '@type': 'Place', name: 'LQ Milano', address: fullAddress },
+  organizer: { '@type': 'Organization', name: 'LQ Milano', url: Astro.site?.href },
+};
+---
+<Base title={d.title} description={`${d.title} da LQ Milano, ${fmtDate(d.start)} alle ${fmtTime(d.start)}, ${d.venue}, Milano.`} image={og.src} type="article" jsonLd={ld}>
+  <div class="container ev-page">
+    <nav aria-label="Percorso">
+      <ol class="breadcrumb"><li><a href="/">Home</a></li><li><a href="/eventi">Eventi</a></li><li aria-current="page">{d.title}</li></ol>
+    </nav>
+    <div class="ev-grid">
+      <figure class="poster">
+        <Picture src={d.poster} alt={`Locandina dell’evento ${d.title}`} widths={[480, 720, 1000, 1400]} sizes="(min-width: 900px) 42vw, 92vw" formats={['avif']} fallbackFormat="webp" loading="eager" />
+      </figure>
+      <div class="ev-info">
+        <span class:list={['badge', !past && d.registration === 'aperta' && 'badge-gold']} data-status data-end={end.toISOString()}>
+          {past ? 'Evento concluso' : d.registration === 'aperta' ? 'Iscrizioni aperte' : d.registration === 'esaurita' ? 'Posti esauriti' : 'Iscrizioni chiuse'}
+        </span>
+        <h1>{d.title}</h1>
+        {d.tagline && <p class="tagline" lang={/[A-Z]{3,} [A-Z]/.test(d.tagline) ? 'en' : undefined}>{d.tagline}</p>}
+
+        <dl class="when">
+          <div><dt><Icon name="calendar" class="icon-sm" /> Data</dt><dd>{fmtDate(d.start)}</dd></div>
+          <div><dt><Icon name="clock" class="icon-sm" /> Orario</dt><dd>{fmtTime(d.start)}{d.end && ` – ${fmtTime(d.end)}`}</dd></div>
+          <div><dt><Icon name="pin" class="icon-sm" /> Dove</dt><dd>LQ Milano · {fullAddress}</dd></div>
+        </dl>
+
+        <div class="reg">
+          {!past && d.registration === 'aperta' && d.registrationUrl ? (
+            <a class="btn btn-lg" href={d.registrationUrl} rel="noopener">Iscriviti all’evento <Icon name="arrow" class="icon-sm" /></a>
+          ) : (
+            <p class="notice"><Icon name="info" class="icon-sm" /> <span>{past ? 'Questo evento si è già svolto.' : 'Le iscrizioni a questo evento sono chiuse.'} <a href="/eventi">Scopri gli altri eventi</a>.</span></p>
+          )}
+          <a class="btn btn-ghost" href={maps} target="_blank" rel="noopener"><Icon name="pin" class="icon-sm" /> Indicazioni stradali</a>
+        </div>
+
+        <h2 class="h3">Info sull’evento</h2>
+        <div class="prose"><Content /></div>
+
+        <div class="share">
+          <span class="label">Condividi questo evento</span>
+          <ul>
+            <li><a class="icon-btn" href={`https://wa.me/?text=${shareText}%20${shareUrl}`} target="_blank" rel="noopener" aria-label="Condividi su WhatsApp"><Icon name="whatsapp" /></a></li>
+            <li><a class="icon-btn" href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`} target="_blank" rel="noopener" aria-label="Condividi su Facebook"><Icon name="facebook" /></a></li>
+            <li><a class="icon-btn" href={`https://x.com/intent/post?text=${shareText}&url=${shareUrl}`} target="_blank" rel="noopener" aria-label="Condividi su X"><Icon name="x" /></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {others.length > 0 && (
+    <section class="section paper-2" aria-labelledby="others-t">
+      <div class="container">
+        <div class="section-head"><div><h2 id="others-t">Altri eventi</h2></div><a class="link-arrow" href="/eventi"><span>Tutti gli eventi</span><Icon name="arrow" class="icon-sm" /></a></div>
+        <div class="grid others">{others.map((e) => <EventCard event={e} />)}</div>
+      </div>
+    </section>
+  )}
+</Base>
+
+<style>
+  .ev-page { padding-top: 12px; padding-bottom: clamp(48px, 7vw, 96px); }
+  .ev-grid { display: grid; gap: 28px; align-items: start; }
+  @media (min-width: 900px) { .ev-grid { grid-template-columns: 0.9fr 1.1fr; gap: clamp(32px, 5vw, 80px); } .poster { position: sticky; top: calc(var(--header-h) + 24px); } }
+  .poster { margin: 0; }
+  .poster :global(img) { width: 100%; height: auto; border-radius: 6px; box-shadow: var(--shadow-2); }
+  .ev-info h1 { margin: 14px 0 8px; }
+  .tagline { font-size: 0.9rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-ink); font-weight: 600; }
+  .when { margin: 24px 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
+  .when div { display: grid; grid-template-columns: 120px 1fr; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .when dt { display: flex; gap: 8px; align-items: center; color: var(--ink-2); }
+  .when dd { margin: 0; font-weight: 500; }
+  .when dd::first-letter { text-transform: uppercase; }
+  @media (max-width: 480px) { .when div { grid-template-columns: 1fr; gap: 2px; } }
+  .reg { display: grid; gap: 10px; margin-bottom: 32px; justify-items: start; }
+  .share { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
+  .share ul { list-style: none; display: flex; padding: 0; margin: 0; }
+  .others { grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .others { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1024px) { .others { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+</style>
+
+<script>
+  const s = document.querySelector<HTMLElement>('[data-status]');
+  if (s && new Date(s.dataset.end!).getTime() < Date.now()) { s.textContent = 'Evento concluso'; s.className = 'badge'; }
+</script>

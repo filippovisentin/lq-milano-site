@@ -1,0 +1,206 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import NeonLogo from '../components/NeonLogo.astro';
+import Icon from '../components/Icon.astro';
+import ProductCard from '../components/ProductCard.astro';
+import EventCard from '../components/EventCard.astro';
+import Spotlight3D from '../components/Spotlight3D.astro';
+import { getProducts, getEvents, inStock, has3d, eventEnd } from '../lib/products';
+import { media, rooms } from '../lib/media';
+import site from '../data/site.json';
+
+const products = (await getProducts()).filter(inStock);
+const featured = [...products.filter((p) => p.data.featured), ...products.filter((p) => !p.data.featured)].slice(0, 4);
+const spotlight = featured.find(has3d) ?? products.find(has3d);
+const events = await getEvents();
+const upcoming = events.filter((e) => eventEnd(e).getTime() >= Date.now()).reverse();
+const past = events.filter((e) => eventEnd(e).getTime() < Date.now());
+
+const journeys = [
+  { title: 'Vintage da indossare', text: 'Capi iconici e pezzi d’archivio selezionati a mano, in negozio a NoLo e online.', img: media.ingresso, alt: 'Scaffali e capi vintage all’ingresso di LQ Milano', href: '/shop', cta: 'Esplora lo shop' },
+  { title: 'Sartoria e upcycling', text: 'Orli, ritocchi, stampe con le grafiche LQ e progetti di riuso creativo su misura.', img: media.angolo, alt: 'L’Angolo Creativo dedicato a sartoria e customizzazione', href: '/servizi#upcycling', cta: 'Personalizza un capo' },
+  { title: 'Archivio per cinema e spettacolo', text: 'Capi e accessori di tutte le epoche a noleggio per film, teatro, shooting e video.', img: media.gHermes, alt: 'Trench Hermès anni ’80 dell’archivio LQ Milano', href: '/servizi#noleggio', cta: 'Parliamo del tuo progetto' },
+];
+---
+<Base title="Home">
+  <!-- ============ HERO ============ -->
+  <section class="hero night" aria-labelledby="hero-title">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <h1 id="hero-title" class="hero-h1">
+          <span class="welcome serif-italic">Benvenuti da</span>
+          <NeonLogo size="lg" />
+        </h1>
+        <p class="hero-statement">{site.tagline}<br />{site.taglineSecond}</p>
+        <div class="hero-cta">
+          <a class="btn btn-gold btn-lg" href="/shop">Esplora lo shop <Icon name="arrow" class="icon-sm" /></a>
+          <a class="btn btn-ghost btn-lg" href="/concept-store">Visita il concept store</a>
+        </div>
+        <a class="services-link" href="/servizi">Scopri i servizi: consulenza, noleggio, sartoria, eventi <Icon name="arrow" class="icon-sm" /></a>
+      </div>
+      <figure class="hero-photo">
+        <Picture src={media.storefront} alt="La vetrina di LQ Milano in via Venini, con l’insegna e i capi esposti" widths={[480, 720, 960, 1140]} sizes="(min-width: 900px) 46vw, 100vw" formats={['avif']} fallbackFormat="webp" loading="eager" fetchpriority="high" />
+        <figcaption><Icon name="pin" class="icon-sm" /> {site.address.street} · {site.address.area}, Milano</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ FEATURED ============ -->
+  <section class="section" aria-labelledby="feat-title">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Appena arrivati in shop</p>
+          <h2 id="feat-title">Pezzi unici, da scegliere con calma</h2>
+          <p class="muted">Ogni capo ha misure, materiale, stato ed epoca nella scheda. Quando è venduto, non torna.</p>
+        </div>
+        <a class="link-arrow" href="/shop"><span>Vedi tutti i {products.length} capi</span><Icon name="arrow" class="icon-sm" /></a>
+      </div>
+      <div class="grid feat">{featured.map((p) => <ProductCard product={p} />)}</div>
+    </div>
+  </section>
+
+  {spotlight && <Spotlight3D product={spotlight} />}
+
+  <!-- ============ JOURNEYS ============ -->
+  <section class="section" aria-labelledby="j-title">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Più di un negozio</p>
+          <h2 id="j-title">Tre modi di vivere il vintage</h2>
+        </div>
+        <a class="link-arrow" href="/servizi"><span>Tutti i servizi</span><Icon name="arrow" class="icon-sm" /></a>
+      </div>
+      <div class="grid journeys">
+        {journeys.map((j) => (
+          <a class="journey reveal" href={j.href}>
+            <div class="frame ratio-4-5"><Picture src={j.img} alt={j.alt} widths={[400, 640, 900]} sizes="(min-width: 900px) 30vw, 92vw" formats={['avif']} fallbackFormat="webp" loading="lazy" /></div>
+            <h3>{j.title}</h3>
+            <p class="muted">{j.text}</p>
+            <span class="link-arrow"><span>{j.cta}</span><Icon name="arrow" class="icon-sm" /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STORE TOUR ============ -->
+  <section class="section paper-2" aria-labelledby="tour-title">
+    <div class="container tour">
+      <div class="tour-copy">
+        <p class="eyebrow">Il concept store</p>
+        <h2 id="tour-title">Quattro stanze, quattro storie</h2>
+        <p class="lead">Dall’ingresso alla Stanza Segreta: capi da tutte le epoche, stampa personalizzata, sartoria e un archivio di lusso riservato al noleggio professionale.</p>
+        <a class="btn" href="/concept-store">Fai il giro del negozio <Icon name="arrow" class="icon-sm" /></a>
+      </div>
+      <ol class="tour-rooms">
+        {rooms.map((r, i) => (
+          <li class="reveal">
+            <a href={`/concept-store#${r.id}`}>
+              <div class="frame ratio-3-4"><Picture src={r.img} alt={r.alt} widths={[300, 480, 640]} sizes="(min-width: 900px) 18vw, 45vw" formats={['avif']} fallbackFormat="webp" loading="lazy" /></div>
+              <span class="room-n tabular">0{i + 1}</span>
+              <span class="room-t">{r.title}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ EVENTS ============ -->
+  <section class="section" aria-labelledby="ev-title">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Eventi e workshop</p>
+          <h2 id="ev-title">{upcoming.length ? 'In programma da LQ' : 'Il negozio come palcoscenico'}</h2>
+          {!upcoming.length && <p class="muted">Al momento non ci sono eventi in programma. Editoriali dal vivo, live painting, serate: ecco gli ultimi. Seguici su Instagram per i prossimi.</p>}
+        </div>
+        <a class="link-arrow" href="/eventi"><span>Tutti gli eventi</span><Icon name="arrow" class="icon-sm" /></a>
+      </div>
+      <div class="grid events">
+        {(upcoming.length ? upcoming : past).slice(0, 3).map((e) => <EventCard event={e} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VISIT ============ -->
+  <section class="visit night" aria-labelledby="visit-title">
+    <div class="container visit-grid">
+      <div>
+        <p class="eyebrow">Vieni a trovarci</p>
+        <h2 id="visit-title">Nel cuore di NoLo, Milano</h2>
+        <address class="visit-addr">{site.address.street}<br />{site.address.postcode} {site.address.city} {site.address.province}</address>
+        <div class="visit-cta">
+          <a class="btn btn-gold" href={site.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" class="icon-sm" /> Indicazioni stradali</a>
+          <a class="btn btn-ghost" href={site.whatsapp} target="_blank" rel="noopener"><Icon name="whatsapp" class="icon-sm" /> WhatsApp</a>
+          <a class="btn btn-ghost" href={site.phoneHref}><Icon name="phone" class="icon-sm" /> {site.phone}</a>
+        </div>
+      </div>
+      <div class="visit-sign" aria-hidden="true"><NeonLogo size="lg" /></div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* hero */
+  .hero { position: relative; overflow: hidden; }
+  .hero::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(50% 60% at 22% 38%, rgba(255, 91, 36, 0.14), transparent 70%), radial-gradient(80% 60% at 100% 100%, rgba(216, 183, 90, 0.07), transparent 70%);
+  }
+  .hero-grid { position: relative; display: grid; gap: 32px; padding-block: clamp(28px, 6vw, 72px) clamp(40px, 7vw, 88px); align-items: center; }
+  @media (min-width: 900px) { .hero-grid { grid-template-columns: 1.05fr 0.95fr; gap: clamp(32px, 5vw, 80px); } }
+  .hero-h1 { margin: 0 0 20px; display: grid; gap: 6px; font-weight: 400; }
+  .welcome { font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.6rem); color: var(--gold); letter-spacing: 0; }
+  .hero-h1 :global(.neon-logo) { margin-left: -0.08em; }
+  .hero-statement { font-family: var(--font-display); font-size: clamp(1.15rem, 1rem + 0.8vw, 1.65rem); line-height: 1.4; color: var(--on-night); max-width: 30ch; margin-bottom: 28px; }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
+  .services-link { display: inline-block; padding-block: 10px; color: var(--on-night-2); font-size: 0.95rem; line-height: 1.5; }
+  .services-link :global(svg) { display: inline-block; vertical-align: -3px; margin-left: 6px; }
+  .services-link:hover { color: var(--on-night); }
+  .hero-photo { margin: 0; position: relative; }
+  .hero-photo :global(img) {
+    width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 6px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(244, 236, 221, 0.08), 0 0 60px rgba(255, 91, 36, 0.12);
+  }
+  @media (max-width: 899px) { .hero-photo :global(img) { aspect-ratio: 5 / 4; } }
+  .hero-photo figcaption { display: flex; gap: 6px; align-items: center; margin-top: 12px; color: var(--on-night-2); font-size: 0.88rem; }
+
+  .feat { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 14px; }
+  @media (min-width: 900px) { .feat { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; } }
+
+  .journeys { grid-template-columns: 1fr; }
+  @media (min-width: 700px) { .journeys { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .journey { text-decoration: none; display: grid; gap: 6px; align-content: start; }
+  .journey h3 { margin: 14px 0 2px; }
+  .journey p { margin: 0; }
+  .journey .frame :global(img) { transition: transform 700ms var(--ease-out); }
+  .journey:hover .frame :global(img) { transform: scale(1.04); }
+  .journey:hover .link-arrow span { text-decoration: underline; }
+
+  .tour { display: grid; gap: 32px; align-items: center; }
+  @media (min-width: 1000px) { .tour { grid-template-columns: 0.8fr 1.2fr; gap: 56px; } }
+  .tour-copy .lead { margin-bottom: 24px; }
+  .tour-rooms { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  @media (min-width: 700px) { .tour-rooms { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .tour-rooms a { display: grid; gap: 4px; text-decoration: none; }
+  .tour-rooms li:nth-child(even) { transform: translateY(24px); }
+  .js .tour-rooms li.reveal:nth-child(even):not(.is-in) { transform: translateY(42px); }
+  .room-n { font-size: 0.78rem; color: var(--gold-ink); font-weight: 700; margin-top: 8px; }
+  .room-t { font-family: var(--font-display); font-size: 1.15rem; line-height: 1.2; }
+  .tour-rooms a:hover .room-t { text-decoration: underline; }
+
+  .events { grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .events { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1024px) { .events { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+  .visit { padding-block: clamp(56px, 8vw, 104px); position: relative; overflow: hidden; }
+  .visit-grid { display: grid; gap: 32px; align-items: center; }
+  @media (min-width: 900px) { .visit-grid { grid-template-columns: 1.2fr 1fr; } }
+  .visit-addr { font-style: normal; font-family: var(--font-display); font-size: clamp(1.3rem, 1.1rem + 1vw, 1.8rem); line-height: 1.35; margin: 0 0 24px; }
+  .visit-cta { display: flex; flex-wrap: wrap; gap: 10px; }
+  .visit-sign { justify-self: center; transform: rotate(-4deg); }
+</style>

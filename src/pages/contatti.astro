@@ -1,0 +1,186 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { media } from '../lib/media';
+import site from '../data/site.json';
+
+// Where the form is delivered. Set PUBLIC_CONTACT_ENDPOINT to a form backend
+// (Formspree, Web3Forms, a Cloudflare Worker…) that accepts a JSON POST with
+// { nome, cognome, email, messaggio, argomento }. Without it the form runs in
+// demo mode and says so: it never pretends a message was sent.
+const endpoint = import.meta.env.PUBLIC_CONTACT_ENDPOINT ?? '';
+const topics = [
+  ['', 'Scegli un argomento (facoltativo)'],
+  ['informazioni', 'Informazioni su un capo o sul negozio'],
+  ['consulenza', 'Consulenza moda per brand'],
+  ['noleggio', 'Noleggio per cinema, teatro, shooting'],
+  ['upcycling', 'Upcycling, sartoria, stampa'],
+  ['linesheet', 'Fornitura pellicce: richiesta linesheet'],
+  ['archivio', 'Disponibilità di un capo d’archivio'],
+  ['eventi', 'Eventi e workshop'],
+];
+---
+<Base title="Contatti" description={`Contatta LQ Milano: ${site.phone}, ${site.email}, WhatsApp. ${site.address.street}, ${site.address.postcode} Milano (NoLo).`}>
+  <PageHero title="Contatti" eyebrow="Scrivici, chiamaci, passa in negozio" lead="Rispondiamo a domande sui capi, richieste di noleggio, consulenze e fornitura. Il modo più veloce è WhatsApp." image={media.servicesBanner} imageAlt="Cravatte vintage colorate esposte in negozio" />
+
+  <section class="section">
+    <div class="container contact-grid">
+      <div class="form-col">
+        <h2>Contattaci</h2>
+        <p class="muted">I campi con <span class="req">*</span> sono obbligatori.</p>
+        <form class="cform" data-contact data-endpoint={endpoint} novalidate>
+          <div class="row2">
+            <div class="field">
+              <label for="nome">Nome <span class="req" aria-hidden="true">*</span></label>
+              <input class="input" id="nome" name="nome" required autocomplete="given-name" aria-describedby="nome-err" />
+              <p class="field-error" id="nome-err" hidden></p>
+            </div>
+            <div class="field">
+              <label for="cognome">Cognome</label>
+              <input class="input" id="cognome" name="cognome" autocomplete="family-name" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
+            <input class="input" id="email" name="email" type="email" required autocomplete="email" inputmode="email" aria-describedby="email-err" />
+            <p class="field-error" id="email-err" hidden></p>
+          </div>
+          <div class="field">
+            <label for="argomento">Argomento</label>
+            <select class="select" id="argomento" name="argomento">
+              {topics.map(([v, l]) => <option value={v}>{l}</option>)}
+            </select>
+          </div>
+          <div class="field">
+            <label for="messaggio">Messaggio</label>
+            <textarea class="textarea" id="messaggio" name="messaggio" rows="6" maxlength="3000"></textarea>
+          </div>
+          <div class="hp" aria-hidden="true"><label>Lascia vuoto <input name="sito" tabindex="-1" autocomplete="off" /></label></div>
+          <button class="btn btn-lg" type="submit" data-submit>Invia messaggio</button>
+          <div data-result role="status" aria-live="polite"></div>
+        </form>
+      </div>
+
+      <aside class="info-col" aria-labelledby="info-t">
+        <div class="info-card night">
+          <h2 id="info-t" class="h3">Informazioni</h2>
+          <ul class="channels">
+            <li><a href={site.whatsapp} target="_blank" rel="noopener"><Icon name="whatsapp" /><span><strong>WhatsApp</strong>{site.phone}</span></a></li>
+            <li><a href={site.phoneHref}><Icon name="phone" /><span><strong>Telefono</strong>{site.phone}</span></a></li>
+            <li><a href={`mailto:${site.email}`}><Icon name="mail" /><span><strong>Email</strong>{site.email}</span></a></li>
+            <li><a href={site.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" /><span><strong>Negozio</strong>{site.address.street}<br />{site.address.postcode} {site.address.city} {site.address.province}, Italia</span></a></li>
+          </ul>
+          <p class="follow">Seguici</p>
+          <ul class="social">
+            <li><a class="icon-btn" href={site.social.instagram} target="_blank" rel="noopener" aria-label="Instagram"><Icon name="instagram" /></a></li>
+            <li><a class="icon-btn" href={site.social.tiktok} target="_blank" rel="noopener" aria-label="TikTok"><Icon name="tiktok" /></a></li>
+            <li><a class="icon-btn" href={site.social.vinted} target="_blank" rel="noopener" aria-label="LQ Milano su Vinted"><Icon name="vinted" /></a></li>
+          </ul>
+        </div>
+        <div class="map">
+          <iframe
+            title="Mappa: LQ Milano, Via Giulio e Corrado Venini 54, Milano"
+            src="https://www.google.com/maps?q=Via+Giulio+e+Corrado+Venini+54,+20127+Milano&output=embed"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact-grid { display: grid; gap: 40px; }
+  @media (min-width: 960px) { .contact-grid { grid-template-columns: 1.1fr 0.9fr; gap: clamp(40px, 5vw, 80px); align-items: start; } }
+  .cform { display: grid; gap: 18px; margin-top: 20px; }
+  .row2 { display: grid; gap: 18px; }
+  @media (min-width: 560px) { .row2 { grid-template-columns: 1fr 1fr; } }
+  .cform .btn { justify-self: start; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .info-card { padding: 28px; border-radius: 10px; }
+  .channels { list-style: none; padding: 0; margin: 0; display: grid; }
+  .channels a { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(244, 236, 221, 0.12); text-decoration: none; color: var(--on-night); }
+  .channels a:hover strong { text-decoration: underline; }
+  .channels :global(svg) { color: var(--gold); flex: none; margin-top: 2px; }
+  .channels span { display: grid; color: var(--on-night-2); line-height: 1.45; }
+  .channels strong { color: var(--on-night); font-weight: 600; }
+  .follow { margin: 20px 0 4px; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+  .social { list-style: none; padding: 0; margin: 0 0 0 -10px; display: flex; }
+  .social .icon-btn:hover { background: rgba(244, 236, 221, 0.1); }
+  .map { margin-top: 16px; border-radius: 10px; overflow: hidden; aspect-ratio: 4 / 3; background: var(--paper-2); }
+  .map iframe { width: 100%; height: 100%; border: 0; display: block; }
+</style>
+
+<script>
+  import site from '../data/site.json';
+  const form = document.querySelector<HTMLFormElement>('[data-contact]')!;
+  const result = form.querySelector<HTMLElement>('[data-result]')!;
+  const btn = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+  const endpoint = form.dataset.endpoint;
+
+  // carry the enquiry topic over from service CTAs (?motivo=noleggio)
+  const motivo = new URLSearchParams(location.search).get('motivo');
+  const sel = form.querySelector<HTMLSelectElement>('#argomento')!;
+  if (motivo && [...sel.options].some((o) => o.value === motivo)) sel.value = motivo;
+
+  // keep a draft so nothing typed is lost on reload
+  const KEY = 'lq-contact-draft';
+  try {
+    const draft = JSON.parse(sessionStorage.getItem(KEY) ?? 'null');
+    if (draft) for (const [k, v] of Object.entries(draft)) { const el = form.elements.namedItem(k) as HTMLInputElement | null; if (el && !el.value && k !== 'argomento') el.value = String(v); }
+  } catch {}
+  form.addEventListener('input', () => { try { sessionStorage.setItem(KEY, JSON.stringify(Object.fromEntries(new FormData(form)))); } catch {} });
+
+  const rules: Record<string, (v: string) => string | null> = {
+    nome: (v) => (v.trim() ? null : 'Inserisci il tuo nome.'),
+    email: (v) => (!v.trim() ? 'Inserisci la tua email, così possiamo risponderti.' : /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) ? null : 'Questa email non sembra completa: controlla che ci siano @ e dominio (es. nome@gmail.com).'),
+  };
+  function check(name: string) {
+    const el = form.elements.namedItem(name) as HTMLInputElement;
+    const msg = rules[name](el.value);
+    const err = document.getElementById(`${name}-err`)!;
+    el.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    err.hidden = !msg; err.textContent = msg ?? '';
+    return !msg;
+  }
+  Object.keys(rules).forEach((n) => form.elements.namedItem(n)!.addEventListener('blur', () => {
+    const el = form.elements.namedItem(n) as HTMLInputElement;
+    if (el.value || el.getAttribute('aria-invalid')) check(n);
+  }));
+
+  const notice = (cls: string, html: string) => { result.innerHTML = `<div class="notice ${cls}">${html}</div>`; };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const bad = Object.keys(rules).filter((n) => !check(n));
+    if (bad.length) { (form.elements.namedItem(bad[0]) as HTMLElement).focus(); return; }
+    const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
+    if (data.sito) return; // honeypot
+    delete data.sito;
+
+    if (!endpoint) {
+      const body = encodeURIComponent(`${data.messaggio}\n\n${data.nome} ${data.cognome}\n${data.email}`);
+      const subj = encodeURIComponent(`Richiesta dal sito${data.argomento ? ` · ${data.argomento}` : ''}`);
+      notice('', `<span><strong>Sito in anteprima: il modulo non è ancora collegato</strong> e il messaggio non è stato inviato. Puoi spedirlo subito via <a href="mailto:${site.email}?subject=${subj}&body=${body}">email</a> oppure scriverci su <a href="${site.whatsapp}" target="_blank" rel="noopener">WhatsApp</a>. I tuoi dati restano nel modulo.</span>`);
+      return;
+    }
+
+    btn.disabled = true;
+    const label = btn.textContent;
+    btn.innerHTML = '<span class="spinner" aria-hidden="true"></span> Invio in corso…';
+    try {
+      const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(data) });
+      if (!res.ok) throw new Error(String(res.status));
+      form.reset();
+      try { sessionStorage.removeItem(KEY); } catch {}
+      notice('notice-ok', '<span><strong>Messaggio inviato.</strong> Grazie! Ti rispondiamo il prima possibile.</span>');
+    } catch {
+      notice('notice-error', `<span><strong>Invio non riuscito.</strong> Il tuo messaggio è ancora qui: riprova tra poco, oppure scrivici a <a href="mailto:${site.email}">${site.email}</a>.</span>`);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = label;
+    }
+  });
+</script>

@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import NeonLogo from '../components/NeonLogo.astro';
+---
+<Base title="Pagina non trovata" noindex>
+  <section class="nf night">
+    <div class="container">
+      <NeonLogo size="lg" />
+      <h1 class="h2">Questa pagina non c’è più</h1>
+      <p class="lead">Come i pezzi unici: a volte qualcuno arriva prima. Ma in negozio c’è sempre qualcosa di nuovo.</p>
+      <div class="cta">
+        <a class="btn btn-gold btn-lg" href="/shop">Vai allo shop</a>
+        <a class="btn btn-ghost btn-lg" href="/">Torna alla home</a>
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+  .nf { padding-block: clamp(64px, 12vw, 160px); text-align: center; }
+  .nf h1 { margin-top: 32px; }
+  .nf .lead { margin-inline: auto; }
+  .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+</style>

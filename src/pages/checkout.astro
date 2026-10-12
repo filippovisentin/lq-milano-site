@@ -1,0 +1,92 @@
+---
+// DEMO checkout. Shown only while the commerce provider is not connected
+// (see src/lib/commerce/provider.ts). It lets the owner preview the flow
+// on every device but never takes payment or creates an order.
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+---
+<Base title="Checkout" noindex>
+  <div class="container co">
+    <nav aria-label="Percorso"><ol class="breadcrumb"><li><a href="/cart-page">Carrello</a></li><li aria-current="page">Checkout</li></ol></nav>
+    <div class="notice demo" role="note">
+      <Icon name="info" />
+      <span><strong>Anteprima del checkout.</strong> Il pagamento online non è ancora attivo: nessun ordine viene creato e nessun importo viene addebitato. Per acquistare ora un capo, <a href="/contatti?motivo=informazioni">scrivici</a> o passa in negozio.</span>
+    </div>
+    <h1>Checkout</h1>
+    <ol class="steps" aria-label="Passaggi">
+      <li aria-current="step"><span>1</span> Dati e consegna</li>
+      <li><span>2</span> Spedizione</li>
+      <li><span>3</span> Pagamento</li>
+    </ol>
+
+    <div class="co-grid">
+      <form class="co-form" data-co novalidate>
+        <fieldset>
+          <legend class="h3">Contatto</legend>
+          <div class="field"><label for="co-email">Email <span class="req">*</span></label><input class="input" id="co-email" type="email" autocomplete="email" required /></div>
+        </fieldset>
+        <fieldset>
+          <legend class="h3">Consegna</legend>
+          <div class="row2">
+            <div class="field"><label for="co-n">Nome <span class="req">*</span></label><input class="input" id="co-n" autocomplete="given-name" required /></div>
+            <div class="field"><label for="co-c">Cognome <span class="req">*</span></label><input class="input" id="co-c" autocomplete="family-name" required /></div>
+          </div>
+          <div class="field"><label for="co-a">Indirizzo <span class="req">*</span></label><input class="input" id="co-a" autocomplete="street-address" required /></div>
+          <div class="row3">
+            <div class="field"><label for="co-cap">CAP <span class="req">*</span></label><input class="input" id="co-cap" autocomplete="postal-code" inputmode="numeric" required /></div>
+            <div class="field"><label for="co-city">Città <span class="req">*</span></label><input class="input" id="co-city" autocomplete="address-level2" required /></div>
+            <div class="field"><label for="co-pr">Provincia</label><input class="input" id="co-pr" autocomplete="address-level1" /></div>
+          </div>
+          <div class="field"><label for="co-tel">Telefono</label><input class="input" id="co-tel" type="tel" autocomplete="tel" inputmode="tel" /><p class="hint">Solo per comunicazioni sulla consegna.</p></div>
+        </fieldset>
+        <button class="btn btn-lg" type="submit" aria-disabled="true">Continua alla spedizione</button>
+        <p class="hint" data-co-msg role="status"></p>
+      </form>
+
+      <aside class="summary" aria-labelledby="co-sum">
+        <h2 id="co-sum" class="h3">Il tuo ordine</h2>
+        <ul class="mini" data-mini></ul>
+        <div class="row"><span>Subtotale</span><strong class="tabular" data-sub></strong></div>
+        <div class="row muted"><span>Spedizione</span><span>Al passaggio successivo</span></div>
+        <a href="/cart-page" class="link-arrow"><Icon name="arrow-left" class="icon-sm" /><span>Modifica il carrello</span></a>
+      </aside>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .co { padding-top: 12px; padding-bottom: clamp(56px, 8vw, 112px); }
+  .demo { margin-bottom: 24px; }
+  .demo > :global(svg) { flex: none; }
+  .steps { list-style: none; padding: 0; margin: 0 0 28px; display: flex; flex-wrap: wrap; gap: 8px 20px; color: var(--ink-2); font-size: 0.92rem; }
+  .steps li { display: inline-flex; gap: 8px; align-items: center; }
+  .steps span { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid currentColor; font-size: 0.8rem; font-weight: 700; }
+  .steps [aria-current] { color: var(--ink); font-weight: 600; }
+  .steps [aria-current] span { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .co-grid { display: grid; gap: 32px; align-items: start; }
+  @media (min-width: 960px) { .co-grid { grid-template-columns: 1.4fr 1fr; gap: 56px; } .summary { position: sticky; top: calc(var(--header-h) + 24px); } }
+  @media (max-width: 959px) { .summary { order: -1; } }
+  fieldset { border: 0; padding: 0; margin: 0 0 28px; display: grid; gap: 16px; }
+  legend { margin-bottom: 12px; padding: 0; }
+  .row2, .row3 { display: grid; gap: 16px; }
+  @media (min-width: 560px) { .row2 { grid-template-columns: 1fr 1fr; } .row3 { grid-template-columns: 1fr 1.5fr 1fr; } }
+  .summary { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px; display: grid; gap: 12px; }
+  .mini { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .mini li { display: grid; grid-template-columns: 56px 1fr auto; gap: 12px; align-items: center; font-size: 0.92rem; }
+  .mini img { width: 56px; aspect-ratio: 4/5; object-fit: contain; background: #fff; border-radius: 4px; }
+  .row { display: flex; justify-content: space-between; gap: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+</style>
+
+<script>
+  import * as cart from '../lib/commerce/cart';
+  const s = cart.get();
+  if (!s.items.length) location.replace('/cart-page');
+  document.querySelector('[data-mini]')!.innerHTML = s.items
+    .map((i) => `<li><img src="${i.image}" alt="" /><span>${i.title.replace(/</g, '&lt;')}${i.size ? `<br><small class="muted">Taglia ${i.size}</small>` : ''}</span><strong class="tabular">${cart.euro(i.price * i.qty)}</strong></li>`)
+    .join('');
+  document.querySelector('[data-sub]')!.textContent = cart.euro(cart.subtotal());
+  document.querySelector('[data-co]')!.addEventListener('submit', (e) => {
+    e.preventDefault();
+    document.querySelector('[data-co-msg]')!.textContent = 'Anteprima: il pagamento online non è ancora attivo, nessun ordine è stato creato.';
+  });
+</script>

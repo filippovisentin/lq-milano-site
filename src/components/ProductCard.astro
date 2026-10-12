@@ -1,0 +1,87 @@
+---
+import { Picture } from 'astro:assets';
+import type { Product } from '../lib/products';
+import { productUrl, inStock, has3d } from '../lib/products';
+import { euro } from '../lib/nav';
+import Icon from './Icon.astro';
+
+interface Props { product: Product; eager?: boolean; headingLevel?: 'h2' | 'h3' }
+const { product, eager = false, headingLevel = 'h3' } = Astro.props;
+const d = product.data;
+const H = headingLevel;
+const available = inStock(product);
+const sizes = '(min-width: 1280px) 300px, (min-width: 1024px) 23vw, (min-width: 640px) 31vw, 46vw';
+---
+<article
+  class="card"
+  data-product
+  data-title={d.title.toLowerCase()}
+  data-category={d.category}
+  data-size={d.size ?? ''}
+  data-price={d.price}
+  data-order={d.order}
+  data-available={available ? '1' : '0'}
+>
+  <a class="card-link" href={productUrl(product.id)}>
+    <div class="card-media">
+      <Picture
+        src={d.images[0]}
+        alt={`${d.title}, vista frontale`}
+        widths={[320, 480, 720]}
+        sizes={sizes}
+        formats={['avif']} fallbackFormat="webp"
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : undefined}
+        class="img-a"
+      />
+      {d.images[1] && (
+        <Picture
+          src={d.images[1]}
+          alt=""
+          widths={[320, 480, 720]}
+          sizes={sizes}
+          formats={['avif']} fallbackFormat="webp"
+          loading="lazy"
+          class="img-b"
+        />
+      )}
+      <div class="tags">
+        {!available ? <span class="badge badge-dark">Venduto</span> : d.quantity === 1 && <span class="badge">Pezzo unico</span>}
+        {has3d(product) && <span class="badge badge-3d"><Icon name="cube" class="icon-xs" /> 3D</span>}
+      </div>
+    </div>
+    <div class="card-body">
+      <H class="card-title">{d.title}</H>
+      <p class="card-meta">
+        <span class="price tabular">{euro(d.price)}</span>
+        {d.size && <span class="size">Taglia {d.size}</span>}
+        {d.details.anni && <span class="era">Anni {d.details.anni.replace(/^'/, '’')}</span>}
+      </p>
+    </div>
+  </a>
+</article>
+
+<style>
+  .card { position: relative; }
+  .card-link { display: block; text-decoration: none; color: inherit; border-radius: var(--radius); }
+  .card-media {
+    position: relative; aspect-ratio: 4 / 5; background: #fff; border-radius: var(--radius); overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(37, 37, 31, 0.05);
+  }
+  .card-media :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 6%; transition: opacity 380ms var(--ease-out), transform 600ms var(--ease-out); }
+  .card-media :global(.img-b) { opacity: 0; }
+  @media (hover: hover) and (pointer: fine) {
+    .card-link:hover .card-media :global(.img-a) { transform: scale(1.03); }
+    .card-link:hover .card-media :global(.img-b) { opacity: 1; }
+    .card-link:hover .card-media:has(:global(.img-b)) :global(.img-a) { opacity: 0; }
+  }
+  .tags { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 6px; flex-wrap: wrap; pointer-events: none; }
+  .badge-3d { margin-left: auto; background: rgba(23, 20, 17, 0.86); color: #ffd9c7; box-shadow: 0 0 10px rgba(255, 91, 36, 0.35); }
+  :global(.icon-xs) { width: 14px; height: 14px; }
+  .card-body { padding: 14px 2px 0; }
+  .card-title { font-family: var(--font-body); font-size: 1rem; font-weight: 600; line-height: 1.35; margin: 0 0 4px; letter-spacing: 0; }
+  .card-link:hover .card-title { text-decoration: underline; text-underline-offset: 0.2em; }
+  .card-meta { margin: 0; display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: 0.92rem; color: var(--ink-2); }
+  .price { color: var(--ink); font-weight: 600; }
+  [data-available='0'] .card-media :global(img) { filter: grayscale(0.6); opacity: 0.7; }
+</style>

@@ -1,0 +1,86 @@
+---
+// Member area entry. The original site uses Wix Members (email/password,
+// Google, Facebook, password recovery). Accounts live with the commerce
+// provider; this page becomes its login/registration UI once connected.
+// Guest checkout stays available: an account is never required to buy.
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+---
+<Base title="Accedi o registrati" noindex>
+  <div class="container acc">
+    <nav aria-label="Percorso"><ol class="breadcrumb"><li><a href="/">Home</a></li><li aria-current="page">Account</li></ol></nav>
+    <div class="acc-card">
+      <h1 class="h2">Il tuo account</h1>
+      <div class="tabs" role="tablist" aria-label="Accesso">
+        <button role="tab" id="t-login" aria-controls="p-login" aria-selected="true" type="button">Accedi</button>
+        <button role="tab" id="t-signup" aria-controls="p-signup" aria-selected="false" tabindex="-1" type="button">Registrati</button>
+      </div>
+
+      <div class="notice"><Icon name="info" class="icon-sm" /><span><strong>Area clienti in arrivo.</strong> Gli account si attivano insieme al negozio online. Puoi già acquistare senza registrarti.</span></div>
+
+      <form id="p-login" role="tabpanel" aria-labelledby="t-login" class="acc-form" novalidate data-acc>
+        <div class="field"><label for="l-email">Email</label><input class="input" id="l-email" type="email" autocomplete="username" /></div>
+        <div class="field">
+          <label for="l-pw">Password</label>
+          <div class="pw"><input class="input" id="l-pw" type="password" autocomplete="current-password" /><button type="button" class="icon-btn" data-pw aria-label="Mostra password" aria-pressed="false"><Icon name="eye" /></button></div>
+          <a class="small" href="#" data-acc-forgot>Hai dimenticato la password?</a>
+        </div>
+        <button class="btn btn-lg btn-block" type="submit">Accedi</button>
+      </form>
+
+      <form id="p-signup" role="tabpanel" aria-labelledby="t-signup" class="acc-form" novalidate hidden data-acc>
+        <div class="field"><label for="s-email">Email</label><input class="input" id="s-email" type="email" autocomplete="email" /></div>
+        <div class="field">
+          <label for="s-pw">Password</label>
+          <div class="pw"><input class="input" id="s-pw" type="password" autocomplete="new-password" aria-describedby="s-pw-h" /><button type="button" class="icon-btn" data-pw aria-label="Mostra password" aria-pressed="false"><Icon name="eye" /></button></div>
+          <p class="hint" id="s-pw-h">Almeno 8 caratteri.</p>
+        </div>
+        <button class="btn btn-lg btn-block" type="submit">Crea account</button>
+      </form>
+      <p class="hint" data-acc-msg role="status"></p>
+      <a class="link-arrow" href="/shop"><span>Continua come ospite</span><Icon name="arrow" class="icon-sm" /></a>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .acc { padding-top: 12px; padding-bottom: clamp(56px, 8vw, 112px); }
+  .acc-card { max-width: 480px; margin: 12px auto 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: clamp(20px, 5vw, 36px); display: grid; gap: 18px; }
+  .acc-card h1 { margin: 0; }
+  .tabs { display: grid; grid-template-columns: 1fr 1fr; background: var(--paper-2); border-radius: 999px; padding: 4px; }
+  .tabs button { min-height: 44px; border: 0; border-radius: 999px; background: none; font-weight: 600; }
+  .tabs [aria-selected='true'] { background: var(--ink); color: var(--paper); }
+  .acc-form { display: grid; gap: 16px; }
+  .pw { position: relative; }
+  .pw .input { padding-right: 52px; }
+  .pw .icon-btn { position: absolute; right: 2px; top: 2px; }
+  .small { font-size: 0.9rem; display: inline-block; padding: 8px 0; }
+</style>
+
+<script>
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+  const select = (t: HTMLButtonElement) => tabs.forEach((x) => {
+    const on = x === t;
+    x.setAttribute('aria-selected', String(on)); x.tabIndex = on ? 0 : -1;
+    document.getElementById(x.getAttribute('aria-controls')!)!.hidden = !on;
+  });
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => select(t));
+    t.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length]; n.focus(); select(n);
+    });
+  });
+  if (location.hash === '#registrati') select(tabs[1]);
+  document.querySelectorAll<HTMLButtonElement>('[data-pw]').forEach((b) => b.addEventListener('click', () => {
+    const i = b.previousElementSibling as HTMLInputElement;
+    const show = i.type === 'password';
+    i.type = show ? 'text' : 'password';
+    b.setAttribute('aria-pressed', String(show));
+    b.setAttribute('aria-label', show ? 'Nascondi password' : 'Mostra password');
+  }));
+  const msg = document.querySelector('[data-acc-msg]')!;
+  const say = () => (msg.textContent = 'Area clienti non ancora attiva: nessun dato è stato inviato. Puoi acquistare come ospite.');
+  document.querySelectorAll('[data-acc]').forEach((f) => f.addEventListener('submit', (e) => { e.preventDefault(); say(); }));
+  document.querySelector('[data-acc-forgot]')!.addEventListener('click', (e) => { e.preventDefault(); say(); });
+</script>

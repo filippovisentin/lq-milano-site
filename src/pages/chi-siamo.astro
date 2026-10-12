@@ -1,0 +1,123 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { media } from '../lib/media';
+import site from '../data/site.json';
+---
+<Base title="Chi siamo" description="Lea Quattrocchi e Antonio Casale: le persone dietro LQ Milano, concept store vintage a NoLo tra moda, musica, sostenibilità e cinema.">
+  <PageHero
+    title="Chi siamo"
+    eyebrow="Le persone di LQ Milano"
+    lead="Un negozio nasce dalle persone che lo abitano. Lea cura lo spazio, i brand e gli eventi; Antonio la ricerca uomo, tra moda e musica."
+    image={media.aboutBanner}
+    imageAlt="Giacca di jeans decorata e cappello in esposizione da LQ Milano"
+    position="center 30%"
+  />
+
+  <article class="section person" id="lea" aria-labelledby="lea-name">
+    <div class="container person-grid">
+      <figure class="portrait reveal">
+        <Picture src={media.lea} alt="Ritratto di Lea Quattrocchi" widths={[480, 720, 1000]} sizes="(min-width: 900px) 40vw, 92vw" formats={['avif']} fallbackFormat="webp" loading="lazy" />
+      </figure>
+      <div class="bio">
+        <p class="eyebrow">Titolare · campagne vendita ed eventi</p>
+        <h2 id="lea-name">Lea Quattrocchi</h2>
+        <ul class="facts" aria-label="In breve">
+          <li>Milanese, titolare di LQ Milano</li>
+          <li>Collaborazioni con artisti di Brera</li>
+          <li>Eventi sostenibili con Green Planner</li>
+          <li>Noleggio per film e serie TV</li>
+        </ul>
+        <div class="prose">
+          <p>Nata e cresciuta a Milano, Lea Quattrocchi è un organizzatore di campagne vendite ed eventi con una carriera ricca e diversificata. È la titolare del brand LQ Milano, un marchio conosciuto per offrire customizzazioni vintage. Dentro lo showroom si occupa principalmente di vendere e di gestire le collaborazioni con i brand.</p>
+          <p>La sua passione per il design e la moda l’ha portata a diventare un’esperta in vintage. Nel cuore di Nolo, un quartiere emergente di Milano, Lea possiede uno spazio che è un punto di riferimento per artisti, designer e creativi di ogni genere. In particolare, collabora strettamente con artisti dell’Accademia delle Belle Arti di Brera, favorendo collaborazioni che danno vita a eventi unici e memorabili.</p>
+          <p>Lea collabora anche con Green Planner, un’importante realtà che si occupa di sostenibilità e innovazione. Grazie a questa collaborazione, è in grado di organizzare eventi che non solo sono esteticamente piacevoli e ben progettati, ma anche rispettosi dell’ambiente e sostenibili.</p>
+          <p>Il suo spazio a Nolo è anche un punto di riferimento per le produzioni cinematografiche. Grazie alla sua vasta esperienza e alla capacità di creare ambienti suggestivi, Lea noleggia le sue creazioni per film e serie TV, contribuendo a dare un tocco unico e autentico alle produzioni.</p>
+        </div>
+        <a class="link-arrow" href="/servizi#consulenza-moda"><span>Consulenza moda con Lea</span><Icon name="arrow" class="icon-sm" /></a>
+      </div>
+    </div>
+  </article>
+
+  <article class="section person paper-2" id="antonio" aria-labelledby="antonio-name">
+    <div class="container person-grid flip">
+      <figure class="portrait reveal">
+        <Picture src={media.antonio} alt="Ritratto di Antonio Casale in negozio, sotto l’insegna al neon" widths={[480, 720, 1000]} sizes="(min-width: 900px) 40vw, 92vw" formats={['avif']} fallbackFormat="webp" loading="lazy" />
+      </figure>
+      <div class="bio">
+        <p class="eyebrow">Stylist e ricercatore · selezione uomo</p>
+        <h2 id="antonio-name">Antonio Casale</h2>
+        <ul class="facts" aria-label="In breve">
+          <li>Moda e musica come un unico linguaggio</li>
+          <li>Focus: anni ’70–’90</li>
+          <li>Immagine per musicisti emergenti</li>
+        </ul>
+        <div class="prose">
+          <p>Antonio Casale è uno stylist e un ricercatore, si distingue per il suo stile unico e per una passione autentica che unisce il mondo della moda con quello della musica.</p>
+          <p>Per lui la moda non è semplicemente un settore creativo o un universo a sé stante, ma un linguaggio vivo e dinamico che dialoga costantemente con la musica.</p>
+          <p>Nel corso della storia del costume il binomio moda–musica ha sempre rappresentato un potente motore di cambiamento, capace di influenzare generazioni, tendenze e identità. A partire dagli anni ’50, artisti come Elvis Presley e David Bowie non hanno solo rivoluzionato la scena musicale, ma hanno anche ridefinito il concetto stesso di stile, trasformando il look in uno strumento di espressione personale e di rottura culturale. Questa eredità, che vede nell’immagine e nell’abbigliamento un mezzo di comunicazione profondo, è il punto di partenza dell’approccio di Antonio.</p>
+          <p>All’interno del negozio, Antonio Casale cura con attenzione ogni dettaglio della selezione di abbigliamento e accessori uomo. Il suo focus principale si concentra sugli stili che hanno segnato il periodo tra gli anni ’70 e ’90, decenni che hanno visto nascere icone e movimenti artistici in grado di fondere estetica e musica in modo indelebile. Ogni scelta – dai tagli ai tessuti, dai colori ai dettagli – nasce dalla ricerca di un legame diretto con i suoni, le atmosfere e le vibrazioni del panorama musicale di quegli anni. Con la stessa sensibilità che guida la sua ricerca di moda, Antonio supporta anche musicisti emergenti, aiutandoli a costruire un’immagine coerente con il genere che propongono. Non si limita a vestire le persone, ma le accompagna in un percorso identitario: interpreta la musica che creano e la trasforma in stile, suggerendo capi e accessori vintage che diventano un prolungamento naturale della loro arte.</p>
+          <p>LQ Milano è un luogo in cui il passato e il presente dialogano, e dove ogni cliente – appassionato di vintage, musicista o semplicemente amante dello stile – può scoprire una nuova dimensione del proprio IO sotto la guida di uno stylist appassionato come Antonio.</p>
+        </div>
+        <a class="link-arrow" href="/shop?cat=Capispalla"><span>Scopri la selezione uomo nello shop</span><Icon name="arrow" class="icon-sm" /></a>
+      </div>
+    </div>
+  </article>
+
+  <section class="section" aria-labelledby="partners-title">
+    <div class="container">
+      <div class="section-head"><div><p class="eyebrow">Collaborazioni</p><h2 id="partners-title">Lavoriamo con i migliori clienti e partner</h2></div></div>
+      <ul class="partners">
+        <li>
+          <a href={site.partners[0].url} target="_blank" rel="noopener" class="partner">
+            <div class="p-logos">
+              <Picture src={media.switchLogo} alt="Switch Magazine" widths={[340, 600]} sizes="300px" formats={['avif']} fallbackFormat="webp" loading="lazy" class="p-logo" />
+              <Picture src={media.switchStyle} alt="" widths={[200, 400]} sizes="120px" formats={['avif']} fallbackFormat="webp" loading="lazy" class="p-cover" />
+            </div>
+            <span class="p-text"><strong>Switch Magazine</strong><span>Leggi la pubblicazione su Calaméo</span></span>
+            <Icon name="arrow" class="icon-sm" />
+          </a>
+        </li>
+        <li>
+          <a href={site.partners[1].url} target="_blank" rel="noopener" class="partner">
+            <div class="p-logos"><Picture src={media.greenPlanner} alt="Green Planner" widths={[340, 600]} sizes="240px" formats={['avif']} fallbackFormat="webp" loading="lazy" class="p-logo" /></div>
+            <span class="p-text"><strong>Green Planner</strong><span>Sostenibilità e innovazione: visita il sito</span></span>
+            <Icon name="arrow" class="icon-sm" />
+          </a>
+        </li>
+      </ul>
+      <div class="ctas">
+        <a class="btn" href="/shop">Esplora lo shop</a>
+        <a class="btn btn-ghost" href="/contatti">Contattaci</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .person-grid { display: grid; gap: 28px; align-items: start; }
+  @media (min-width: 900px) {
+    .person-grid { grid-template-columns: 0.85fr 1.15fr; gap: clamp(40px, 5vw, 88px); }
+    .person-grid.flip .portrait { order: 2; }
+    .portrait { position: sticky; top: calc(var(--header-h) + 24px); }
+  }
+  .portrait { margin: 0; }
+  .portrait :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 6px; }
+  .bio h2 { font-size: clamp(2rem, 1.5rem + 2vw, 3.2rem); }
+  .facts { list-style: none; padding: 0; margin: 0 0 24px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .facts li { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: 0.88rem; }
+  .bio .prose { margin-bottom: 16px; }
+  .partners { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
+  @media (min-width: 800px) { .partners { grid-template-columns: 1fr 1fr; } }
+  .partner { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; padding: 18px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); text-decoration: none; transition: border-color var(--t-fast), box-shadow var(--t-fast); }
+  .partner:hover { border-color: var(--ink); box-shadow: var(--shadow-1); }
+  .p-logos { display: flex; gap: 10px; align-items: center; }
+  .p-logos :global(.p-logo) { width: 130px; height: auto; }
+  .p-logos :global(.p-cover) { width: 64px; height: 64px; object-fit: cover; border-radius: 4px; }
+  .p-text { display: grid; }
+  .p-text span { color: var(--ink-2); font-size: 0.9rem; }
+  @media (max-width: 520px) { .partner { grid-template-columns: 1fr auto; } .p-logos { grid-column: 1 / -1; } }
+  .ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 40px; }
+</style>

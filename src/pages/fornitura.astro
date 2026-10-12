@@ -1,0 +1,75 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { media } from '../lib/media';
+
+const furs = [
+  { img: media.fur1, alt: 'Pelliccia vintage chiara a pelo lungo su manichino' },
+  { img: media.fur2, alt: 'Pelliccia vintage fulva con cintura su manichino' },
+  { img: media.fur3, alt: 'Pelliccia vintage maculata su manichino' },
+  { img: media.fur4, alt: 'Pelliccia vintage scura a pelo lungo su manichino' },
+];
+---
+<Base title="Fornitura" description="Pellicce vintage all’ingrosso per rivenditori: capi scelti e catalogati per anno di produzione. Richiedi il linesheet a LQ Milano.">
+  <PageHero
+    title="Fornitura"
+    eyebrow="Per rivenditori · pellicce vintage all’ingrosso"
+    lead="LQ Milano Vintage offre ai rivenditori l’opportunità di acquistare pellicce vintage all’ingrosso, da proporre nei propri store."
+    image={media.furCarpet}
+    imageAlt="Tappeto di pelliccia chiara"
+  >
+    <a class="btn btn-gold btn-lg hero-cta" href="/contatti?motivo=linesheet">Richiedi il linesheet <Icon name="arrow" class="icon-sm" /></a>
+  </PageHero>
+
+  <section class="section">
+    <div class="container">
+      <div class="intro">
+        <div class="point"><Icon name="check" /><p><strong>Scelti a mano.</strong> Ogni capo è accuratamente scelto e catalogato in base all’anno di produzione.</p></div>
+        <div class="point"><Icon name="sparkle" /><p><strong>Autenticità e qualità</strong> per chi cerca pezzi unici dal fascino intramontabile.</p></div>
+        <div class="point"><Icon name="mail" /><p><strong>Su richiesta.</strong> Scrivici per ricevere il linesheet aggiornato e le condizioni di fornitura.</p></div>
+      </div>
+
+      <h2 class="sr-only">Una selezione dalla fornitura</h2>
+      <ul class="furs">
+        {furs.map((f, i) => (
+          <li class="reveal">
+            <figure>
+              <Picture src={f.img} alt={f.alt} widths={[360, 560, 800]} sizes="(min-width: 900px) 24vw, 46vw" formats={['avif']} fallbackFormat="webp" loading="lazy" />
+              <figcaption><span class="tabular">N. {String(i + 1).padStart(2, '0')}</span> Pelliccia vintage · dettagli nel linesheet</figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+
+      <div class="cta-panel night">
+        <div>
+          <h2>Vorresti scoprire di più?</h2>
+          <p class="lead">Contattaci per avere più informazioni: indica il tuo negozio e cosa cerchi, ti inviamo il linesheet.</p>
+        </div>
+        <a class="btn btn-gold btn-lg" href="/contatti?motivo=linesheet">Richiedi il linesheet <Icon name="arrow" class="icon-sm" /></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero-cta { margin-top: 24px; }
+  .intro { display: grid; gap: 16px; margin-bottom: clamp(32px, 5vw, 56px); }
+  @media (min-width: 800px) { .intro { grid-template-columns: repeat(3, 1fr); } }
+  .point { display: flex; gap: 12px; align-items: flex-start; }
+  .point > :global(svg) { color: var(--gold-ink); flex: none; margin-top: 2px; }
+  .point p { margin: 0; color: var(--ink-2); }
+  .point strong { color: var(--ink); }
+  .furs { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  @media (min-width: 900px) { .furs { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; } }
+  .furs figure { margin: 0; }
+  .furs :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 6px; }
+  .furs figcaption { margin-top: 10px; font-size: 0.9rem; color: var(--ink-2); }
+  .furs figcaption span { color: var(--gold-ink); font-weight: 700; margin-right: 6px; }
+  .cta-panel { margin-top: clamp(48px, 7vw, 88px); padding: clamp(28px, 5vw, 56px); border-radius: 10px; display: grid; gap: 20px; align-items: center; }
+  @media (min-width: 900px) { .cta-panel { grid-template-columns: 1fr auto; } }
+  .cta-panel h2 { margin-bottom: 8px; }
+  .cta-panel .lead { margin: 0; }
+</style>

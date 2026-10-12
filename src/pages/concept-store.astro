@@ -1,0 +1,72 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { media, rooms } from '../lib/media';
+import site from '../data/site.json';
+---
+<Base title="Concept store" description="Fai il giro di LQ Milano a NoLo: l’ingresso, il corridoio con la stampa personalizzata, l’Angolo Creativo di sartoria e la Stanza Segreta d’archivio.">
+  <PageHero
+    title="Concept store"
+    eyebrow="Via Venini 54 · NoLo, Milano"
+    lead="Più di un negozio: un viaggio nella moda vintage in quattro stanze, con capi iconici, pezzi d’archivio, stampa personalizzata e sartoria."
+    image={media.storeBanner}
+    imageAlt="L’interno di LQ Milano con capi appesi e accessori"
+  >
+    <nav class="room-nav" aria-label="Le stanze">
+      {rooms.map((r, i) => <a href={`#${r.id}`}><span class="tabular">0{i + 1}</span> {r.title}</a>)}
+    </nav>
+  </PageHero>
+
+  <div class="rooms">
+    {rooms.map((r, i) => (
+      <section class:list={['room section', i % 2 && 'paper-2']} id={r.id} aria-labelledby={`${r.id}-t`}>
+        <div class:list={['container room-grid', i % 2 && 'flip']}>
+          <figure class="reveal">
+            <Picture src={r.img} alt={r.alt} widths={[480, 720, 1000, 1280]} sizes="(min-width: 900px) 45vw, 92vw" formats={['avif']} fallbackFormat="webp" loading={i === 0 ? 'eager' : 'lazy'} />
+          </figure>
+          <div class="room-copy">
+            <p class="eyebrow">Stanza 0{i + 1}</p>
+            <h2 id={`${r.id}-t`}>{r.title}</h2>
+            {r.tag && <p class="room-tag"><Icon name={r.id === 'stanza-segreta' ? 'film' : r.id === 'corridoio' ? 'sparkle' : 'scissors'} class="icon-sm" /> {r.tag}</p>}
+            <p class="prose">{r.text}</p>
+            {r.id === 'angolo-creativo' && <a class="link-arrow" href="/servizi#upcycling"><span>Personalizza un capo</span><Icon name="arrow" class="icon-sm" /></a>}
+            {r.id === 'stanza-segreta' && <a class="link-arrow" href="/servizi#noleggio"><span>Noleggio per professionisti</span><Icon name="arrow" class="icon-sm" /></a>}
+            {r.id === 'ingresso' && <a class="link-arrow" href="/shop"><span>Una parte della selezione è anche online</span><Icon name="arrow" class="icon-sm" /></a>}
+          </div>
+        </div>
+      </section>
+    ))}
+  </div>
+
+  <section class="visit night section-tight" aria-labelledby="v-title">
+    <div class="container visit-grid">
+      <div>
+        <h2 id="v-title">Passa a trovarci</h2>
+        <p class="lead">{site.address.street}, {site.address.postcode} {site.address.city}. Per una consulenza, una prova o un ritocco su misura, scrivici prima: ti aspettiamo.</p>
+      </div>
+      <div class="visit-cta">
+        <a class="btn btn-gold" href={site.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" class="icon-sm" /> Indicazioni</a>
+        <a class="btn btn-ghost" href={site.whatsapp} target="_blank" rel="noopener"><Icon name="whatsapp" class="icon-sm" /> WhatsApp</a>
+        <a class="btn btn-ghost" href={site.phoneHref}><Icon name="phone" class="icon-sm" /> Chiama</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .room-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+  .room-nav a { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(244, 236, 221, 0.3); color: var(--on-night); text-decoration: none; font-size: 0.92rem; }
+  .room-nav a:hover { background: rgba(244, 236, 221, 0.1); }
+  .room-nav span { color: var(--gold); font-size: 0.78rem; font-weight: 700; }
+  .room-grid { display: grid; gap: 28px; align-items: center; }
+  @media (min-width: 900px) { .room-grid { grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 96px); } .room-grid.flip figure { order: 2; } }
+  .room figure { margin: 0; }
+  .room figure :global(img) { width: 100%; aspect-ratio: 4 / 5; max-height: 78vh; object-fit: cover; border-radius: 6px; }
+  .room-tag { display: inline-flex; gap: 8px; align-items: center; padding: 8px 14px; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: 0.88rem; font-weight: 500; }
+  .room-copy .prose { margin-bottom: 16px; }
+  .visit-grid { display: grid; gap: 24px; align-items: center; }
+  @media (min-width: 900px) { .visit-grid { grid-template-columns: 1.2fr 1fr; } .visit-cta { justify-content: flex-end; } }
+  .visit-cta { display: flex; flex-wrap: wrap; gap: 10px; }
+</style>

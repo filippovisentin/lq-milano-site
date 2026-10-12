@@ -1,0 +1,121 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+---
+<Base title="Carrello" noindex>
+  <div class="container cart-page">
+    <nav aria-label="Percorso"><ol class="breadcrumb"><li><a href="/">Home</a></li><li><a href="/shop">Shop</a></li><li aria-current="page">Carrello</li></ol></nav>
+    <h1>Il mio carrello</h1>
+
+    <div class="empty" data-empty hidden>
+      <p class="lead">Il carrello è vuoto. Ogni capo è un pezzo unico: quando lo trovi, mettilo qui prima che lo prenda qualcun altro.</p>
+      <a class="btn btn-lg" href="/shop">Esplora lo shop <Icon name="arrow" class="icon-sm" /></a>
+    </div>
+
+    <div class="cart-grid" data-full hidden>
+      <section aria-labelledby="items-t">
+        <h2 id="items-t" class="sr-only">Articoli</h2>
+        <ul class="items" data-items></ul>
+        <div class="extras">
+          <div class="field">
+            <label for="note">Aggiungi una nota</label>
+            <textarea class="textarea" id="note" rows="3" maxlength="500" placeholder="Es. regalo, richiesta di ritiro in negozio…" data-note></textarea>
+          </div>
+        </div>
+        <a class="link-arrow" href="/shop"><Icon name="arrow-left" class="icon-sm" /><span>Continua lo shopping</span></a>
+      </section>
+
+      <aside class="summary" aria-labelledby="sum-t">
+        <h2 id="sum-t" class="h3">Riepilogo ordine</h2>
+        <dl>
+          <div><dt>Subtotale</dt><dd class="tabular" data-subtotal></dd></div>
+          <div><dt>Spedizione</dt><dd>Calcolata al checkout</dd></div>
+        </dl>
+        <form class="coupon" data-coupon>
+          <label for="coupon" class="label">Codice sconto</label>
+          <div class="coupon-row">
+            <input class="input" id="coupon" autocomplete="off" autocapitalize="characters" />
+            <button class="btn btn-ghost" type="submit">Applica</button>
+          </div>
+          <p class="hint" data-coupon-msg role="status"></p>
+        </form>
+        <div class="total"><span>Totale stimato</span><strong class="tabular" data-total></strong></div>
+        <button class="btn btn-lg btn-block" type="button" data-checkout>Procedi al checkout <Icon name="arrow" class="icon-sm" /></button>
+        <p class="secure"><Icon name="check" class="icon-sm" /> Pagamento sicuro gestito dalla piattaforma di pagamento. Spedizione e totale definitivi nel checkout.</p>
+      </aside>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .cart-page { padding-top: 12px; padding-bottom: clamp(56px, 8vw, 112px); }
+  .empty { padding: 24px 0 48px; }
+  .cart-grid { display: grid; gap: 32px; align-items: start; }
+  @media (min-width: 960px) { .cart-grid { grid-template-columns: 1.5fr 1fr; gap: 56px; } .summary { position: sticky; top: calc(var(--header-h) + 24px); } }
+  .items { list-style: none; padding: 0; margin: 0 0 24px; border-top: 1px solid var(--line); }
+  .items :global(.line) { grid-template-columns: 110px 1fr auto; }
+  @media (max-width: 480px) { .items :global(.line) { grid-template-columns: 84px 1fr; } .items :global(.line-price) { grid-column: 2; } }
+  .extras { margin-bottom: 20px; }
+  .summary { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 24px; display: grid; gap: 16px; }
+  .summary h2 { margin: 0; }
+  dl { margin: 0; }
+  dl div { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; }
+  dt { color: var(--ink-2); }
+  dd { margin: 0; }
+  .coupon-row { display: flex; gap: 8px; margin-top: 6px; }
+  .coupon-row .input { flex: 1; min-width: 0; }
+  .total { display: flex; justify-content: space-between; padding-top: 14px; border-top: 1px solid var(--line); font-size: 1.15rem; }
+  .secure { display: flex; gap: 8px; margin: 0; font-size: 0.86rem; color: var(--ink-2); }
+  .secure :global(svg) { flex: none; margin-top: 3px; color: var(--ok); }
+</style>
+
+<script>
+  import * as cart from '../lib/commerce/cart';
+  import { commerce } from '../lib/commerce/provider';
+  const $ = <T extends HTMLElement>(s: string) => document.querySelector<T>(s)!;
+  const tpl = document.getElementById('cart-line-tpl') as HTMLTemplateElement;
+  const note = $<HTMLTextAreaElement>('[data-note]');
+  const couponIn = $<HTMLInputElement>('#coupon');
+
+  function render() {
+    const s = cart.get();
+    $('[data-empty]').hidden = s.items.length > 0;
+    $('[data-full]').hidden = s.items.length === 0;
+    $('[data-items]').replaceChildren(...s.items.map((it) => {
+      const li = tpl.content.firstElementChild!.cloneNode(true) as HTMLLIElement;
+      li.querySelectorAll<HTMLAnchorElement>('a').forEach((a) => (a.href = it.url));
+      const img = li.querySelector('img')!; img.src = it.image; img.alt = it.title;
+      li.querySelector('.line-title')!.textContent = it.title;
+      li.querySelector('.line-meta')!.textContent = [it.size ? `Taglia ${it.size}` : null, cart.euro(it.price), it.max === 1 ? 'Pezzo unico' : null].filter(Boolean).join(' · ');
+      li.querySelector('.qty-val')!.textContent = String(it.qty);
+      li.querySelector('.qty')!.setAttribute('aria-label', `Quantità di ${it.title}`);
+      (li.querySelector('[data-inc]') as HTMLButtonElement).disabled = it.qty >= it.max;
+      li.querySelector('[data-inc]')!.addEventListener('click', () => cart.setQty(it.id, it.qty + 1));
+      li.querySelector('[data-dec]')!.addEventListener('click', () => cart.setQty(it.id, it.qty - 1));
+      li.querySelector('[data-remove]')!.addEventListener('click', () => {
+        cart.remove(it.id);
+        (window as any).lqToast?.(`${it.title} rimosso.`, { label: 'Annulla', onClick: () => cart.undoRemove() });
+      });
+      li.querySelector('.line-price')!.textContent = cart.euro(it.price * it.qty);
+      return li;
+    }));
+    $('[data-subtotal]').textContent = cart.euro(cart.subtotal());
+    $('[data-total]').textContent = cart.euro(cart.subtotal());
+    if (document.activeElement !== note) note.value = s.note;
+    if (s.coupon && !couponIn.value) couponIn.value = s.coupon;
+  }
+  render();
+  window.addEventListener('cart:change', render);
+  note.addEventListener('change', () => cart.setNote(note.value));
+  $('[data-coupon]').addEventListener('submit', (e) => {
+    e.preventDefault();
+    cart.setCoupon(couponIn.value);
+    $('[data-coupon-msg]').textContent = couponIn.value.trim()
+      ? `Codice “${couponIn.value.trim().toUpperCase()}” salvato: la validità e lo sconto vengono verificati al checkout.`
+      : '';
+  });
+  $<HTMLButtonElement>('[data-checkout]').addEventListener('click', async (e) => {
+    const b = e.currentTarget as HTMLButtonElement; b.disabled = true;
+    try { location.href = (await commerce.createCheckout(cart.get())).redirectUrl; } catch { b.disabled = false; }
+  });
+</script>

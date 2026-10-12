@@ -1,0 +1,20 @@
+---
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props { title: string; eyebrow?: string; lead?: string; image?: ImageMetadata; imageAlt?: string; position?: string; crumb?: string }
+const { title, eyebrow, lead, image, imageAlt = '', position = 'center', crumb } = Astro.props;
+---
+<section class="page-hero">
+  {image && (
+    <div class="bg">
+      <Picture src={image} alt={imageAlt} widths={[640, 1024, 1600, 2200]} sizes="100vw" formats={['avif']} fallbackFormat="webp" loading="eager" fetchpriority="high" style={`object-position:${position}`} />
+    </div>
+  )}
+  <div class="container">
+    <nav aria-label="Percorso"><ol class="breadcrumb"><li><a href="/">Home</a></li><li aria-current="page">{crumb ?? title}</li></ol></nav>
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h1>{title}</h1>
+    {lead && <p class="lead">{lead}</p>}
+    <slot />
+  </div>
+</section>

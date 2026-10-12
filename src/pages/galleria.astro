@@ -1,0 +1,62 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { media } from '../lib/media';
+
+const pieces = [
+  { title: 'Giacca jeans Americanino', era: 'Anni ’80', img: media.gAmericanino, alt: 'Giacca di jeans Americanino anni ’80 su manichino', text: 'Negli anni ’80 Americanino era noto per il suo stile giovane, casual e denim-oriented, simbolo della moda urbana e ribelle dell’epoca. Le collezioni comprendevano spesso capi in denim sottoposti a lavaggi originali e dettagli di tendenza. Il brand puntava su un’immagine di informalità e spirito americano, diventando un punto di riferimento per la moda teen e streetwear e in particolare per i paninari Milanesi. Oggi molti pezzi di Americanino sono ricercati da chi cerca look casual e autentici dell\'epoca.' },
+  { title: 'Trench Hamilton', era: 'Anni ’80', img: media.gHamilton, alt: 'Trench nero Hamilton anni ’80 su manichino', text: 'Negli anni ’80 Hamilton propose una linea di abbigliamento dallo stile classico e sportivo, ispirato all’eleganza americana. Il marchio punta su qualità dei materiali e un’estetica raffinata e senza tempo. Oggi i capi Hamilton sono molto ricercati per chi ama l’eleganza classica.' },
+  { title: 'Trench Hermès', era: 'Anni ’80', img: media.gHermes, alt: 'Trench beige Hermès anni ’80 su manichino', text: 'Negli anni ’80 Hermès consolidò la sua immagine di lusso discreto e artigianalità senza tempo. Le collezioni di abbigliamento puntavano su linee eleganti e pulite, materiali pregiati e tagli classici dal gusto parigino, spesso in tonalità neutre. Il brand divenne simbolo di raffinatezza sobria e qualità impeccabile, incarnando l’eleganza francese. Oggi il brand è molto apprezzato nel mercato vintage grazie alla qualità dei capi.' },
+  { title: 'Saint Laurent', era: 'Anni ’80', img: media.gYsl, alt: 'Abito floreale Saint Laurent anni ’80 su manichino', text: 'Negli anni ’80 gli abiti di Saint Laurent riflettono un’estetica sofisticata e potente, simbolo dell’eleganza. Le sue collezioni univano strutture sartoriali decise a tocchi sensuali e femminili. Tessuti ricchi, colori intensi e contrasti audaci definivano uno stile che celebrava la donna forte, indipendente e moderna. Oggi i capi vintage firmati Yves Saint Laurent sono considerati pezzi iconici e inimitabili che incarnano l’ideale di eleganza senza tempo.' },
+];
+---
+<Base title="Galleria · Capi iconici" description="Capi iconici dall’archivio LQ Milano: Americanino, Hamilton, Hermès e Saint Laurent degli anni ’80, raccontati uno per uno.">
+  <PageHero
+    title="Capi iconici"
+    crumb="Galleria"
+    eyebrow="Galleria · dall’archivio"
+    lead="Quattro pezzi degli anni ’80 e le storie dei brand che li hanno firmati. Sono capi d’archivio raccontati qui: per sapere se sono disponibili, scrivici."
+    image={media.galleryBanner}
+    imageAlt="L’interno di LQ Milano con capi d’archivio esposti"
+    position="center 40%"
+  />
+  <section class="section">
+    <div class="container">
+      <ol class="pieces">
+        {pieces.map((p, i) => (
+          <li class="piece reveal">
+            <figure><Picture src={p.img} alt={p.alt} widths={[400, 640, 900, 1200]} sizes="(min-width: 900px) 40vw, 92vw" formats={['avif']} fallbackFormat="webp" loading={i < 2 ? 'eager' : 'lazy'} /></figure>
+            <div class="piece-copy">
+              <p class="eyebrow">{p.era} · N. {i + 1}</p>
+              <h2>{p.title}</h2>
+              <p class="prose">{p.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <aside class="archive-note">
+        <Icon name="info" />
+        <div>
+          <p><strong>Archivio, non catalogo.</strong> I capi della galleria fanno parte della selezione d’archivio: alcuni sono in vendita in negozio, altri sono riservati al noleggio per cinema, teatro e fotografia.</p>
+          <div class="note-cta">
+            <a class="btn" href="/contatti?motivo=archivio">Chiedi disponibilità</a>
+            <a class="btn btn-ghost" href="/servizi#noleggio">Noleggio professionale</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .pieces { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(48px, 7vw, 96px) clamp(24px, 4vw, 64px); }
+  @media (min-width: 900px) { .pieces { grid-template-columns: 1fr 1fr; } .piece:nth-child(even) { margin-top: 120px; } }
+  .piece figure { margin: 0 0 20px; }
+  .piece figure :global(img) { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 6px; }
+  .piece h2 { font-size: clamp(1.7rem, 1.3rem + 1.4vw, 2.4rem); }
+  .archive-note { display: flex; gap: 16px; align-items: flex-start; margin-top: clamp(56px, 8vw, 112px); padding: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; max-width: 760px; }
+  .archive-note > :global(svg) { color: var(--gold-ink); flex: none; margin-top: 2px; }
+  .note-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+</style>

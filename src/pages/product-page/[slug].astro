@@ -1,0 +1,557 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import { readFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { PROJECT_ROOT } from '../../lib/root';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { getProducts, productUrl, inStock, has3d, type Product } from '../../lib/products';
+import { euro } from '../../lib/nav';
+import site from '../../data/site.json';
+
+export async function getStaticPaths() {
+  const products = await getProducts();
+  return products.map((p) => ({ params: { slug: p.id }, props: { product: p, all: products } }));
+}
+interface Props { product: Product; all: Product[] }
+const { product, all } = Astro.props;
+const d = product.data;
+const { Content } = await render(product);
+const url = new URL(productUrl(product.id), Astro.site).href;
+const available = inStock(product);
+const with3d = has3d(product);
+const meta3d = with3d ? JSON.parse(readFileSync(join(PROJECT_ROOT, 'public/3d', product.id, 'meta.json'), 'utf8')) : null;
+
+const thumbs = await Promise.all(d.images.map((img) => getImage({ src: img, width: 200, format: 'webp' })));
+const large = await Promise.all(d.images.map((img) => getImage({ src: img, width: 1800, format: 'webp', quality: 86 })));
+const cartThumb = await getImage({ src: d.images[0], width: 240, format: 'webp' });
+const ogImg = await getImage({ src: d.images[0], width: 1200, format: 'jpg' });
+const related = all
+  .filter((p) => p.id !== product.id && inStock(p))
+  .sort((a, b) => Number(b.data.category === d.category) - Number(a.data.category === d.category))
+  .slice(0, 4);
+const description = product.body?.trim().split('\n').filter(Boolean)[0] ?? d.title;
+const waText = encodeURIComponent(`Ciao LQ Milano! Vorrei informazioni su: ${d.title} (${url})`);
+const shareText = encodeURIComponent(`${d.title} · LQ Milano`);
+const shareUrl = encodeURIComponent(url);
+const productLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: d.title,
+  description,
+  image: new URL(ogImg.src, Astro.site).href,
+  sku: product.id,
+  itemCondition: 'https://schema.org/UsedCondition',
+  ...(d.size ? { size: d.size } : {}),
+  offers: {
+    '@type': 'Offer',
+    url,
+    priceCurrency: 'EUR',
+    price: d.price.toFixed(2),
+    availability: available ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
+  },
+};
+const crumbsLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: new URL('/', Astro.site).href },
+    { '@type': 'ListItem', position: 2, name: 'Shop', item: new URL('/shop', Astro.site).href },
+    { '@type': 'ListItem', position: 3, name: d.title, item: url },
+  ],
+};
+const anni = d.details.anni?.replace(/^'/, '’');
+---
+<Base title={d.title} description={d.seoDescription ?? `${description} ${euro(d.price)}${d.size ? ` · Taglia ${d.size}` : ''}. Vintage selezionato da LQ Milano.`} image={ogImg.src} type="product" jsonLd={[productLd, crumbsLd]}>
+  <div class="container pdp">
+    <nav aria-label="Percorso">
+      <ol class="breadcrumb">
+        <li><a href="/">Home</a></li>
+        <li><a href="/shop" data-back-to-shop>Shop</a></li>
+        <li aria-current="page">{d.title}</li>
+      </ol>
+    </nav>
+
+    <div class="pdp-grid">
+      <!-- ============ Media ============ -->
+      <section class="media" aria-label="Immagini del prodotto">
+        <div class="stage" data-stage>
+          {with3d && (
+            <div
+              class="pane pane-3d is-active"
+              data-pane="3d"
+              data-viewer
+              data-base={`/3d/${product.id}`}
+              data-has-back={meta3d?.hasBack ? '1' : '0'}
+            >
+              <div
+                class="v-host"
+                data-v-host
+                tabindex="0"
+                role="img"
+                aria-roledescription="vista 3D"
+                aria-label={`${d.title}: vista 3D rotante. Trascina o usa le frecce sinistra e destra per ruotarlo.`}
+              >
+                <img class="poster" src={`/3d/${product.id}/front.webp`} alt="" width="1024" height="1024" fetchpriority="high" />
+              </div>
+              <div class="v-loading" data-v-loading><span class="spinner"></span> Carico la vista 3D…</div>
+              <div class="v-controls" data-v-controls hidden>
+                <button type="button" class="v-btn" data-v-auto aria-pressed="true"><Icon name="pause" class="icon-sm" /><span>Pausa</span></button>
+                <button type="button" class="v-btn" data-v-face="front">Fronte</button>
+                <button type="button" class="v-btn" data-v-face="back">Retro</button>
+              </div>
+              <p class="v-hint" data-v-hint hidden><Icon name="rotate" class="icon-sm" /> Trascina per ruotare</p>
+            </div>
+          )}
+          {d.images.map((img, i) => (
+            <div class:list={['pane', 'pane-photo', !with3d && i === 0 && 'is-active']} data-pane={`p${i}`} hidden={with3d || i > 0}>
+              <Picture
+                src={img}
+                alt={`${d.title}, foto ${i + 1} di ${d.images.length}`}
+                widths={[600, 900, 1200, 1600]}
+                sizes="(min-width: 1024px) 56vw, 100vw"
+                formats={['avif']} fallbackFormat="webp"
+                loading={!with3d && i === 0 ? 'eager' : 'lazy'}
+              />
+              <button type="button" class="zoom-btn" data-zoom={i}><Icon name="zoom" class="icon-sm" /><span>Ingrandisci</span></button>
+            </div>
+          ))}
+        </div>
+
+        <div class="thumbs" role="tablist" aria-label="Scegli la vista">
+          {with3d && (
+            <button type="button" role="tab" class="thumb thumb-3d" aria-selected="true" data-show="3d" aria-controls="stage">
+              <Icon name="cube" />
+              <span>3D</span>
+            </button>
+          )}
+          {thumbs.map((t, i) => (
+            <button type="button" role="tab" class="thumb" aria-selected={!with3d && i === 0 ? 'true' : 'false'} data-show={`p${i}`}>
+              <img src={t.src} alt={`Foto ${i + 1}`} width="100" height="125" loading="lazy" decoding="async" />
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <!-- ============ Purchase panel ============ -->
+      <section class="panel" aria-labelledby="pdp-title">
+        <p class="eyebrow">{d.category}{anni && ` · Anni ${anni}`}</p>
+        <h1 id="pdp-title" class="pdp-title">{d.title}</h1>
+        <p class="pdp-price tabular">{euro(d.price)} <span class="vat">IVA inclusa</span></p>
+
+        <ul class="facts" aria-label="In breve">
+          {d.quantity === 1 && available && <li><Icon name="sparkle" class="icon-sm" /> Pezzo unico</li>}
+          {d.details.stato && <li><Icon name="check" class="icon-sm" /> Stato: {d.details.stato}</li>}
+          {anni && <li><Icon name="clock" class="icon-sm" /> Anni {anni}</li>}
+        </ul>
+
+        <form class="buy" data-buy novalidate
+          data-id={product.id}
+          data-title={d.title}
+          data-price={d.price}
+          data-image={cartThumb.src}
+          data-url={productUrl(product.id)}
+          data-max={available ? d.quantity : 0}
+        >
+          {d.size && (
+            <fieldset class="sizes">
+              <legend class="label">Taglia <span class="req" aria-hidden="true">*</span></legend>
+              <div class="size-opts">
+                <label class="size-opt">
+                  <input type="radio" name="size" value={d.size} checked required />
+                  <span>{d.size}</span>
+                </label>
+              </div>
+              <p class="hint">Taglia unica disponibile per questo capo. Controlla le misure qui sotto: le taglie vintage possono vestire diversamente.</p>
+            </fieldset>
+          )}
+
+          {available ? (
+            <>
+              <button class="btn btn-lg btn-block add-btn" type="submit" data-add>
+                <Icon name="bag" class="icon-sm" /><span data-add-label>Aggiungi al carrello</span>
+              </button>
+              <p class="buy-status" data-buy-status role="status"></p>
+            </>
+          ) : (
+            <p class="notice"><Icon name="info" class="icon-sm" /> Questo capo è già stato venduto. Scrivici: potremmo avere qualcosa di simile.</p>
+          )}
+          <a class="btn btn-ghost btn-block" href={`${site.whatsapp}?text=${waText}`} target="_blank" rel="noopener">
+            <Icon name="whatsapp" class="icon-sm" /> Chiedi info su WhatsApp
+          </a>
+        </form>
+
+        <div class="accordions">
+          <details open>
+            <summary>Descrizione <Icon name="chevron-down" class="icon-sm" /></summary>
+            <div class="acc-body prose"><Content /></div>
+          </details>
+          <details open={d.details.misure.length > 0}>
+            <summary>Misure <Icon name="chevron-down" class="icon-sm" /></summary>
+            <div class="acc-body">
+              {d.details.misure.length ? (
+                <dl class="measures">
+                  {d.details.misure.map((m) => {
+                    const [k, ...v] = m.split(':');
+                    return v.length ? <div><dt>{k.trim()}</dt><dd class="tabular">{v.join(':').trim()}</dd></div> : <div><dd>{m}</dd></div>;
+                  })}
+                </dl>
+              ) : (
+                <p class="muted">Misure non ancora inserite. <a href={`${site.whatsapp}?text=${waText}`} target="_blank" rel="noopener">Chiedile su WhatsApp</a>.</p>
+              )}
+              <p class="hint">Misure prese a capo disteso.</p>
+            </div>
+          </details>
+          {d.details.materiale.length > 0 && (
+            <details>
+              <summary>Materiale <Icon name="chevron-down" class="icon-sm" /></summary>
+              <div class="acc-body"><ul class="plain">{d.details.materiale.map((m) => <li>{m}</li>)}</ul></div>
+            </details>
+          )}
+          {(d.details.stato || anni) && (
+            <details>
+              <summary>Stato ed epoca <Icon name="chevron-down" class="icon-sm" /></summary>
+              <div class="acc-body">
+                <dl class="measures">
+                  {d.details.stato && <div><dt>Stato</dt><dd>{d.details.stato}</dd></div>}
+                  {anni && <div><dt>Anni</dt><dd>{anni}</dd></div>}
+                </dl>
+              </div>
+            </details>
+          )}
+        </div>
+
+        <aside class="tailor">
+          <Icon name="scissors" />
+          <p><strong>Su misura, come vuoi tu.</strong> Orli, ritocchi e personalizzazioni nel nostro <a href="/concept-store#angolo-creativo">Angolo Creativo</a>.</p>
+        </aside>
+
+        <div class="share">
+          <span class="label">Condividi</span>
+          <ul>
+            <li><a class="icon-btn" href={`https://wa.me/?text=${shareText}%20${shareUrl}`} target="_blank" rel="noopener" aria-label="Condividi su WhatsApp"><Icon name="whatsapp" /></a></li>
+            <li><a class="icon-btn" href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`} target="_blank" rel="noopener" aria-label="Condividi su Facebook"><Icon name="facebook" /></a></li>
+            <li><a class="icon-btn" href={`https://x.com/intent/post?text=${shareText}&url=${shareUrl}`} target="_blank" rel="noopener" aria-label="Condividi su X"><Icon name="x" /></a></li>
+            <li><a class="icon-btn" href={`https://pinterest.com/pin/create/button/?url=${shareUrl}&description=${shareText}`} target="_blank" rel="noopener" aria-label="Condividi su Pinterest"><Icon name="pinterest" /></a></li>
+            <li><button class="icon-btn" type="button" data-copy={url} aria-label="Copia il link"><Icon name="link" /></button></li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  {related.length > 0 && (
+    <section class="section paper-2" aria-labelledby="rel-title">
+      <div class="container">
+        <div class="section-head">
+          <div><p class="eyebrow">Continua a cercare</p><h2 id="rel-title">Potrebbero piacerti</h2></div>
+          <a class="link-arrow" href="/shop"><span>Tutto lo shop</span><Icon name="arrow" class="icon-sm" /></a>
+        </div>
+        <div class="grid related">{related.map((p) => <ProductCard product={p} />)}</div>
+      </div>
+    </section>
+  )}
+
+  {available && (
+    <div class="sticky-buy" data-sticky-buy aria-hidden="true">
+      <div>
+        <strong class="s-title">{d.title}</strong>
+        <span class="tabular">{euro(d.price)}{d.size && ` · Taglia ${d.size}`}</span>
+      </div>
+      <button class="btn" type="button" tabindex="-1" data-sticky-add>Aggiungi</button>
+    </div>
+  )}
+
+  <dialog class="lightbox" data-lightbox aria-label={`Foto di ${d.title}`}>
+    <img data-lb-img alt="" />
+    <p class="lb-count tabular" data-lb-count aria-live="polite"></p>
+    <button class="lb-btn lb-close" type="button" data-lb-close aria-label="Chiudi"><Icon name="close" /></button>
+    <button class="lb-btn lb-prev" type="button" data-lb-prev aria-label="Foto precedente"><Icon name="chevron-left" /></button>
+    <button class="lb-btn lb-next" type="button" data-lb-next aria-label="Foto successiva"><Icon name="chevron" /></button>
+  </dialog>
+  <script type="application/json" id="lb-data" set:html={JSON.stringify(large.map((l, i) => ({ src: l.src, alt: `${d.title}, foto ${i + 1}` })))} />
+</Base>
+
+<style>
+  .pdp { padding-top: 12px; padding-bottom: clamp(48px, 7vw, 96px); }
+  .pdp-grid { display: grid; gap: 28px; }
+  .pdp-grid > * { min-width: 0; }
+  @media (min-width: 960px) {
+    .pdp-grid { grid-template-columns: minmax(0, 1.35fr) minmax(340px, 1fr); gap: clamp(32px, 4vw, 72px); align-items: start; }
+    .panel { position: sticky; top: calc(var(--header-h) + 24px); }
+  }
+
+  /* stage */
+  .stage {
+    position: relative; aspect-ratio: 1 / 1; border-radius: 6px; overflow: hidden;
+    background:
+      radial-gradient(70% 55% at 50% 40%, #fffdf8 0%, #f1e9da 70%, #e7dcc8 100%);
+  }
+  @media (max-width: 959px) { .stage { aspect-ratio: 4 / 5; margin-inline: calc(var(--gutter) * -1); border-radius: 0; } }
+  .pane { position: absolute; inset: 0; }
+  .pane-photo { background: #fff; }
+  .pane-photo :global(img) { width: 100%; height: 100%; object-fit: contain; }
+  .v-host { position: absolute; inset: 0; cursor: grab; outline-offset: -4px; }
+  .v-host:global(.is-grabbing) { cursor: grabbing; }
+  .v-host :global(canvas) { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+  .poster { position: absolute; inset: 8%; width: 84%; height: 84%; object-fit: contain; transition: opacity 400ms var(--ease-out); }
+  .pane-3d:global(.is-ready) .poster { opacity: 0; }
+  .v-loading {
+    position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); display: inline-flex; gap: 8px; align-items: center;
+    padding: 8px 14px; border-radius: 999px; background: rgba(255, 252, 246, 0.9); font-size: 0.86rem; color: var(--ink-2);
+  }
+  .v-loading .spinner { width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .v-controls { position: absolute; left: 12px; bottom: 12px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .v-btn {
+    display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(37, 37, 31, 0.12);
+    background: rgba(255, 252, 246, 0.92); font-size: 0.86rem; font-weight: 600; box-shadow: var(--shadow-1); backdrop-filter: blur(6px);
+  }
+  .v-btn:hover { background: #fff; }
+  .v-hint {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%); margin: 0; display: inline-flex; gap: 6px; align-items: center;
+    padding: 6px 12px; border-radius: 999px; background: rgba(23, 20, 17, 0.78); color: #fff; font-size: 0.82rem; pointer-events: none;
+    animation: hint 4.5s 0.8s var(--ease-out) forwards; opacity: 0;
+  }
+  @keyframes hint { 10%, 75% { opacity: 1; } 100% { opacity: 0; } }
+  .zoom-btn {
+    position: absolute; right: 12px; bottom: 12px; display: inline-flex; gap: 6px; align-items: center; min-height: 44px; padding: 0 16px;
+    border-radius: 999px; border: 1px solid var(--line); background: rgba(255, 252, 246, 0.95); font-weight: 600; font-size: 0.88rem; box-shadow: var(--shadow-1);
+  }
+
+  .thumbs { display: flex; gap: 10px; margin-top: 12px; overflow-x: auto; padding: 4px 2px 8px; scrollbar-width: none; }
+  .thumbs::-webkit-scrollbar { display: none; }
+  .thumb {
+    flex: none; width: 76px; aspect-ratio: 4 / 5; padding: 0; border: 2px solid transparent; border-radius: 6px; background: #fff; overflow: hidden;
+    box-shadow: inset 0 0 0 1px var(--line); transition: border-color var(--t-fast);
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .thumb[aria-selected='true'] { border-color: var(--ink); }
+  .thumb:hover { border-color: var(--line-strong); }
+  .thumb-3d { display: grid; place-items: center; align-content: center; gap: 2px; background: var(--night); color: #ffd9c7; font-weight: 700; font-size: 0.8rem; box-shadow: none; }
+  .thumb-3d[aria-selected='true'] { border-color: var(--neon); }
+
+  /* panel */
+  .pdp-title { font-size: clamp(1.9rem, 1.4rem + 2vw, 2.9rem); margin-bottom: 10px; }
+  .pdp-price { font-size: 1.5rem; font-weight: 600; margin-bottom: 16px; }
+  .vat { font-size: 0.85rem; font-weight: 400; color: var(--ink-2); margin-left: 6px; }
+  .facts { list-style: none; padding: 0; margin: 0 0 22px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .facts li { display: inline-flex; gap: 6px; align-items: center; padding: 6px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 0.88rem; }
+  .facts :global(svg) { color: var(--gold-ink); }
+  .buy { display: grid; gap: 12px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+  .sizes { border: 0; padding: 0; margin: 0 0 6px; display: grid; gap: 8px; }
+  .size-opts { display: flex; gap: 8px; flex-wrap: wrap; }
+  .size-opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .size-opt span {
+    display: grid; place-items: center; min-width: 56px; min-height: 48px; padding: 0 16px; border-radius: var(--radius-ctl);
+    border: 1.5px solid var(--line-strong); background: var(--surface); font-weight: 600; cursor: pointer;
+  }
+  .size-opt input:checked + span { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .size-opt input:focus-visible + span { outline: 3px solid var(--olive); outline-offset: 3px; }
+  .hint { font-size: 0.86rem; color: var(--ink-2); margin: 0; }
+  .add-btn:global(.is-added) { --bg: var(--ink); --bd: var(--ink); }
+  .buy-status { margin: 0; font-size: 0.92rem; min-height: 1.2em; color: var(--ok); font-weight: 500; }
+  .buy-status:empty { display: none; }
+
+  .accordions details { border-bottom: 1px solid var(--line); }
+  .accordions summary {
+    list-style: none; display: flex; align-items: center; justify-content: space-between; min-height: 56px; cursor: pointer;
+    font-family: var(--font-display); font-size: 1.2rem;
+  }
+  .accordions summary::-webkit-details-marker { display: none; }
+  .accordions summary :global(svg) { transition: transform var(--t-fast); }
+  .accordions details[open] summary :global(svg) { transform: rotate(180deg); }
+  .acc-body { padding-bottom: 18px; }
+  .measures { margin: 0 0 10px; display: grid; gap: 0; }
+  .measures div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px dashed var(--line); }
+  .measures dt { color: var(--ink-2); }
+  .measures dd { margin: 0; font-weight: 600; text-align: right; }
+  .plain { list-style: none; padding: 0; margin: 0; }
+  .tailor { display: flex; gap: 12px; align-items: flex-start; margin: 22px 0; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-ctl); }
+  .tailor :global(svg) { color: var(--olive); flex: none; margin-top: 2px; }
+  .tailor p { margin: 0; font-size: 0.95rem; }
+  .share { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .share ul { list-style: none; display: flex; gap: 2px; padding: 0; margin: 0; }
+
+  .related { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (min-width: 900px) { .related { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+  .sticky-buy {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom)); background: rgba(255, 252, 246, 0.97); border-top: 1px solid var(--line);
+    box-shadow: 0 -8px 24px rgba(37, 37, 31, 0.08); transform: translateY(110%); transition: transform 260ms var(--ease-out);
+  }
+  .sticky-buy > div { display: grid; min-width: 0; font-size: 0.9rem; }
+  .s-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sticky-buy:global(.is-shown) { transform: none; }
+  @media (min-width: 960px) { .sticky-buy { display: none; } }
+
+  .lightbox { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: #fff; }
+  .lightbox::backdrop { background: #fff; }
+  .lightbox img { width: 100%; height: 100%; object-fit: contain; padding: 56px 16px; }
+  .lb-btn { position: absolute; width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--line); background: rgba(255, 252, 246, 0.95); display: grid; place-items: center; box-shadow: var(--shadow-1); }
+  .lb-close { top: calc(12px + env(safe-area-inset-top)); right: 12px; }
+  .lb-prev { left: 12px; top: 50%; transform: translateY(-50%); }
+  .lb-next { right: 12px; top: 50%; transform: translateY(-50%); }
+  .lb-count { position: absolute; top: calc(22px + env(safe-area-inset-top)); left: 20px; margin: 0; font-weight: 600; }
+</style>
+
+<script>
+  import * as cart from '../../lib/commerce/cart';
+
+  const toast = (m: string, a?: any) => (window as any).lqToast?.(m, a);
+
+  // ---------- stage / thumbnails ----------
+  const stage = document.querySelector<HTMLElement>('[data-stage]')!;
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('.thumb')];
+  let viewer: import('../../scripts/garment-viewer').ViewerHandle | null = null;
+  let userPausedAuto = false;
+
+  function show(id: string) {
+    stage.querySelectorAll<HTMLElement>('[data-pane]').forEach((p) => {
+      const on = p.dataset.pane === id;
+      p.hidden = !on;
+      p.classList.toggle('is-active', on);
+    });
+    tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.show === id)));
+    if (viewer) viewer.setAuto(id === '3d' && !userPausedAuto);
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => show(t.dataset.show!));
+    t.addEventListener('keydown', (e) => {
+      const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      const n = tabs[(i + d + tabs.length) % tabs.length];
+      n.focus(); n.click();
+    });
+  });
+
+  // ---------- 3D viewer (lazy) ----------
+  const host = document.querySelector<HTMLElement>('[data-viewer]');
+  if (host) {
+    const start = async () => {
+      try {
+        const { mountViewer } = await import('../../scripts/garment-viewer');
+        viewer = await mountViewer(host.querySelector<HTMLElement>('[data-v-host]')!, { base: host.dataset.base!, hasBack: host.dataset.hasBack === '1', label: '' });
+        host.classList.add('is-ready');
+        host.querySelector<HTMLElement>('[data-v-loading]')!.hidden = true;
+        host.querySelector<HTMLElement>('[data-v-controls]')!.hidden = false;
+        host.querySelector<HTMLElement>('[data-v-hint]')!.hidden = false;
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) setAutoBtn(false);
+      } catch (err) {
+        // No WebGL: the static front cut-out stays, photos remain one tap away.
+        host.querySelector<HTMLElement>('[data-v-loading]')!.textContent = 'Vista 3D non disponibile su questo dispositivo.';
+      }
+    };
+    const autoBtn = host.querySelector<HTMLButtonElement>('[data-v-auto]')!;
+    const setAutoBtn = (on: boolean) => {
+      autoBtn.setAttribute('aria-pressed', String(on));
+      autoBtn.querySelector('span')!.textContent = on ? 'Pausa' : 'Ruota';
+      autoBtn.querySelector('svg')!.innerHTML = on ? '<path d="M9 5v14M15 5v14"/>' : '<path d="M7 5v14l11-7L7 5Z"/>';
+    };
+    autoBtn.addEventListener('click', () => {
+      if (!viewer) return;
+      const on = !viewer.isAuto();
+      userPausedAuto = !on;
+      viewer.setAuto(on); setAutoBtn(on);
+    });
+    host.querySelectorAll<HTMLButtonElement>('[data-v-face]').forEach((b) =>
+      b.addEventListener('click', () => viewer?.face(b.dataset.vFace as 'front' | 'back')));
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); start(); } }, { rootMargin: '200px' });
+      io.observe(host);
+    } else start();
+  }
+
+  // ---------- lightbox ----------
+  const lb = document.querySelector<HTMLDialogElement>('[data-lightbox]')!;
+  const photos: { src: string; alt: string }[] = JSON.parse(document.getElementById('lb-data')!.textContent!);
+  const lbImg = lb.querySelector<HTMLImageElement>('[data-lb-img]')!;
+  let cur = 0;
+  const setLb = (i: number) => {
+    cur = (i + photos.length) % photos.length;
+    lbImg.src = photos[cur].src; lbImg.alt = photos[cur].alt;
+    lb.querySelector('[data-lb-count]')!.textContent = `${cur + 1} / ${photos.length}`;
+  };
+  document.querySelectorAll<HTMLButtonElement>('[data-zoom]').forEach((b) => b.addEventListener('click', () => { setLb(Number(b.dataset.zoom)); lb.showModal(); }));
+  lb.querySelector('[data-lb-close]')!.addEventListener('click', () => lb.close());
+  lb.querySelector('[data-lb-prev]')!.addEventListener('click', () => setLb(cur - 1));
+  lb.querySelector('[data-lb-next]')!.addEventListener('click', () => setLb(cur + 1));
+  lb.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') setLb(cur - 1); if (e.key === 'ArrowRight') setLb(cur + 1); });
+  let sx = 0;
+  lb.addEventListener('pointerdown', (e) => (sx = e.clientX));
+  lb.addEventListener('pointerup', (e) => { const dx = e.clientX - sx; if (Math.abs(dx) > 50) setLb(cur + (dx < 0 ? 1 : -1)); });
+  lb.addEventListener('close', () => {
+    // keep the stage in sync with what was being looked at
+    show(`p${cur}`);
+  });
+
+  // ---------- add to cart ----------
+  const form = document.querySelector<HTMLFormElement>('[data-buy]')!;
+  const addBtn = form.querySelector<HTMLButtonElement>('[data-add]');
+  const status = form.querySelector<HTMLElement>('[data-buy-status]');
+  const f = form.dataset;
+  function syncBtn() {
+    if (!addBtn) return;
+    const inCart = cart.get().items.find((i) => i.id === f.id);
+    const full = !!inCart && inCart.qty >= Number(f.max);
+    addBtn.classList.toggle('is-added', full);
+    addBtn.querySelector('[data-add-label]')!.textContent = full ? 'Nel carrello · Apri il carrello' : 'Aggiungi al carrello';
+  }
+  syncBtn();
+  window.addEventListener('cart:change', syncBtn);
+
+  function addToCart() {
+    const size = (form.querySelector<HTMLInputElement>('input[name="size"]:checked'))?.value ?? null;
+    if (form.querySelector('input[name="size"]') && !size) {
+      status!.textContent = 'Seleziona una taglia per continuare.';
+      status!.style.color = 'var(--danger)';
+      form.querySelector<HTMLInputElement>('input[name="size"]')!.focus();
+      return;
+    }
+    const inCart = cart.get().items.find((i) => i.id === f.id);
+    if (inCart && inCart.qty >= Number(f.max)) { window.dispatchEvent(new Event('cart:open')); return; }
+    const res = cart.add({ id: f.id!, title: f.title!, price: Number(f.price), size, image: f.image!, url: f.url!, max: Number(f.max) });
+    if (res.ok) {
+      status!.style.color = '';
+      status!.textContent = `Aggiunto al carrello${size ? `, taglia ${size}` : ''}.`;
+      document.documentElement.classList.add('cart-bump');
+      setTimeout(() => document.documentElement.classList.remove('cart-bump'), 500);
+      toast(`${f.title} è nel carrello.`, { label: 'Apri carrello', onClick: () => window.dispatchEvent(new Event('cart:open')) });
+    } else {
+      status!.style.color = 'var(--danger)';
+      status!.textContent = res.reason === 'max' ? 'È un pezzo unico: è già nel tuo carrello.' : 'Questo capo non è più disponibile.';
+    }
+  }
+  form.addEventListener('submit', (e) => { e.preventDefault(); addToCart(); });
+
+  // sticky bar on phones once the main button scrolls away
+  const sticky = document.querySelector<HTMLElement>('[data-sticky-buy]');
+  if (sticky && addBtn && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => {
+      const show = !e.isIntersecting && e.boundingClientRect.top < 0;
+      sticky.classList.toggle('is-shown', show);
+      sticky.setAttribute('aria-hidden', String(!show));
+      sticky.querySelector('button')!.tabIndex = show ? 0 : -1;
+    }).observe(addBtn);
+    sticky.querySelector('[data-sticky-add]')!.addEventListener('click', addToCart);
+  }
+
+  // copy link / native share
+  document.querySelector<HTMLButtonElement>('[data-copy]')?.addEventListener('click', async (e) => {
+    const url = (e.currentTarget as HTMLButtonElement).dataset.copy!;
+    if (navigator.share && matchMedia('(pointer: coarse)').matches) {
+      try { await navigator.share({ title: document.title, url }); return; } catch { /* cancelled */ }
+    }
+    try { await navigator.clipboard.writeText(url); toast('Link copiato.'); } catch { toast(url); }
+  });
+
+  // "Shop" crumb returns to the exact browse state (filters/scroll) when we came from it
+  const back = document.querySelector<HTMLAnchorElement>('[data-back-to-shop]');
+  try {
+    const last = sessionStorage.getItem('lq-shop-url');
+    if (back && last) back.href = last;
+  } catch {}
+</script>

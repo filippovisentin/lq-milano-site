@@ -1,0 +1,72 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import NeonLogo from './NeonLogo.astro';
+import { footerNav } from '../lib/nav';
+import site from '../data/site.json';
+import logo from '../assets/media/8198f7_d6e53810866c436d94c0bc118aa1d637_mv2.webp';
+const a = site.address;
+---
+<footer class="site-footer night">
+  <div class="container top">
+    <div class="brand-col">
+      <a href="/" class="mark" aria-label="LQ Milano, home">
+        <Image src={logo} alt="" width={120} height={101} class="paper-logo" />
+      </a>
+      <p class="pitch">{site.tagline} {site.taglineSecond}</p>
+      <ul class="social" aria-label="LQ Milano sui social">
+        <li><a class="icon-btn" href={site.social.instagram} target="_blank" rel="noopener" aria-label="Instagram"><Icon name="instagram" /></a></li>
+        <li><a class="icon-btn" href={site.social.tiktok} target="_blank" rel="noopener" aria-label="TikTok"><Icon name="tiktok" /></a></li>
+        <li><a class="icon-btn" href={site.social.vinted} target="_blank" rel="noopener" aria-label="Vinted"><Icon name="vinted" /></a></li>
+        <li><a class="icon-btn" href={site.whatsapp} target="_blank" rel="noopener" aria-label="WhatsApp"><Icon name="whatsapp" /></a></li>
+      </ul>
+    </div>
+
+    {footerNav.map((g) => (
+      <nav class="col" aria-label={g.title}>
+        <h2 class="col-title">{g.title}</h2>
+        <ul>{g.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+      </nav>
+    ))}
+
+    <div class="col visit">
+      <h2 class="col-title">Vieni a trovarci</h2>
+      <address>
+        <a href={site.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" class="icon-sm" /><span>{a.street}<br />{a.postcode} {a.city} {a.province} · {a.area}</span></a>
+        <a href={site.phoneHref}><Icon name="phone" class="icon-sm" /><span>{site.phone}</span></a>
+        <a href={`mailto:${site.email}`}><Icon name="mail" class="icon-sm" /><span>{site.email}</span></a>
+      </address>
+    </div>
+  </div>
+  <div class="container bottom">
+    <NeonLogo size="sm" />
+    <p>© {new Date().getFullYear()} LQ Milano · P.IVA {site.vat}</p>
+    <a href="#top" class="to-top">Torna su ↑</a>
+  </div>
+</footer>
+
+<style>
+  .site-footer { padding-top: clamp(48px, 7vw, 96px); padding-bottom: env(safe-area-inset-bottom); }
+  .top { display: grid; gap: 40px 32px; grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .top { grid-template-columns: 1fr 1fr; } .brand-col { grid-column: 1 / -1; } }
+  @media (min-width: 1024px) { .top { grid-template-columns: 1.5fr repeat(3, 1fr) 1.3fr; } .brand-col { grid-column: auto; } }
+  .mark { display: inline-block; border-radius: 6px; overflow: hidden; }
+  :global(.paper-logo) { width: 120px; height: auto; border-radius: 6px; }
+  .pitch { color: var(--on-night-2); max-width: 32ch; margin: 16px 0; }
+  .social { list-style: none; padding: 0; margin: 0 0 0 -10px; display: flex; gap: 2px; }
+  .social .icon-btn:hover { background: rgba(244, 236, 221, 0.1); color: var(--gold); }
+  .col-title { font-family: var(--font-body); font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; font-weight: 600; }
+  .col ul { list-style: none; padding: 0; margin: 0; }
+  .col a { display: inline-flex; align-items: center; min-height: 40px; color: var(--on-night-2); text-decoration: none; }
+  .col a:hover { color: var(--on-night); text-decoration: underline; }
+  address { font-style: normal; display: grid; gap: 4px; }
+  address a { gap: 10px; align-items: flex-start !important; padding-block: 8px; line-height: 1.45; }
+  address :global(svg) { margin-top: 3px; color: var(--gold); }
+  .bottom {
+    margin-top: clamp(40px, 6vw, 72px); padding-block: 20px; border-top: 1px solid rgba(244, 236, 221, 0.1);
+    display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; font-size: 0.88rem; color: var(--on-night-2);
+  }
+  .bottom p { margin: 0; }
+  .bottom :global(.neon-logo) { --fs: 1.3rem; }
+  .to-top { color: var(--on-night-2); min-height: 44px; display: inline-flex; align-items: center; }
+</style>

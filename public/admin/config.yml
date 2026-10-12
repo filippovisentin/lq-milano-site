@@ -1,0 +1,170 @@
+# Pannello di gestione LQ Milano (Sveltia CMS) — https://<sito>/admin
+#
+# Online: accedi con GitHub; ogni salvataggio crea un commit e Cloudflare Pages
+# ripubblica il sito in 1-2 minuti (il 3D del prodotto si genera da solo).
+# In locale (Chrome/Edge): `npm run dev`, apri http://localhost:4321/admin e
+# scegli "Lavora con un repository locale", selezionando la cartella site/.
+backend:
+  name: github
+  repo: OWNER/lq-milano-site # <- da impostare quando il repository esiste
+  branch: main
+
+locale: it
+site_url: https://www.lqmilano.it
+display_url: https://www.lqmilano.it
+logo_url: /favicon.svg
+
+media_folder: src/assets/media
+public_folder: ../../assets/media
+
+slug:
+  encoding: unicode
+  clean_accents: true
+  sanitize_replacement: '-'
+
+collections:
+  - name: products
+    label: Prodotti
+    label_singular: Prodotto
+    description: >-
+      Ogni prodotto è una pagina /product-page/<slug>. Carica le foto nell'ordine:
+      1) fronte su sfondo chiaro, 2) retro su sfondo chiaro, poi dettagli.
+      La vista 3D rotante si crea automaticamente dalle prime due.
+    folder: src/content/products
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: '{{title}}'
+    identifier_field: title
+    summary: '{{title}} · {{price}} € · {{category}}{{available | ternary("", " · VENDUTO")}}'
+    sortable_fields: [order, title, price]
+    view_filters:
+      - { label: Disponibili, field: available, pattern: true }
+      - { label: Venduti, field: available, pattern: false }
+    view_groups:
+      - { label: Categoria, field: category }
+    media_folder: ../../assets/media
+    public_folder: ../../assets/media
+    fields:
+      - { name: title, label: Nome del capo, widget: string, hint: 'Es. "Giacca Pal Zileri"' }
+      - { name: price, label: Prezzo (€), widget: number, value_type: float, min: 0, step: 0.5 }
+      - { name: size, label: Taglia, widget: string, required: false, hint: 'Es. M, 50, 43. Lascia vuoto se non applicabile.' }
+      - name: category
+        label: Categoria
+        widget: select
+        options: [Capispalla, Maglieria e polo, Camicie, Pantaloni e gonne, Accessori, Altro]
+        default: Capispalla
+      - { name: available, label: Disponibile, widget: boolean, default: true, hint: 'Togli la spunta quando il capo è venduto: resta visibile come "Venduto".' }
+      - { name: quantity, label: Pezzi disponibili, widget: number, value_type: int, default: 1, min: 0 }
+      - { name: featured, label: In evidenza in home, widget: boolean, default: false }
+      - { name: order, label: Ordine nello shop, widget: number, value_type: int, default: 1, hint: 'Numero più basso = prima posizione.' }
+      - name: images
+        label: Foto
+        label_singular: Foto
+        widget: list
+        min: 1
+        hint: 'Prima foto = fronte, seconda = retro (sfondo bianco/chiaro e uniforme per il 3D). Poi i dettagli.'
+        field: { name: image, label: Foto, widget: image }
+      - name: details
+        label: Dettagli
+        widget: object
+        fields:
+          - name: misure
+            label: Misure
+            widget: list
+            required: false
+            hint: 'Una misura per riga, es. "Larghezza spalle: 45 cm"'
+            field: { name: misura, label: Misura, widget: string }
+          - name: materiale
+            label: Materiale
+            widget: list
+            required: false
+            field: { name: voce, label: Voce, widget: string }
+          - { name: stato, label: Stato, widget: select, options: [Nuovo con cartellino, Ottimo, Molto buono, Buono, Discreto], required: false }
+          - { name: anni, label: Anni / epoca, widget: string, required: false, hint: "Es. '80, '90-2000" }
+      - name: model3d
+        label: Vista 3D (avanzate)
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { name: front, label: Foto fronte per il 3D, widget: image, required: false, hint: 'Solo se la prima foto non è il fronte.' }
+          - { name: back, label: Foto retro per il 3D, widget: image, required: false }
+          - { name: disabled, label: Disattiva la vista 3D, widget: boolean, default: false }
+      - { name: seoDescription, label: Descrizione per Google (facoltativa), widget: text, required: false }
+      - { name: body, label: Descrizione, widget: markdown, buttons: [bold, italic, link, bulleted-list], editor_components: [] }
+
+  - name: events
+    label: Eventi
+    label_singular: Evento
+    description: Ogni evento è una pagina /event-details/<slug>. Passato o in programma viene calcolato dalla data.
+    folder: src/content/events
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: '{{title}}'
+    summary: '{{title}} · {{start | date("DD/MM/YYYY")}}'
+    sortable_fields: [start, title]
+    media_folder: ../../assets/media
+    public_folder: ../../assets/media
+    fields:
+      - { name: title, label: Titolo, widget: string }
+      - { name: tagline, label: Sottotitolo / slogan, widget: string, required: false }
+      - { name: start, label: Inizio, widget: datetime, format: 'YYYY-MM-DDTHH:mm:ssZ', time_format: 'HH:mm', date_format: 'DD/MM/YYYY' }
+      - { name: end, label: Fine, widget: datetime, required: false, format: 'YYYY-MM-DDTHH:mm:ssZ', time_format: 'HH:mm', date_format: 'DD/MM/YYYY' }
+      - { name: poster, label: Locandina, widget: image }
+      - { name: venue, label: Luogo, widget: string, default: 'Via Giulio e Corrado Venini, 54' }
+      - name: registration
+        label: Iscrizioni
+        widget: select
+        options:
+          - { label: Aperte, value: aperta }
+          - { label: Chiuse, value: chiusa }
+          - { label: Posti esauriti, value: esaurita }
+        default: chiusa
+      - { name: registrationUrl, label: Link per iscriversi, widget: string, required: false, hint: 'Pagina dove ci si iscrive (es. Eventbrite, modulo). Il bottone appare solo se le iscrizioni sono aperte.' }
+      - { name: body, label: Descrizione, widget: markdown, buttons: [bold, italic, link, bulleted-list], editor_components: [] }
+
+  - name: settings
+    label: Impostazioni negozio
+    files:
+      - name: site
+        label: Contatti e dati del negozio
+        file: src/data/site.json
+        fields:
+          - { name: name, label: Nome, widget: string }
+          - { name: tagline, label: Frase 1, widget: string }
+          - { name: taglineSecond, label: Frase 2, widget: string }
+          - { name: phone, label: Telefono (testo), widget: string }
+          - { name: phoneHref, label: Telefono (link tel:), widget: string }
+          - { name: whatsapp, label: Link WhatsApp, widget: string }
+          - { name: email, label: Email, widget: string }
+          - name: address
+            label: Indirizzo
+            widget: object
+            fields:
+              - { name: street, label: Via, widget: string }
+              - { name: postcode, label: CAP, widget: string }
+              - { name: city, label: Città, widget: string }
+              - { name: province, label: Provincia, widget: string }
+              - { name: country, label: Paese, widget: string }
+              - { name: area, label: Quartiere, widget: string }
+          - { name: mapsUrl, label: Link Google Maps, widget: string }
+          - { name: vat, label: Partita IVA, widget: string }
+          - { name: openingHours, label: Orari (una riga per giorno), widget: list, required: false, field: { name: riga, label: Riga, widget: string } }
+          - name: social
+            label: Social
+            widget: object
+            fields:
+              - { name: instagram, label: Instagram, widget: string }
+              - { name: tiktok, label: TikTok, widget: string }
+              - { name: vinted, label: Vinted, widget: string }
+          - name: partners
+            label: Partner
+            widget: list
+            fields:
+              - { name: name, label: Nome, widget: string }
+              - { name: url, label: Link, widget: string }
+          - { name: ownerChecks, label: Da verificare (note interne), widget: list, required: false, field: { name: nota, label: Nota, widget: string } }
