@@ -1,0 +1,86 @@
+{
+  "ok": true,
+  "verdict": "pass",
+  "confidence": 0.817,
+  "estimatedFidelity": 0.817,
+  "targetThreshold": 0.7,
+  "materialId": "horn-button",
+  "sourceImage": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\crops\\button.png",
+  "outDir": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\pbr\\horn-button",
+  "palette": [
+    "#494448",
+    "#585257",
+    "#201C20",
+    "#4F4B4F",
+    "#302C35"
+  ],
+  "maps": {
+    "albedo": {
+      "path": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\pbr\\horn-button\\horn-button_albedo.png",
+      "url": "C:/Program Files/Git/showcase/cappotto-schneiders-salzburg/pbr/horn-button/horn-button_albedo.png",
+      "channel": "albedo",
+      "source": "reference-pixel-extraction"
+    },
+    "roughness": {
+      "path": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\pbr\\horn-button\\horn-button_roughness.png",
+      "url": "C:/Program Files/Git/showcase/cappotto-schneiders-salzburg/pbr/horn-button/horn-button_roughness.png",
+      "channel": "roughness",
+      "source": "reference-pixel-extraction"
+    },
+    "height": {
+      "path": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\pbr\\horn-button\\horn-button_height.png",
+      "url": "C:/Program Files/Git/showcase/cappotto-schneiders-salzburg/pbr/horn-button/horn-button_height.png",
+      "channel": "height",
+      "source": "reference-pixel-extraction"
+    },
+    "normal": {
+      "path": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\pbr\\horn-button\\horn-button_normal.png",
+      "url": "C:/Program Files/Git/showcase/cappotto-schneiders-salzburg/pbr/horn-button/horn-button_normal.png",
+      "channel": "normal",
+      "source": "reference-pixel-extraction"
+    },
+    "ao": {
+      "path": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\pbr\\horn-button\\horn-button_ao.png",
+      "url": "C:/Program Files/Git/showcase/cappotto-schneiders-salzburg/pbr/horn-button/horn-button_ao.png",
+      "channel": "ao",
+      "source": "reference-pixel-extraction"
+    }
+  },
+  "diagnostics": {
+    "sourceWidth": 56,
+    "sourceHeight": 56,
+    "mapSize": 512,
+    "cropBBoxPixels": {
+      "x": 0,
+      "y": 0,
+      "width": 56,
+      "height": 56
+    },
+    "mask": {
+      "backgroundColor": "#352E30",
+      "backgroundNoise": 15.033,
+      "transparentPixelFraction": 0.0,
+      "foregroundCoverage": 0.0925
+    },
+    "mapStats": {
+      "valueRange": 0.2364,
+      "heightP90Gradient": 0.01551,
+      "roughnessBase": 0.68,
+      "roughnessVariation": 0.05,
+      "normalStrength": 0.174,
+      "blurRadius": 10
+    },
+    "palette": [
+      "#494448",
+      "#585257",
+      "#201C20",
+      "#4F4B4F",
+      "#302C35"
+    ]
+  },
+  "warnings": [
+    "single-image inverse rendering cannot prove true physical PBR; confidence is capped",
+    "low value range weakens height/roughness inference"
+  ],
+  "limitation": "single-image PBR extraction is an estimate; 70%+ extraction confidence still needs render screenshot review"
+}

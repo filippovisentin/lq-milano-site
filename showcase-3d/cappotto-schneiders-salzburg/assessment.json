@@ -1,0 +1,397 @@
+{
+  "targetName": "Balmacaan raincoat Schneiders",
+  "sourceImage": "ref-front.png",
+  "preSpecAssessment": {
+    "objectClass": {
+      "primaryType": "single-breasted balmacaan raincoat (outerwear garment)",
+      "primaryDomain": "object",
+      "formLanguage": [
+        "organic soft-shell",
+        "bilateral symmetry",
+        "A-line trapezoid"
+      ],
+      "structureKind": [
+        "shell assembly",
+        "tube appendages",
+        "folded profile collar"
+      ],
+      "motionPotential": [
+        "turntable rotation",
+        "sleeve sway (optional)"
+      ],
+      "materialFamilies": [
+        "woven fabric",
+        "horn button"
+      ],
+      "notes": "Garment displayed on an invisible mannequin: hollow neck, sleeves hang near vertical."
+    },
+    "complexity": {
+      "tier": "complex",
+      "scores": {
+        "silhouetteComplexity": 0.5,
+        "componentCount": 0.6,
+        "hierarchyDepth": 0.6,
+        "repetitionDensity": 0.4,
+        "materialLayerCount": 0.4,
+        "localDetailDensity": 0.5,
+        "occlusionRisk": 0.4,
+        "actionReadinessNeed": 0.2
+      },
+      "estimatedCounts": {
+        "macroComponents": 4,
+        "mesoComponents": 9,
+        "microFeatureGroups": 5,
+        "materialLayers": 3,
+        "repetitionSystems": 2
+      },
+      "reasoning": [
+        "4 macro shells (body, 2 sleeves, collar), 9 meso features (placket, top button, 2 welt pockets, vent, 2 cuff tabs, raglan seams, neck interior), micro: topstitch rows, buttons, crinkle relief.",
+        "Organic cloth: geometry via lofted ellipse cross-sections + tapered tubes; surface via projected de-lit photo (projection-first)."
+      ]
+    },
+    "specDepthDecision": {
+      "requiredDepth": "complex",
+      "minimumComponentLevels": [
+        "macro",
+        "meso",
+        "micro"
+      ],
+      "needsRepetitionSystems": true,
+      "needsMaterialLocalOverrides": true,
+      "needsMultipleReviewViews": true,
+      "needsActionReadyHierarchy": true,
+      "rationale": "Choose simple/moderate/complex/ultra-complex from observed structure, not from a hardcoded domain."
+    },
+    "unknownsToResolveBeforeImplementation": [
+      "Torso side depth not photographed: assume chest depth 0.55x shoulder width, hem depth 0.62x (A-line flare).",
+      "Sleeve cross-section depth assumed round.",
+      "Neck interior colour inferred (dark fabric)."
+    ],
+    "detailInventory": {
+      "scanMethod": "component-zones",
+      "targetMinDetails": 10,
+      "note": "Enumerate every identity-defining small detail before authoring the spec. Each detail must map to a component.localFeatures entry or material.localOverrides entry, never prose only. Use forge/stage1_intake/build_detail_inventory.py to scan zones.",
+      "details": [
+        {
+          "id": "collar-point-leaves",
+          "description": "Point collar, two leaves with rounded tips, stand ~3% height",
+          "zone": "collar",
+          "mapsTo": "component.localFeatures"
+        },
+        {
+          "id": "collar-buttonhole-bar",
+          "description": "Bar buttonhole on wearer-left collar leaf",
+          "zone": "collar",
+          "mapsTo": "component.localFeatures"
+        },
+        {
+          "id": "collar-topstitch",
+          "description": "Topstitch row 4mm from collar edge",
+          "zone": "collar",
+          "mapsTo": "component.localFeatures"
+        },
+        {
+          "id": "fly-placket",
+          "description": "Concealed fly-front placket strip from neck to hem, slightly raised",
+          "zone": "body-front",
+          "mapsTo": "component.localFeatures"
+        },
+        {
+          "id": "top-button",
+          "description": "Single exposed dark-brown top button at neck",
+          "zone": "body-front",
+          "mapsTo": "component.localFeatures"
+        },
+        {
+          "id": "welt-pocket-l",
+          "description": "Slanted welt pocket wearer-left, 30deg, hip height",
+          "zone": "body-front",
+          "mapsTo": "component.localFeatures"
+        },
+        {
+          "id": "welt-pocket-r",
+          "description": "Slanted welt pocket wearer-right, mirror",
+          "zone": "body-front",
+          "mapsTo": "component.localFeatures"
+        },
+        {
+          "id": "raglan-seams",
+          "description": "Raglan seams neck->underarm, visible on back",
+          "zone": "body-back",
+          "mapsTo": "component.localFeatures"
+        },
+        {
+          "id": "back-vent",
+          "description": "Centre back vent lower 35% of back",
+          "zone": "body-back",
+          "mapsTo": "component.localFeatures"
+        },
+        {
+          "id": "cuff-tabs",
+          "description": "Cuff tab + button on each sleeve hem",
+          "zone": "sleeves",
+          "mapsTo": "component.localFeatures"
+        },
+        {
+          "id": "crinkle-relief",
+          "description": "Fine crease/crinkle relief on chest and back (sheen highlights)",
+          "zone": "material",
+          "mapsTo": "material.localOverrides"
+        },
+        {
+          "id": "neck-interior",
+          "description": "Hollow neck opening, darker interior lining",
+          "zone": "body",
+          "mapsTo": "component.localFeatures"
+        }
+      ]
+    },
+    "anatomy": {
+      "applies": false,
+      "styleHeads": 0.0,
+      "proportions": {
+        "headUnit": 0.0,
+        "torso": 0.0,
+        "legs": 0.0,
+        "shoulderWidth": 0.0,
+        "hipWidth": 0.0
+      },
+      "pose": {
+        "type": "unassessed",
+        "jointAngles": {}
+      },
+      "faceLandmarks": {
+        "eyeLine": 0.0,
+        "eyeSpacing": 0.0,
+        "noseBase": 0.0,
+        "mouthLine": 0.0,
+        "hairline": 0.0
+      },
+      "features": [],
+      "confidence": 0.0,
+      "note": "Only meaningful when objectClass.primaryDomain is character or hybrid. Set applies=true and fill from forge/stage1_intake/extract_landmarks.py. See grimoire/character/reconstruction.md and grimoire/character/likeness_maximization.md."
+    },
+    "sourceImage": "ref-front.png"
+  },
+  "qualityContract": {
+    "qualityBar": "complex",
+    "definitionOfDone": [
+      "The rendered model matches the reference silhouette, primary proportions, visible component hierarchy, material response, and most recognizable local features for the selected fidelity tier."
+    ],
+    "minimumSpecDepth": {
+      "macroComponents": 3,
+      "mesoComponents": 8,
+      "microFeatureGroups": 5,
+      "materialLayers": 3,
+      "repetitionSystems": 1,
+      "reviewViewpoints": 4
+    },
+    "featureGroups": [
+      {
+        "id": "overall-silhouette",
+        "name": "Overall silhouette and proportions",
+        "required": true,
+        "qualityCriteria": [
+          "Bounding shape, dominant curves, negative spaces, and scale relationships are explicitly described."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "model reads as a generic placeholder instead of the reference object",
+          "major proportions are guessed without evidence"
+        ]
+      },
+      {
+        "id": "primary-structure",
+        "name": "Primary structure and hierarchy",
+        "required": true,
+        "qualityCriteria": [
+          "Major parts, joints, seams, contact points, and parent-child relationships are named before code generation."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "large visible parts are merged into one mesh",
+          "component hierarchy is too shallow for the observed complexity"
+        ]
+      },
+      {
+        "id": "attachment-joint-correctness",
+        "name": "Attachment and joint correctness",
+        "required": true,
+        "qualityCriteria": [
+          "Every visible child appendage, branch, limb, handle, connector, tube, cable, horn, wing, leg, or hinged part has an attachment contract with parent socket, localStart/localEnd, contact type, embed/overlap, and gap tolerance."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "child part root floats away from the parent",
+          "branch/limb/tube is centered in space instead of pivoting from its root",
+          "parent-child transform mixes world and local coordinates"
+        ]
+      },
+      {
+        "id": "surface-material-response",
+        "name": "Surface material response",
+        "required": true,
+        "qualityCriteria": [
+          "Albedo zones, roughness, normal/bump/displacement intent, cavity dirt, edge wear, and local overrides are specified where visible.",
+          "Important materials define independent albedo, roughness, height/normal, and AO responses instead of reusing one texture for unrelated PBR channels.",
+          "Surface response is decomposed into macro, meso, and micro frequency bands with scale and amplitude tied to object scale."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "surface looks like flat plastic",
+          "local material variation is missing or not tied to image evidence"
+        ]
+      },
+      {
+        "id": "reference-lookdev",
+        "name": "Reference color, material, and lighting response",
+        "required": true,
+        "qualityCriteria": [
+          "Material-pass names the reference-derived albedo palette, roughness variation, tactile normal/bump/displacement response, and local masks.",
+          "When a source image is available, run reference PBR extraction and require confidence >= 0.7 before treating maps as implementation-ready.",
+          "Lighting-pass names key/fill/rim or environment light, exposure, tone mapping, background, and contact shadow behavior.",
+          "Neutral, grazing-angle, and reference-matched renders prove that surface relief survives relighting and is not painted into albedo."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "model has acceptable shape but reads as flat shaded or plastic",
+          "colors are a generic average instead of reference-observed local color zones",
+          "lighting is evenly ambient and cannot reproduce the source value range"
+        ]
+      }
+    ],
+    "visualDeltaChecks": [
+      "silhouette and negative-space delta",
+      "component hierarchy depth delta",
+      "repetition density and distribution delta",
+      "material albedo/roughness/normal response delta",
+      "local feature placement and scale delta"
+    ],
+    "antiShallowSpecRules": [
+      "Do not proceed to code if qualityContract.qualityBar is unassessed.",
+      "Do not proceed to code if the spec only contains a root component for a moderate or complex object.",
+      "Do not proceed to code if required featureGroups are not represented by componentTree, materials, or repetitionSystems.",
+      "Do not proceed to code if visible local features are described only in prose and not attached to components/materials/evidenceRefs.",
+      "Do not proceed past structural-pass if attached child parts lack attachment.parentSocket, localStart, localEnd, embedDepth/overlap, and gapTolerance.",
+      "Do not pass material look-dev when albedo is reused as roughness, height, normal, or AO.",
+      "Do not pass material look-dev without macro, meso, and micro surface frequency bands for close-up materials.",
+      "Do not pass reference-fidelity material look-dev from a source image without usable referencePbr maps or an explicit documented limitation.",
+      "Do not patch a spec with extracted PBR maps when extraction confidence is below the target threshold unless the user explicitly accepts lower fidelity.",
+      "Do not place adjacent separate-geometry parts below 0.02 world-unit seam overlap (source: grimoire/build/geometry_patterns.md).",
+      "Do not satisfy raised or recessed relief, fasteners, or grip structure with a map alone when the feature affects form; use geometry or displacement (source: grimoire/build/geometry_patterns.md)."
+    ]
+  },
+  "authoringInstruction": "Fill observed object class, complexity reasoning, featureGroups, visualDeltaChecks, and unknowns before generating or implementing ObjectSculptSpec.",
+  "localSpecSearch": {
+    "collection": "core_3d",
+    "query": "Balmacaan raincoat Schneiders cloth garment fabric drape folds coat sleeve collar seam stitching woven fabric roughness sheen",
+    "index": {
+      "status": "rebuilt",
+      "reason": "missing",
+      "fingerprint": "06f0b2ece2935e441653f5c3533f91b3a4d6163f2aec4267559d7d8419bdd040"
+    },
+    "matches": [
+      {
+        "record_id": "core.pbr-roughness",
+        "file_path": "grimoire/glossary/3d_vocabulary.md",
+        "heading": "Material And PBR",
+        "key_path": null,
+        "score": 4.20187819032,
+        "snippets": [
+          "Roughness is microfacet scatter: high roughness reads matte and low roughness reads glossy. Recognition cues: low roughness reads as a sharp, mirror-like, tight specular highlight; high roughness reads as a blurry, wide, dim highlight and matte ..."
+        ],
+        "source_refs": [
+          {
+            "path": "grimoire/glossary/3d_vocabulary.md",
+            "heading": "Material And PBR",
+            "key_path": null
+          },
+          {
+            "path": "grimoire/intake/image_analysis.md",
+            "heading": "Layer 5 \u00e2\u20ac\u201d Materials & surface (PBR)",
+            "key_path": null
+          },
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.material_pbr[1]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "grimoire/glossary/3d_vocabulary.md"
+          },
+          {
+            "kind": "notebooklm-research",
+            "ref": "notebooklm:4b03c2f9-8393-411f-b5b4-039ab9532843",
+            "note": "Validated generic schema vocabulary; numeric claims remain backed by local source_refs."
+          },
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation \u00e2\u20ac\u201d merged recognition cues + Three.js target instead of duplicating this entity."
+          }
+        ]
+      },
+      {
+        "record_id": "core.pbr-orm-channel-packing",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.material_pbr[10]",
+        "score": 3.44606566173,
+        "snippets": [
+          "Convention of packing AO, Roughness, and Metalness grayscale maps into the R, G, B channels of a single texture to cut texture-fetch and VRAM cost. Quy \u00c6\u00b0\u00e1\u00bb\u203ac \u00c4\u2018\u00c3\u00b3ng g\u00c3\u00b3i ba b\u00e1\u00ba\u00a3n \u00c4\u2018\u00e1\u00bb\u201c grayscale AO, Roughness, Metalness v\u00c3\u00a0o c\u00c3\u00a1c k\u00c3\u00aanh R, G, B c\u00e1\u00bb\u00a7a m\u00e1\u00bb\u2122t ..."
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.material_pbr[10]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      },
+      {
+        "record_id": "core.shader-mapping-orm-packed-texture-assignment",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.rendering_shader_mapping[13]",
+        "score": 2.997635391648,
+        "snippets": [
+          "... bi\u00e1\u00bb\u2021t c\u00e1\u00bb\u00a7a MeshPhysicalMaterial c\u00c3\u00b9ng l\u00c3\u00bac, theo quy \u00c6\u00b0\u00e1\u00bb\u203ac ORM c\u00e1\u00bb\u00a7a glTF. Recognition cues: Source 2/CS2 exports often ship AO/Roughness/Metalness pre-packed into one file rather than three separate grayscale images D\u00e1\u00ba\u00a5u hi\u00e1\u00bb\u2021u nh\u00e1\u00ba\u00adn di\u00e1\u00bb\u2021n: B\u00e1\u00ba\u00a3n xu\u00e1\u00ba\u00a5t t\u00e1\u00bb\u00ab ..."
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.rendering_shader_mapping[13]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      }
+    ]
+  }
+}

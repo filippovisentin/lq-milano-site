@@ -1,0 +1,68 @@
+---
+// Dev-only review stage for the hand-built showcase garments (img2threejs).
+// Renders a factory on a white sweep like the product photos, from a fixed
+// azimuth (?az=0|90|180|270), so captures line up with ref-front/ref-back.
+export const prerender = false;
+if (!import.meta.env.DEV) return new Response(null, { status: 404 });
+---
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <title>Showcase review</title>
+    <style>
+      html, body { margin: 0; background: #fff; }
+      canvas { display: block; width: 600px; height: 900px; }
+    </style>
+  </head>
+  <body>
+    <canvas id="c" width="600" height="900"></canvas>
+    <script>
+      import * as THREE from 'three';
+      import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+      import { mountShowcase } from '../../scripts/showcase/index';
+
+      const q = new URLSearchParams(location.search);
+      const canvas = document.getElementById('c') as HTMLCanvasElement;
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+      renderer.setPixelRatio(1);
+      renderer.setSize(600, 900, false);
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.setClearColor(0xffffff, 1);
+      const scene = new THREE.Scene();
+      const pm = new THREE.PMREMGenerator(renderer);
+      scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
+      const { model, lights } = await mountShowcase(q.get('id') ?? 'cappotto-schneiders-salzburg', { pass: q.get('pass') ?? 'final' });
+      scene.add(model, lights);
+      // orthographic camera framed on the garment, like the flat product shots
+      const box = new THREE.Box3().setFromObject(model);
+      const c = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3());
+      const h = Math.max(size.y, size.x * 1.5) * 1.2;
+      const cam = new THREE.OrthographicCamera(-h / 3, h / 3, h / 2, -h / 2, 0.01, 50);
+      const az = (Number(q.get('az') ?? 0) * Math.PI) / 180, el = (Number(q.get('el') ?? 0) * Math.PI) / 180;
+      cam.position.set(c.x + Math.sin(az) * Math.cos(el) * 10, c.y + Math.sin(el) * 10, c.z + Math.cos(az) * Math.cos(el) * 10);
+      cam.lookAt(c);
+      if (q.get('clay')) model.traverse((o: any) => { if (o.isMesh) o.material = new THREE.MeshStandardMaterial({ color: 0xb9b6a8, roughness: 0.8 }); });
+      if (q.get('wire')) model.traverse((o: any) => o.isMesh && (o.material.wireframe = true));
+      // textures arrive asynchronously: render until the loading manager is idle
+      await new Promise<void>((res) => {
+        let idle = 0;
+        const tick = () => {
+          renderer.render(scene, cam);
+          const busy = (THREE.DefaultLoadingManager as any).itemsLoaded < (THREE.DefaultLoadingManager as any).itemsTotal;
+          idle = busy ? 0 : idle + 1;
+          if (idle > 20) res(); else setTimeout(tick, 30);
+        };
+        let loaded = 0, total = 0;
+        THREE.DefaultLoadingManager.onProgress = (_u, l, t) => { loaded = l; total = t; (THREE.DefaultLoadingManager as any).itemsLoaded = l; (THREE.DefaultLoadingManager as any).itemsTotal = t; };
+        tick();
+      });
+      const save = q.get('save');
+      if (save) {
+        await fetch('/dev/capture', { method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ id: q.get('id') ?? 'cappotto-schneiders-salzburg', name: save, png: canvas.toDataURL('image/png') }) });
+      }
+      (window as any).__ready = true;
+    </script>
+  </body>
+</html>

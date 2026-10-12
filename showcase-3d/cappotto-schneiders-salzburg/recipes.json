@@ -1,0 +1,47 @@
+{
+ "fabric": {
+  "componentId": "root",
+  "dominantAlbedo": "rgba(130, 126, 111, 1.0)",
+  "secondaryAlbedo": "rgba(176, 169, 147, 1.0)",
+  "materialClass": "fabric",
+  "materialClassConfidence": 0.6,
+  "roughnessEstimate": 0.294,
+  "metalnessEstimate": 0.0,
+  "highlightEvidence": "sharp, tight specular hotspot \u2014 supports low roughness/high specularity",
+  "sourceCropPath": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\crops\\fabric.png",
+  "labClusterMeta": {
+   "clusterCount": 3,
+   "dominantClusterSharePct": 0.396
+  }
+ },
+ "button": {
+  "componentId": "root",
+  "dominantAlbedo": "rgba(73, 68, 72, 1.0)",
+  "secondaryAlbedo": "rgba(40, 35, 41, 1.0)",
+  "materialClass": "plastic",
+  "materialClassConfidence": 0.6,
+  "roughnessEstimate": 0.87,
+  "metalnessEstimate": 0.0,
+  "highlightEvidence": "broad, gradually-fading highlight \u2014 supports high roughness/diffuse response",
+  "sourceCropPath": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\crops\\button.png",
+  "labClusterMeta": {
+   "clusterCount": 3,
+   "dominantClusterSharePct": 0.46
+  }
+ },
+ "interior": {
+  "componentId": "root",
+  "dominantAlbedo": "rgba(81, 76, 66, 1.0)",
+  "secondaryAlbedo": "rgba(67, 59, 53, 1.0)",
+  "materialClass": "fabric",
+  "materialClassConfidence": 0.6,
+  "roughnessEstimate": 0.184,
+  "metalnessEstimate": 0.0,
+  "highlightEvidence": "sharp, tight specular hotspot \u2014 supports low roughness/high specularity",
+  "sourceCropPath": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\crops\\interior.png",
+  "labClusterMeta": {
+   "clusterCount": 3,
+   "dominantClusterSharePct": 0.493
+  }
+ }
+}

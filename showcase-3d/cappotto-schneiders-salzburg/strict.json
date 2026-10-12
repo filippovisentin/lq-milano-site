@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "summary": {
+    "targetName": "Cappotto Schneiders Salzburg",
+    "suitability": "conditional",
+    "components": 17,
+    "materials": 4
+  }
+}

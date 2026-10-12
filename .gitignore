@@ -12,3 +12,9 @@ ADMIN-CREDENZIALI.txt
 public/img/
 # GitHub Pages snapshot (scripts/export-static.mjs)
 pages-dist/
+# img2threejs work files (regenerable)
+showcase-3d/*/captures/
+showcase-3d/*/crops/
+showcase-3d/*/detail-inventory/
+showcase-3d/*/ref-*.png
+showcase-3d/*/delit-*.png

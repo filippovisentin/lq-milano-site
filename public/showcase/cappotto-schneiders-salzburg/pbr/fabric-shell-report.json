@@ -1,0 +1,85 @@
+{
+  "ok": true,
+  "verdict": "pass",
+  "confidence": 0.86,
+  "estimatedFidelity": 0.86,
+  "targetThreshold": 0.7,
+  "materialId": "fabric-shell",
+  "sourceImage": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\crops\\fabric.png",
+  "outDir": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\pbr\\fabric-shell",
+  "palette": [
+    "#868173",
+    "#ECE9CE",
+    "#A39C87",
+    "#BFB99F",
+    "#676455"
+  ],
+  "maps": {
+    "albedo": {
+      "path": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\pbr\\fabric-shell\\fabric-shell_albedo.png",
+      "url": "C:/Program Files/Git/showcase/cappotto-schneiders-salzburg/pbr/fabric-shell/fabric-shell_albedo.png",
+      "channel": "albedo",
+      "source": "reference-pixel-extraction"
+    },
+    "roughness": {
+      "path": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\pbr\\fabric-shell\\fabric-shell_roughness.png",
+      "url": "C:/Program Files/Git/showcase/cappotto-schneiders-salzburg/pbr/fabric-shell/fabric-shell_roughness.png",
+      "channel": "roughness",
+      "source": "reference-pixel-extraction"
+    },
+    "height": {
+      "path": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\pbr\\fabric-shell\\fabric-shell_height.png",
+      "url": "C:/Program Files/Git/showcase/cappotto-schneiders-salzburg/pbr/fabric-shell/fabric-shell_height.png",
+      "channel": "height",
+      "source": "reference-pixel-extraction"
+    },
+    "normal": {
+      "path": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\pbr\\fabric-shell\\fabric-shell_normal.png",
+      "url": "C:/Program Files/Git/showcase/cappotto-schneiders-salzburg/pbr/fabric-shell/fabric-shell_normal.png",
+      "channel": "normal",
+      "source": "reference-pixel-extraction"
+    },
+    "ao": {
+      "path": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\pbr\\fabric-shell\\fabric-shell_ao.png",
+      "url": "C:/Program Files/Git/showcase/cappotto-schneiders-salzburg/pbr/fabric-shell/fabric-shell_ao.png",
+      "channel": "ao",
+      "source": "reference-pixel-extraction"
+    }
+  },
+  "diagnostics": {
+    "sourceWidth": 260,
+    "sourceHeight": 400,
+    "mapSize": 512,
+    "cropBBoxPixels": {
+      "x": 0,
+      "y": 0,
+      "width": 260,
+      "height": 400
+    },
+    "mask": {
+      "backgroundColor": "#B4B09B",
+      "backgroundNoise": 30.1,
+      "transparentPixelFraction": 0.0,
+      "foregroundCoverage": 0.1182
+    },
+    "mapStats": {
+      "valueRange": 0.5241,
+      "heightP90Gradient": 0.0512,
+      "roughnessBase": 0.684,
+      "roughnessVariation": 0.086,
+      "normalStrength": 0.216,
+      "blurRadius": 10
+    },
+    "palette": [
+      "#868173",
+      "#ECE9CE",
+      "#A39C87",
+      "#BFB99F",
+      "#676455"
+    ]
+  },
+  "warnings": [
+    "single-image inverse rendering cannot prove true physical PBR; confidence is capped"
+  ],
+  "limitation": "single-image PBR extraction is an estimate; 70%+ extraction confidence still needs render screenshot review"
+}

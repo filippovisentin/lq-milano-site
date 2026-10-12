@@ -1,0 +1,14 @@
+{
+  "admitted": true,
+  "reasons": [],
+  "provenance": {
+    "viewpoint": "reference",
+    "sourcePath": "C:\\Users\\filip\\Desktop\\LQ-Milano-Handoff\\site\\showcase-3d\\cappotto-schneiders-salzburg\\ref-front.png",
+    "width": 1600,
+    "height": 2400,
+    "foregroundCoverage": 0.2672,
+    "largestComponentFraction": 1.0,
+    "pHash": 18139641304952078496,
+    "duplicateOfHash": null
+  }
+}
