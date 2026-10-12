@@ -1,6 +1,8 @@
 {
-  "version": 1791841321595,
+  "version": 1791845119764,
+  "algo": 2,
   "hasBack": false,
+  "warp": null,
   "tolerance": 22,
   "area": 0.379
 }

@@ -19,7 +19,7 @@ export interface ViewerHandle {
 }
 
 const N = 200; // grid cells per side
-const THICK = 0.15; // max half-thickness, in garment-width units (a jacket is ~30% as deep as it is wide)
+const THICK = 0.12; // max half-thickness, in frame units (depth.png is normalised: 255 = thickest point)
 const MIN_WALL = 0.012; // the outline is never paper-thin
 
 type Px = { data: Uint8ClampedArray; w: number; h: number };
@@ -35,6 +35,12 @@ function sample(p: Px, u: number, v: number, ch: number) {
   const y = Math.min(p.h - 1, Math.max(0, Math.round((1 - v) * (p.h - 1))));
   return p.data[(y * p.w + x) * 4 + ch] / 255;
 }
+function bilinear(p: Px, u: number, v: number, ch: number) {
+  const fx = Math.min(p.w - 1, Math.max(0, u * (p.w - 1))), fy = Math.min(p.h - 1, Math.max(0, (1 - v) * (p.h - 1)));
+  const x0 = Math.floor(fx), y0 = Math.floor(fy), x1 = Math.min(p.w - 1, x0 + 1), y1 = Math.min(p.h - 1, y0 + 1);
+  const a = fx - x0, b = fy - y0, at = (x: number, y: number) => p.data[(y * p.w + x) * 4 + ch];
+  return ((at(x0, y0) * (1 - a) + at(x1, y0) * a) * (1 - b) + (at(x0, y1) * (1 - a) + at(x1, y1) * a) * b) / 255;
+}
 
 function buildSolid(alpha: Px, depth: Px) {
   const V = N + 1;
@@ -43,21 +49,71 @@ function buildSolid(alpha: Px, depth: Px) {
   for (let j = 0; j < V; j++) for (let i = 0; i < V; i++) {
     const u = i / N, v = j / N, k = j * V + i;
     inside[k] = sample(alpha, u, v, 3) > 0.5 ? 1 : 0;
-    z[k] = Math.max(MIN_WALL, sample(depth, u, v, 0) * THICK);
+    z[k] = Math.max(MIN_WALL, bilinear(depth, u, v, 0) * THICK);
   }
   const full = new Uint8Array(N * N);
   for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
     const a = j * V + i;
     full[j * N + i] = inside[a] && inside[a + 1] && inside[a + V] && inside[a + V + 1] ? 1 : 0;
   }
+  const isFull = (i: number, j: number) => i >= 0 && j >= 0 && i < N && j < N && full[j * N + i] === 1;
 
-  // shells: shared vertex grid, separate index buffers
+  // outline edges (between a full cell and an empty one), counter-clockwise
+  const edges: [number, number][] = [];
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+    if (!full[j * N + i]) continue;
+    const a = j * V + i, b = a + 1, c = a + V, d = c + 1;
+    if (!isFull(i, j - 1)) edges.push([a, b]); // bottom
+    if (!isFull(i + 1, j)) edges.push([b, d]); // right
+    if (!isFull(i, j + 1)) edges.push([d, c]); // top
+    if (!isFull(i - 1, j)) edges.push([c, a]); // left
+  }
+  // vertex positions: the grid, with the outline relaxed so the staircase of
+  // cells becomes a smooth curve (shells and wall share these positions)
+  const X = new Float32Array(V * V), Y = new Float32Array(V * V);
+  for (let j = 0; j < V; j++) for (let i = 0; i < V; i++) { X[j * V + i] = i / N - 0.5; Y[j * V + i] = j / N - 0.5; }
+  const nb = new Map<number, number[]>();
+  for (const [a, b] of edges) { (nb.get(a) ?? nb.set(a, []).get(a)!).push(b); (nb.get(b) ?? nb.set(b, []).get(b)!).push(a); }
+  for (let it = 0; it < 4; it++) {
+    const nx = new Map<number, [number, number]>();
+    for (const [k, ns] of nb) {
+      if (ns.length !== 2) continue; // pinch points stay put
+      nx.set(k, [X[k] * 0.5 + (X[ns[0]] + X[ns[1]]) * 0.25, Y[k] * 0.5 + (Y[ns[0]] + Y[ns[1]]) * 0.25]);
+    }
+    for (const [k, [x, y]] of nx) { X[k] = x; Y[k] = y; }
+  }
+  // thickness: the outline sits at the thin wall; the first rings of vertices
+  // inside are relaxed so the flank rises as one smooth ramp instead of a
+  // saw-tooth (outline vertices lie at slightly different depths in the map)
+  const ring = new Int16Array(V * V).fill(-1);
+  let front: number[] = [...nb.keys()];
+  for (const k of front) { ring[k] = 0; z[k] = MIN_WALL; }
+  for (let r = 1; r <= 4 && front.length; r++) {
+    const next: number[] = [];
+    for (const k of front) for (const n of [k - 1, k + 1, k - V, k + V]) {
+      if (n < 0 || n >= V * V || ring[n] !== -1 || !inside[n]) continue;
+      ring[n] = r; next.push(n);
+    }
+    front = next;
+  }
+  for (let it = 0; it < 6; it++) {
+    const nz = z.slice();
+    for (let k = 0; k < V * V; k++) {
+      if (ring[k] < 1) continue;
+      let s = 0, c = 0;
+      for (const n of [k - 1, k + 1, k - V, k + V]) if (n >= 0 && n < V * V && inside[n]) { s += z[n]; c++; }
+      if (c) nz[k] = z[k] * 0.4 + (s / c) * 0.6;
+    }
+    z.set(nz);
+  }
+
+  // shells: shared vertex grid, separate index buffers; UVs follow positions
   const pos = new Float32Array(V * V * 3), uv = new Float32Array(V * V * 2);
   const posB = new Float32Array(V * V * 3), uvB = new Float32Array(V * V * 2);
-  for (let j = 0; j < V; j++) for (let i = 0; i < V; i++) {
-    const k = j * V + i, x = i / N - 0.5, y = j / N - 0.5;
-    pos.set([x, y, z[k]], k * 3); uv.set([i / N, j / N], k * 2);
-    posB.set([x, y, -z[k]], k * 3); uvB.set([1 - i / N, j / N], k * 2); // back texture is authored seen from behind
+  for (let k = 0; k < V * V; k++) {
+    const x = X[k], y = Y[k];
+    pos.set([x, y, z[k]], k * 3); uv.set([x + 0.5, y + 0.5], k * 2);
+    posB.set([x, y, -z[k]], k * 3); uvB.set([0.5 - x, y + 0.5], k * 2); // back texture is authored seen from behind
   }
   const fi: number[] = [], bi: number[] = [];
   for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
@@ -77,23 +133,12 @@ function buildSolid(alpha: Px, depth: Px) {
 
   // side wall along every edge between a full cell and an empty one
   const wp: number[] = [], wu: number[] = [];
-  const quad = (ka: number, kb: number) => {
+  for (const [ka, kb] of edges) {
     // ka -> kb runs counter-clockwise around the solid seen from the front
-    const xa = (ka % V) / N - 0.5, ya = Math.floor(ka / V) / N - 0.5;
-    const xb = (kb % V) / N - 0.5, yb = Math.floor(kb / V) / N - 0.5;
-    const ua = [(ka % V) / N, Math.floor(ka / V) / N], ub = [(kb % V) / N, Math.floor(kb / V) / N];
-    const A = [xa, ya, z[ka]], B = [xb, yb, z[kb]], C = [xb, yb, -z[kb]], D = [xa, ya, -z[ka]];
+    const ua = [X[ka] + 0.5, Y[ka] + 0.5], ub = [X[kb] + 0.5, Y[kb] + 0.5];
+    const A = [X[ka], Y[ka], z[ka]], B = [X[kb], Y[kb], z[kb]], C = [X[kb], Y[kb], -z[kb]], D = [X[ka], Y[ka], -z[ka]];
     wp.push(...A, ...C, ...B, ...A, ...D, ...C);
     wu.push(...ua, ...ub, ...ub, ...ua, ...ua, ...ub);
-  };
-  const isFull = (i: number, j: number) => i >= 0 && j >= 0 && i < N && j < N && full[j * N + i] === 1;
-  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
-    if (!full[j * N + i]) continue;
-    const a = j * V + i, b = a + 1, c = a + V, d = c + 1;
-    if (!isFull(i, j - 1)) quad(a, b); // bottom edge
-    if (!isFull(i + 1, j)) quad(b, d); // right
-    if (!isFull(i, j + 1)) quad(d, c); // top
-    if (!isFull(i - 1, j)) quad(c, a); // left
   }
   const wall = new BufferGeometry();
   wall.setAttribute('position', new BufferAttribute(new Float32Array(wp), 3));

@@ -1,6 +1,11 @@
 {
-  "version": 1791841417168,
+  "version": 1791845171351,
+  "algo": 2,
   "hasBack": true,
+  "warp": {
+    "method": "tps(0.003)",
+    "coverage": 0.994
+  },
   "tolerance": 22,
   "area": 0.231
 }
