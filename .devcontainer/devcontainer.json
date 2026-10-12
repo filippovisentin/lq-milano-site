@@ -1,0 +1,14 @@
+{
+  // GitHub Codespaces: Code -> Codespaces -> Create. Installs, creates the admin
+  // account (credentials in ADMIN-CREDENZIALI.txt inside the codespace), builds
+  // and starts the site; port 4321 opens in the browser, private to you.
+  "name": "LQ Milano",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "postCreateCommand": "npm ci && ( [ -f .env ] || npm run admin:create ) && npm run build",
+  "postAttachCommand": "cat ADMIN-CREDENZIALI.txt; npm start",
+  "forwardPorts": [4321],
+  "portsAttributes": {
+    "4321": { "label": "Sito LQ Milano", "onAutoForward": "openBrowser" }
+  },
+  "hostRequirements": { "memory": "4gb" }
+}

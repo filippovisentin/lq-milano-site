@@ -17,7 +17,12 @@ export default defineConfig({
   // Static pages are prerendered; shop, products, events, media and the admin
   // panel run on demand on the Node server (they read the live catalogue).
   adapter: node({ mode: 'standalone' }),
-  security: { checkOrigin: true },
+  security: {
+    checkOrigin: true,
+    // In GitHub Codespaces the site sits behind the *.app.github.dev proxy:
+    // trust its forwarded host so login and admin forms pass the origin check.
+    allowedDomains: process.env.CODESPACES ? [{ protocol: 'https', hostname: '*.app.github.dev' }] : [],
+  },
   image: {
     responsiveStyles: false,
   },
