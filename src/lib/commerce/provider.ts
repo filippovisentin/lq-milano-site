@@ -29,7 +29,7 @@ const demo: CommerceProvider = {
   label: 'Modalità demo',
   live: false,
   async createCheckout() {
-    return { redirectUrl: '/checkout' };
+    return { redirectUrl: `${import.meta.env.BASE_URL.replace(/\/$/, '')}/checkout` };
   },
 };
 

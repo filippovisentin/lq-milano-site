@@ -2,7 +2,6 @@
 // Intro: the shop sign switching on. Shown once per browser session, never
 // blocks the page underneath (content is already rendered and focusable),
 // skippable by click/tap/any key, short under reduced motion.
-import { getImage } from 'astro:assets';
 import NeonLogo from './NeonLogo.astro';
 import { media } from '../lib/media';
 import site from '../data/site.json';
@@ -15,7 +14,9 @@ const place = encodeURIComponent(`${site.address.street}, ${site.address.postcod
 const street = key
   ? `https://maps.googleapis.com/maps/api/streetview?size=640x400&scale=2&location=${place}&fov=85&pitch=6&source=outdoor&return_error_code=true&key=${key}`
   : null;
-const fallback = (await getImage({ src: media.storefront, width: 1140, format: 'webp', quality: 70 })).src;
+// pre-rendered by scripts/page-images.mjs (same naming as Pic.astro)
+const stem = media.storefront.src.split('?')[0].split('/').pop()!.replace(/\.[^.]+$/, '').replace(/\.[A-Za-z0-9_-]{8}$/, '');
+const fallback = `/img/${stem}-1100.webp`;
 ---
 <div class="loader" id="loader" aria-hidden="true">
   <div class="loader-bg" style={`background-image:url('${street ?? fallback}'), url('${fallback}')`}></div>

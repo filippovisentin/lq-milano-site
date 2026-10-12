@@ -80,7 +80,7 @@ import Icon from '../components/Icon.astro';
 <script>
   import * as cart from '../lib/commerce/cart';
   const s = cart.get();
-  if (!s.items.length) location.replace('/cart-page');
+  if (!s.items.length) location.replace(`${import.meta.env.BASE_URL.replace(/\/$/, '')}/cart-page`);
   document.querySelector('[data-mini]')!.innerHTML = s.items
     .map((i) => `<li><img src="${i.image}" alt="" /><span>${i.title.replace(/</g, '&lt;')}${i.size ? `<br><small class="muted">Taglia ${i.size}</small>` : ''}</span><strong class="tabular">${cart.euro(i.price * i.qty)}</strong></li>`)
     .join('');

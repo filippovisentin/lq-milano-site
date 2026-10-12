@@ -30,6 +30,9 @@ In produzione `data/` deve stare su un **disco persistente** (o `LQ_DATA_DIR`) e
 ## Hosting
 Serve un hosting Node con disco persistente (es. Render, Railway, Fly.io, un VPS). Cloudflare Pages da solo non basta più: il pannello riceve upload e genera il 3D sul server.
 
+### Anteprima su GitHub Pages (solo vetrina)
+Con il repository **pubblico**: Settings → Pages → Source: *GitHub Actions*, poi Actions → *Pubblica su GitHub Pages* → Run workflow. Il sito va su `https://<utente>.github.io/<repo>/` e si aggiorna a ogni push. È una fotografia statica (`scripts/export-static.mjs`): niente pannello admin, il catalogo è quello in `data/` al momento della pubblicazione. Finché il repository è privato il workflow viene saltato.
+
 ## E-commerce
 Modalità **demo** dichiarata (carrello reale, checkout di anteprima senza pagamento). Per andare live: implementare un provider in `src/lib/commerce/provider.ts` (Wix Headless, Stripe o Shopify).
 

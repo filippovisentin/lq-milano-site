@@ -8,9 +8,14 @@ import { fileURLToPath } from 'node:url';
 const ROOT = fileURLToPath(new URL('.', import.meta.url));
 process.env.LQ_PROJECT_ROOT = ROOT;
 
+// GitHub Pages snapshot (scripts/export-static.mjs): the site lives under a
+// sub-path such as /lq-milano-site, so assets and chunks get that base.
+const PAGES_BASE = process.env.PAGES_BASE || undefined;
+
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://www.lqmilano.it',
+  site: process.env.PAGES_SITE || 'https://www.lqmilano.it',
+  base: PAGES_BASE,
   // Wix URLs have no trailing slash; keep them identical.
   trailingSlash: 'ignore',
   build: { format: 'directory' },
