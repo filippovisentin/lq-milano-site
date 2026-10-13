@@ -1,0 +1,83 @@
+---
+import LegalPage from '../components/LegalPage.astro';
+import site from '../data/site.json';
+const L = site.legal, a = site.address;
+const toc: [string, string][] = [
+  ['titolare', 'Chi tratta i tuoi dati'],
+  ['dati', 'Quali dati, perché e su quale base'],
+  ['destinatari', 'A chi li comunichiamo'],
+  ['estero', 'Trasferimenti fuori dall’UE'],
+  ['conservazione', 'Per quanto tempo'],
+  ['diritti', 'I tuoi diritti'],
+  ['minori', 'Minori'],
+  ['sicurezza', 'Sicurezza'],
+  ['modifiche', 'Modifiche'],
+];
+---
+<LegalPage title="Informativa privacy" description="Come LQ Milano tratta i dati personali di chi visita il sito, scrive, acquista o si iscrive agli eventi." toc={toc}>
+  <p>Questa informativa spiega, ai sensi degli articoli 13 e 14 del Regolamento (UE) 2016/679 (GDPR), come trattiamo i tuoi dati quando visiti il sito, ci scrivi, acquisti un capo o partecipi a un evento.</p>
+
+  <h2 id="titolare">Chi tratta i tuoi dati</h2>
+  <p>Titolare del trattamento è <strong>{L.controller}</strong>, {a.street}, {a.postcode} {a.city} ({a.province}), P.IVA {site.vat}.
+  Per ogni richiesta sulla privacy: <a href={`mailto:${L.privacyEmail}`}>{L.privacyEmail}</a> oppure {site.phone}.</p>
+
+  <h2 id="dati">Quali dati, perché e su quale base</h2>
+  <table>
+    <thead><tr><th>Quando</th><th>Dati</th><th>Perché</th><th>Base giuridica</th></tr></thead>
+    <tbody>
+      <tr><td>Navighi il sito</td><td>Indirizzo IP, browser, pagine richieste (log tecnici del server)</td><td>Far funzionare il sito, proteggerlo da abusi</td><td>Legittimo interesse (art. 6.1.f)</td></tr>
+      <tr><td>Ci scrivi (modulo, email, WhatsApp, telefono)</td><td>Nome, email o numero, contenuto del messaggio</td><td>Risponderti</td><td>Misure precontrattuali richieste da te (art. 6.1.b)</td></tr>
+      <tr><td>Acquisti online</td><td>Nome, indirizzo, email, telefono, dettagli dell’ordine. I dati della carta li tratta solo il gestore dei pagamenti, noi non li vediamo.</td><td>Gestire ordine, pagamento, spedizione, resi e garanzia</td><td>Contratto (art. 6.1.b) e obblighi di legge fiscali (art. 6.1.c)</td></tr>
+      <tr><td>Crei un account</td><td>Email, password (cifrata), storico ordini</td><td>Accesso rapido, storico acquisti</td><td>Contratto (art. 6.1.b)</td></tr>
+      <tr><td>Ti iscrivi a un evento</td><td>Nome e contatto, sulla piattaforma indicata nell’evento</td><td>Gestire la partecipazione</td><td>Contratto (art. 6.1.b)</td></tr>
+      <tr><td>Accetti le mappe di Google</td><td>Indirizzo IP e cookie di Google</td><td>Mostrarti dove siamo</td><td>Consenso (art. 6.1.a), revocabile in ogni momento</td></tr>
+    </tbody>
+  </table>
+  <p>Non facciamo profilazione né pubblicità mirata e non vendiamo dati. Fornirli è facoltativo, ma senza i dati necessari non possiamo risponderti o evadere un ordine.</p>
+
+  <h2 id="destinatari">A chi li comunichiamo</h2>
+  <p>Solo a chi ci serve per offrirti il servizio, nominato responsabile del trattamento quando previsto:</p>
+  <ul>
+    <li>{L.hosting}, che ospita il sito;</li>
+    <li>{L.payments} e i circuiti di pagamento;</li>
+    <li>corrieri, per le spedizioni;</li>
+    <li>il nostro commercialista, per gli obblighi fiscali;</li>
+    <li>Google Ireland Ltd., solo se accetti le mappe;</li>
+    <li>WhatsApp Ireland Ltd., se scegli di scriverci su WhatsApp.</li>
+  </ul>
+  <p>Possono riceverli anche le autorità, se la legge lo richiede.</p>
+
+  <h2 id="estero">Trasferimenti fuori dall’UE</h2>
+  <p>Alcuni fornitori (ad esempio Google e Wix) possono trattare dati anche fuori dall’Unione europea. In questi casi il trasferimento avviene con le garanzie previste dal GDPR: decisione di adeguatezza (EU-US Data Privacy Framework) o clausole contrattuali standard della Commissione europea.</p>
+
+  <h2 id="conservazione">Per quanto tempo</h2>
+  <ul>
+    <li>Messaggi e richieste di contatto: {L.dataRetention.contact} dall’ultimo scambio.</li>
+    <li>Ordini e fatture: {L.dataRetention.orders}.</li>
+    <li>Account: {L.dataRetention.account}.</li>
+    <li>Log tecnici del server: al massimo 30 giorni, salvo esigenze di sicurezza.</li>
+    <li>La tua scelta sui cookie: 6 mesi, poi te la chiediamo di nuovo.</li>
+  </ul>
+
+  <h2 id="diritti">I tuoi diritti</h2>
+  <p>Puoi chiederci in ogni momento di accedere ai tuoi dati, correggerli, cancellarli, limitarne l’uso, riceverli in un formato leggibile (portabilità) e opporti al trattamento basato sul legittimo interesse (articoli 15–22 GDPR). Se hai dato un consenso, puoi revocarlo quando vuoi: per le mappe basta aprire <button type="button" class="linklike" data-consent-open>Preferenze cookie</button>.</p>
+  <p>Scrivi a <a href={`mailto:${L.privacyEmail}`}>{L.privacyEmail}</a>: rispondiamo entro un mese. Se ritieni che i tuoi dati siano trattati in modo non corretto, puoi presentare reclamo al <a href="https://www.garanteprivacy.it" target="_blank" rel="noopener">Garante per la protezione dei dati personali</a>.</p>
+
+  <h2 id="minori">Minori</h2>
+  <p>Acquisti e registrazione sono riservati ai maggiorenni: al momento dell’ordine e della creazione dell’account ti chiediamo di confermare di avere almeno 18 anni. Non raccogliamo consapevolmente dati di minori di 14 anni; se succede, li cancelliamo.</p>
+
+  <h2 id="sicurezza">Sicurezza</h2>
+  <p>Il sito usa solo connessioni cifrate (HTTPS), intestazioni di sicurezza che bloccano contenuti non autorizzati e un’area riservata protetta da password cifrata e blocco dei tentativi. I pagamenti avvengono sulle pagine sicure del gestore dei pagamenti.</p>
+
+  <h2 id="modifiche">Modifiche</h2>
+  <p>Se cambiamo questa informativa, aggiorniamo la data in alto. Per modifiche importanti lo segnaliamo anche sul sito.</p>
+</LegalPage>
+
+<style>
+  .linklike { background: none; border: 0; padding: 0; font: inherit; color: inherit; text-decoration: underline; cursor: pointer; }
+</style>
+
+<script>
+  import { openConsentPreferences } from '../lib/consent';
+  document.querySelectorAll('[data-consent-open]').forEach((b) => b.addEventListener('click', openConsentPreferences));
+</script>

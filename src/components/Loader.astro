@@ -19,8 +19,8 @@ const stem = media.storefront.src.split('?')[0].split('/').pop()!.replace(/\.[^.
 const fallback = `/img/${stem}-1100.webp`;
 ---
 <div class="loader" id="loader" aria-hidden="true">
-  <div class="loader-bg" style={`background-image:url('${street ?? fallback}'), url('${fallback}')`}></div>
-  {street && <span class="loader-credit">Immagini © Google</span>}
+  <div class="loader-bg" style={`background-image:url('${fallback}')`} data-street={street ?? undefined} data-fallback={fallback}></div>
+  {street && <span class="loader-credit" hidden>Immagini © Google</span>}
   <div class="loader-inner">
     <NeonLogo size="xl" animated />
     <p class="loader-sub">Concept store · NoLo, Milano</p>
@@ -70,6 +70,15 @@ const fallback = `/img/${stem}-1100.webp`;
     var el = document.getElementById('loader');
     if (!el || document.documentElement.classList.contains('intro-seen')) { el && el.remove(); return; }
     try { sessionStorage.setItem('lq-intro', '1'); } catch (e) {}
+    // Street View is Google content: only with the visitor's consent (see lib/consent.ts)
+    var bg = el.querySelector('.loader-bg');
+    try {
+      var c = JSON.parse(localStorage.getItem('lq-consent') || 'null');
+      if (bg && bg.dataset.street && c && c.v === 1 && c.maps && Date.now() - c.at < 182 * 864e5) {
+        bg.style.backgroundImage = "url('" + bg.dataset.street + "'), url('" + bg.dataset.fallback + "')";
+        var cr = el.querySelector('.loader-credit'); if (cr) cr.hidden = false;
+      }
+    } catch (e) {}
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var done = false;
     function finish() {

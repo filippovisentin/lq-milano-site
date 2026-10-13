@@ -156,10 +156,8 @@ const quoteAntonio = 'La moda non è un universo a sé: è un linguaggio vivo ch
 
   <!-- ============ VISITA ============ -->
   <section class="visit night" aria-labelledby="visit-title">
-    <div class="map" aria-hidden="true">
-      <iframe title="Mappa di LQ Milano" tabindex="-1" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-        src="https://www.google.com/maps?q=Via+Giulio+e+Corrado+Venini+54,+20127+Milano&z=16&output=embed"></iframe>
-    </div>
+    <!-- decorative map: Google's embed only with consent, otherwise a drawn street grid -->
+    <div class="map" aria-hidden="true" data-mapbg data-src="https://www.google.com/maps?q=Via+Giulio+e+Corrado+Venini+54,+20127+Milano&z=16&output=embed"></div>
     <div class="container visit-card-wrap">
       <div class="visit-card">
         <NeonLogo size="md" />
@@ -275,6 +273,10 @@ const quoteAntonio = 'La moda non è un universo a sé: è un linguaggio vivo ch
   .visit { position: relative; min-height: 520px; display: grid; align-items: center; overflow: hidden; }
   .map { position: absolute; inset: 0; filter: grayscale(1) invert(0.92) contrast(0.9) sepia(0.25); opacity: 0.55; }
   .map iframe { width: 100%; height: 100%; border: 0; pointer-events: none; }
+  .map:empty { background:
+      linear-gradient(28deg, transparent 49.6%, rgba(23, 20, 17, 0.5) 49.8% 50.2%, transparent 50.4%) 0 0 / 220px 160px,
+      linear-gradient(-62deg, transparent 49.5%, rgba(23, 20, 17, 0.35) 49.7% 50.3%, transparent 50.5%) 0 0 / 180px 240px,
+      #d9d2c2; }
   .visit::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(23, 20, 17, 0.92) 0%, rgba(23, 20, 17, 0.55) 55%, rgba(23, 20, 17, 0.2) 100%); }
   .visit-card-wrap { position: relative; z-index: 1; padding-block: 64px; }
   .visit-card { max-width: 460px; display: grid; gap: 12px; justify-items: start; }
@@ -282,3 +284,17 @@ const quoteAntonio = 'La moda non è un universo a sé: è un linguaggio vivo ch
   .visit-card address { font-style: normal; font-family: var(--font-display); font-size: 1.35rem; line-height: 1.35; }
   .visit-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
 </style>
+
+<script>
+  // decorative Google map in "Vieni a trovarci": only with consent
+  import { onConsent } from '../lib/consent';
+  const el = document.querySelector<HTMLElement>('[data-mapbg]');
+  if (el) onConsent((c) => {
+    if (c?.maps && !el.firstChild) {
+      const f = document.createElement('iframe');
+      f.src = el.dataset.src!; f.title = 'Mappa di LQ Milano'; f.tabIndex = -1; f.loading = 'lazy';
+      f.referrerPolicy = 'strict-origin-when-cross-origin';
+      el.append(f);
+    } else if (!c?.maps) el.replaceChildren();
+  });
+</script>

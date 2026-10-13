@@ -131,6 +131,7 @@ ul, ol { padding-left: 1.2em; }
 .btn:hover { --bg: var(--olive-2); --bd: var(--olive-2); }
 .btn:active { transform: scale(0.97); }
 .btn[disabled], .btn[aria-disabled='true'] { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-sm { min-height: 40px; padding: 8px 16px; font-size: 0.9rem; }
 .btn-gold { --bg: var(--gold); --fg: var(--ink); --bd: var(--gold); }
 .btn-gold:hover { --bg: #e3c56c; --bd: #e3c56c; }
 .btn-ghost { --bg: transparent; --fg: var(--ink); --bd: var(--line-strong); }
@@ -226,3 +227,9 @@ ul, ol { padding-left: 1.2em; }
   font-family: var(--font-neon); font-weight: 400; color: var(--neon-core); line-height: 1;
   text-shadow: 0 0 2px #fff, 0 0 6px var(--neon), 0 0 14px var(--neon), 0 0 28px var(--neon-glow), 0 0 56px rgba(255, 70, 10, 0.55);
 }
+
+/* ---------- Consent / age checkbox ---------- */
+.check { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; font-size: 0.94rem; line-height: 1.45; cursor: pointer; }
+.check input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--olive); }
+.check[data-invalid] { color: var(--danger); }
+.check[data-invalid] input { outline: 2px solid var(--danger); outline-offset: 2px; }

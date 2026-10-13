@@ -25,7 +25,8 @@
   "ownerChecks": [
     "CAP: il sito originale riporta sia 20125 (pagina Contatti) sia 20127 (footer e mappa). Qui si usa 20127: da confermare.",
     "Email: il sito originale mostra lqlqmilano@gmail.com ma il link puntava a info@mysite.com. Qui il link usa l'indirizzo mostrato: da confermare.",
-    "Orari di apertura: non presenti sul sito originale, non vengono mostrati finché non sono forniti."
+    "Orari di apertura: non presenti sul sito originale, non vengono mostrati finché non sono forniti.",
+    "Pagine legali: confermare ragione sociale/forma giuridica, eventuale PEC, regole di spedizione e reso, garanzia di 12 mesi sui capi usati, fornitore di hosting definitivo."
   ],
   "partners": [
     {
@@ -36,5 +37,22 @@
       "name": "Green Planner",
       "url": "https://www.greenplanner.it/"
     }
-  ]
+  ],
+  "legal": {
+    "updated": "2026-10-13",
+    "controller": "LQ Milano",
+    "controllerNote": "Ragione sociale e forma giuridica da confermare con la titolare.",
+    "privacyEmail": "lqlqmilano@gmail.com",
+    "hosting": "fornitore di hosting con server nell'Unione europea",
+    "payments": "Wix.com Ltd. (checkout e pagamenti)",
+    "withdrawalDays": 14,
+    "refundDays": 14,
+    "returnShipping": "a carico del cliente",
+    "warrantyMonths": 12,
+    "dataRetention": {
+      "contact": "12 mesi",
+      "orders": "10 anni (obblighi fiscali)",
+      "account": "fino alla cancellazione dell'account"
+    }
+  }
 }

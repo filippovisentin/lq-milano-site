@@ -1,0 +1,43 @@
+---
+// Shared frame for the legal pages: readable column, last-update line, table
+// of contents built from the h2s of the page.
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+interface Props { title: string; description: string; toc: [string, string][] }
+const { title, description, toc } = Astro.props;
+const updated = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(site.legal.updated));
+---
+<Base title={title} description={description}>
+  <article class="legal container">
+    <header>
+      <p class="eyebrow">Informazioni legali</p>
+      <h1>{title}</h1>
+      <p class="muted">Ultimo aggiornamento: {updated}</p>
+    </header>
+    <nav class="toc" aria-label="In questa pagina">
+      <ol>{toc.map(([id, label]) => <li><a href={`#${id}`}>{label}</a></li>)}</ol>
+    </nav>
+    <div class="body"><slot /></div>
+    <footer class="legal-foot muted">
+      <p>Per domande scrivi a <a href={`mailto:${site.legal.privacyEmail}`}>{site.legal.privacyEmail}</a>.
+      Vedi anche: <a href="/privacy">Privacy</a> · <a href="/cookie">Cookie</a> · <a href="/condizioni-di-vendita">Condizioni di vendita</a>.</p>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .legal { max-width: 760px; padding-top: clamp(28px, 5vw, 56px); padding-bottom: clamp(56px, 8vw, 112px); }
+  .legal h1 { margin: 6px 0 8px; }
+  .toc { margin: 28px 0 8px; padding: 16px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .toc ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+  .toc a { text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .body :global(h2) { margin-top: 40px; scroll-margin-top: calc(var(--header-h, 72px) + 16px); font-size: 1.35rem; }
+  .body :global(h3) { margin-top: 24px; font-size: 1.05rem; }
+  .body :global(p), .body :global(li) { line-height: 1.65; max-width: 68ch; }
+  .body :global(table) { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.92rem; display: block; overflow-x: auto; }
+  .body :global(th), .body :global(td) { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  .body :global(th) { font-weight: 600; background: var(--paper-2); }
+  .body :global(.box) { padding: 16px 18px; border-left: 3px solid var(--gold); background: var(--surface); border-radius: 0 8px 8px 0; margin: 16px 0; }
+  .legal-foot { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 0.92rem; }
+</style>

@@ -1,0 +1,63 @@
+---
+import LegalPage from '../components/LegalPage.astro';
+import site from '../data/site.json';
+const L = site.legal, a = site.address;
+const toc: [string, string][] = [
+  ['venditore', 'Chi vende'],
+  ['capi', 'I capi: vintage, usati, pezzi unici'],
+  ['ordine', 'Ordine, età e conclusione del contratto'],
+  ['prezzi', 'Prezzi e pagamento'],
+  ['spedizione', 'Spedizione e ritiro in negozio'],
+  ['recesso', 'Diritto di recesso (14 giorni)'],
+  ['garanzia', 'Garanzia legale'],
+  ['reclami', 'Assistenza e reclami'],
+  ['legge', 'Legge applicabile'],
+];
+---
+<LegalPage title="Condizioni di vendita" description="Condizioni generali di vendita online di LQ Milano: ordini, pagamenti, spedizioni, recesso di 14 giorni e garanzia sui capi vintage." toc={toc}>
+  <p>Queste condizioni regolano gli acquisti sul sito di LQ Milano da parte di consumatori, secondo il Codice del Consumo (D.Lgs. 206/2005) e le norme sul commercio elettronico (D.Lgs. 70/2003). Ti chiediamo di leggerle prima di ordinare: confermando l’ordine dichiari di averle accettate.</p>
+
+  <h2 id="venditore">Chi vende</h2>
+  <p><strong>{L.controller}</strong>, {a.street}, {a.postcode} {a.city} ({a.province}), P.IVA {site.vat}. Email <a href={`mailto:${site.email}`}>{site.email}</a>, telefono {site.phone}.</p>
+
+  <h2 id="capi">I capi: vintage, usati, pezzi unici</h2>
+  <p>Vendiamo soprattutto abbigliamento e accessori <strong>vintage e usati</strong>, selezionati, controllati e igienizzati. Ogni scheda indica lo stato del capo, le misure prese a mano e i segni del tempo visibili. Foto e vista 3D mostrano il capo reale; i colori possono variare leggermente a seconda dello schermo.</p>
+  <p>Quasi tutti i capi sono <strong>pezzi unici</strong>: il capo è riservato solo quando l’ordine è pagato. Se nel frattempo viene venduto in negozio, ti avvisiamo e ti rimborsiamo subito per intero.</p>
+
+  <h2 id="ordine">Ordine, età e conclusione del contratto</h2>
+  <ol>
+    <li>Aggiungi i capi al carrello e vai al pagamento.</li>
+    <li>Inserisci i dati di consegna e scegli spedizione o ritiro in negozio.</li>
+    <li>Confermi di aver letto queste condizioni e l’informativa privacy e di avere <strong>almeno 18 anni</strong>.</li>
+    <li>Paghi sulla pagina sicura del gestore dei pagamenti.</li>
+  </ol>
+  <p>Il contratto è concluso quando ricevi l’email di conferma dell’ordine, che riassume capi, prezzi, spese e queste condizioni. Conserviamo l’ordine e te ne inviamo copia.</p>
+
+  <h2 id="prezzi">Prezzi e pagamento</h2>
+  <p>I prezzi sono in euro e comprendono l’IVA quando dovuta. Le spese di spedizione sono indicate prima della conferma dell’ordine. Paghi con carta di credito o debito, PayPal o gli altri metodi mostrati al pagamento, gestito da {L.payments}. Non vediamo e non conserviamo i dati della tua carta.</p>
+
+  <h2 id="spedizione">Spedizione e ritiro in negozio</h2>
+  <p>Spediamo in Italia con corriere tracciato. Tempi e costi sono indicati al pagamento. Puoi anche ritirare gratis in negozio, in {a.street}, negli orari di apertura. Alla consegna controlla che il pacco sia integro; se è danneggiato, accettalo con riserva e scrivici entro 48 ore con una foto.</p>
+
+  <h2 id="recesso">Diritto di recesso (14 giorni)</h2>
+  <p>Puoi restituire i capi acquistati online <strong>entro {L.withdrawalDays} giorni</strong> dal giorno in cui li ricevi, senza dare spiegazioni (artt. 52–59 Codice del Consumo).</p>
+  <ol>
+    <li>Scrivi a <a href={`mailto:${site.email}`}>{site.email}</a> che vuoi recedere, indicando numero d’ordine e capi. Puoi usare il modulo qui sotto, ma basta una dichiarazione chiara.</li>
+    <li>Rispediscici i capi entro 14 giorni dalla comunicazione, oppure riportali in negozio. Le spese di restituzione sono {L.returnShipping}.</li>
+    <li>Ti rimborsiamo entro {L.refundDays} giorni dalla tua comunicazione, con lo stesso metodo di pagamento, comprese le spese di consegna standard. Possiamo attendere di ricevere i capi prima del rimborso.</li>
+  </ol>
+  <p>I capi devono tornare come li hai ricevuti: non indossati se non per provarli, con eventuali cartellini. Rispondi di una perdita di valore dovuta a un uso diverso dalla prova. Il recesso non si applica ai capi realizzati su misura o modificati su tua richiesta (upcycling, sartoria).</p>
+  <div class="box">
+    <p><strong>Modulo di recesso</strong> (da copiare in un’email a {site.email})</p>
+    <p>Con la presente notifico il recesso dal contratto di vendita dei seguenti beni: [capi] — ordinati il [data] / ricevuti il [data] — numero d’ordine [numero] — nome e cognome [nome] — indirizzo [indirizzo] — data [data].</p>
+  </div>
+
+  <h2 id="garanzia">Garanzia legale</h2>
+  <p>Tutti i capi sono coperti dalla garanzia legale di conformità (artt. 128 e seguenti Codice del Consumo). Per i <strong>beni usati</strong> la garanzia dura <strong>{L.warrantyMonths} mesi</strong> dalla consegna, come previsto dall’art. 134 per l’usato. Non sono difetti i segni d’uso e d’epoca descritti nella scheda del capo. Se trovi un difetto non descritto, scrivici con una foto: ripariamo, sostituiamo se possibile, oppure rimborsiamo.</p>
+
+  <h2 id="reclami">Assistenza e reclami</h2>
+  <p>Per qualsiasi problema scrivi a <a href={`mailto:${site.email}`}>{site.email}</a> o su WhatsApp al {site.phone}: rispondiamo di norma entro 2 giorni lavorativi. Se non troviamo un accordo, puoi rivolgerti a un organismo di risoluzione alternativa delle controversie (ADR) o alle associazioni dei consumatori.</p>
+
+  <h2 id="legge">Legge applicabile</h2>
+  <p>Si applica la legge italiana. Per le controversie con un consumatore è competente il foro del luogo in cui il consumatore risiede. Restano salvi i diritti più favorevoli riconosciuti dalla legge del tuo paese di residenza.</p>
+</LegalPage>

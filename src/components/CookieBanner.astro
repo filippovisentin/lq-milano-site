@@ -1,0 +1,81 @@
+---
+// Cookie banner + preferences. Rifiuta has the same weight as Accetta, closing
+// with the X means "rejected" (Garante 2021), nothing is pre-ticked, and the
+// footer link "Preferenze cookie" reopens it at any time.
+---
+<section class="cb night" data-cb hidden aria-labelledby="cb-t" role="region">
+  <div class="cb-in">
+    <button class="icon-btn cb-x" type="button" data-cb-reject aria-label="Chiudi e rifiuta i contenuti di terze parti">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+    </button>
+    <h2 id="cb-t" class="cb-title">Cookie e contenuti esterni</h2>
+    <p class="cb-text">
+      Usiamo solo strumenti tecnici necessari al sito (carrello, preferenze). Con il tuo consenso
+      mostriamo anche le <strong>mappe di Google</strong>, che possono impostare cookie e ricevere il tuo indirizzo IP.
+      Nessuna pubblicità, nessuna profilazione. <a href="/cookie">Cookie policy</a> · <a href="/privacy">Privacy</a>
+    </p>
+
+    <div class="cb-prefs" data-cb-prefs hidden>
+      <label class="cb-row">
+        <input type="checkbox" checked disabled />
+        <span><strong>Necessari</strong> — sempre attivi. Carrello, schermata di apertura, questa scelta.</span>
+      </label>
+      <label class="cb-row">
+        <input type="checkbox" data-cb-maps />
+        <span><strong>Contenuti di terze parti</strong> — Google Maps e Street View (Google Ireland Ltd.).</span>
+      </label>
+    </div>
+
+    <div class="cb-actions">
+      <button class="btn btn-ghost on-night" type="button" data-cb-reject>Rifiuta</button>
+      <button class="btn btn-ghost on-night" type="button" data-cb-custom>Personalizza</button>
+      <button class="btn btn-ghost on-night" type="button" data-cb-save hidden>Salva le scelte</button>
+      <button class="btn btn-ghost on-night" type="button" data-cb-accept>Accetta tutto</button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cb { position: fixed; z-index: 90; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); border-radius: 12px; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35); }
+  @media (min-width: 720px) { .cb { left: auto; right: 20px; bottom: 20px; width: min(520px, calc(100vw - 40px)); } }
+  .cb-in { position: relative; padding: 20px 20px 18px; display: grid; gap: 12px; }
+  .cb-x { position: absolute; top: 6px; right: 6px; color: var(--on-night-2); }
+  .cb-title { font-family: var(--font-body); font-size: 1rem; font-weight: 700; margin: 0; padding-right: 36px; color: var(--on-night); }
+  .cb-text { margin: 0; font-size: 0.92rem; line-height: 1.5; color: var(--on-night-2); }
+  .cb-text a { color: var(--gold); }
+  .cb-prefs { display: grid; gap: 10px; padding: 12px 0 4px; border-top: 1px solid rgba(244, 236, 221, 0.14); }
+  .cb-row { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; font-size: 0.9rem; color: var(--on-night-2); cursor: pointer; }
+  .cb-row input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--gold); }
+  .cb-row strong { color: var(--on-night); }
+  .cb-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .cb-actions .btn { min-height: 44px; justify-content: center; }
+  .cb-actions [data-cb-accept] { grid-column: span 2; }
+  @media (min-width: 480px) { .cb-actions { grid-template-columns: repeat(3, 1fr); } .cb-actions [data-cb-accept] { grid-column: auto; } }
+</style>
+
+<script>
+  import { getConsent, setConsent } from '../lib/consent';
+
+  const box = document.querySelector<HTMLElement>('[data-cb]')!;
+  const prefs = box.querySelector<HTMLElement>('[data-cb-prefs]')!;
+  const maps = box.querySelector<HTMLInputElement>('[data-cb-maps]')!;
+  const save = box.querySelector<HTMLButtonElement>('[data-cb-save]')!;
+  const custom = box.querySelector<HTMLButtonElement>('[data-cb-custom]')!;
+
+  const show = (withPrefs: boolean) => {
+    maps.checked = !!getConsent()?.maps;
+    prefs.hidden = !withPrefs; save.hidden = !withPrefs; custom.hidden = withPrefs;
+    box.hidden = false;
+  };
+  const done = (yes: boolean) => { setConsent(yes); box.hidden = true; };
+
+  box.querySelectorAll('[data-cb-reject]').forEach((b) => b.addEventListener('click', () => done(false)));
+  box.querySelector('[data-cb-accept]')!.addEventListener('click', () => done(true));
+  custom.addEventListener('click', () => show(true));
+  save.addEventListener('click', () => done(maps.checked));
+  window.addEventListener('consent:open', () => show(true));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !box.hidden && !getConsent()) done(false); });
+
+  // ask after the intro sign has done its thing, never on top of it
+  if (!getConsent()) setTimeout(() => show(false), document.documentElement.classList.contains('intro-seen') ? 300 : 2600);
+</script>

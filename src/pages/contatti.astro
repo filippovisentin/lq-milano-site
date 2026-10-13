@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import Icon from '../components/Icon.astro';
+import MapEmbed from '../components/MapEmbed.astro';
 import { media } from '../lib/media';
 import site from '../data/site.json';
 
@@ -57,6 +58,7 @@ const topics = [
             <textarea class="textarea" id="messaggio" name="messaggio" rows="6" maxlength="3000"></textarea>
           </div>
           <div class="hp" aria-hidden="true"><label>Lascia vuoto <input name="sito" tabindex="-1" autocomplete="off" /></label></div>
+          <p class="hint privacy-note">Usiamo i tuoi dati solo per risponderti e li cancelliamo dopo 12 mesi. <a href="/privacy">Informativa privacy</a></p>
           <button class="btn btn-lg" type="submit" data-submit>Invia messaggio</button>
           <div data-result role="status" aria-live="polite"></div>
         </form>
@@ -79,12 +81,7 @@ const topics = [
           </ul>
         </div>
         <div class="map">
-          <iframe
-            title="Mappa: LQ Milano, Via Giulio e Corrado Venini 54, Milano"
-            src="https://www.google.com/maps?q=Via+Giulio+e+Corrado+Venini+54,+20127+Milano&output=embed"
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-          ></iframe>
+          <MapEmbed title="Mappa: LQ Milano, Via Giulio e Corrado Venini 54, Milano" />
         </div>
       </aside>
     </div>

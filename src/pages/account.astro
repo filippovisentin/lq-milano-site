@@ -35,6 +35,10 @@ import Icon from '../components/Icon.astro';
           <div class="pw"><input class="input" id="s-pw" type="password" autocomplete="new-password" aria-describedby="s-pw-h" /><button type="button" class="icon-btn" data-pw aria-label="Mostra password" aria-pressed="false"><Icon name="eye" /></button></div>
           <p class="hint" id="s-pw-h">Almeno 8 caratteri.</p>
         </div>
+        <label class="check" data-s-ok-label>
+          <input type="checkbox" id="s-ok" required />
+          <span>Ho <strong>almeno 18 anni</strong> e ho letto l’<a href="/privacy" target="_blank">informativa privacy</a> e le <a href="/condizioni-di-vendita" target="_blank">condizioni di vendita</a>.</span>
+        </label>
         <button class="btn btn-lg btn-block" type="submit">Crea account</button>
       </form>
       <p class="hint" data-acc-msg role="status"></p>
@@ -81,6 +85,18 @@ import Icon from '../components/Icon.astro';
   }));
   const msg = document.querySelector('[data-acc-msg]')!;
   const say = () => (msg.textContent = 'Area clienti non ancora attiva: nessun dato è stato inviato. Puoi acquistare come ospite.');
-  document.querySelectorAll('[data-acc]').forEach((f) => f.addEventListener('submit', (e) => { e.preventDefault(); say(); }));
+  const sOk = document.querySelector<HTMLInputElement>('#s-ok')!;
+  const sOkLabel = document.querySelector<HTMLElement>('[data-s-ok-label]')!;
+  sOk.addEventListener('change', () => sOk.checked && sOkLabel.removeAttribute('data-invalid'));
+  document.querySelectorAll('[data-acc]').forEach((f) => f.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (f.id === 'p-signup' && !sOk.checked) {
+      sOkLabel.setAttribute('data-invalid', '');
+      msg.textContent = 'Per registrarti conferma di essere maggiorenne e di aver letto l’informativa privacy.';
+      sOk.focus();
+      return;
+    }
+    say();
+  }));
   document.querySelector('[data-acc-forgot]')!.addEventListener('click', (e) => { e.preventDefault(); say(); });
 </script>

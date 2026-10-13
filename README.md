@@ -39,5 +39,12 @@ Modalità **demo** dichiarata (carrello reale, checkout di anteprima senza pagam
 ## Schermata di caricamento
 Con `PUBLIC_GOOGLE_MAPS_KEY` usa Street View di via Venini come sfondo; senza chiave usa la foto della vetrina.
 
+## Privacy, cookie e sicurezza
+- **Consenso cookie** (`src/components/CookieBanner.astro`, `src/lib/consent.ts`): solo strumenti tecnici propri; Google Maps e Street View si caricano solo dopo il consenso (mappe con segnaposto "Mostra la mappa"). Rifiuta con lo stesso peso di Accetta, X = rifiuto, scelta valida 6 mesi, link "Preferenze cookie" nel footer.
+- **Pagine legali**: `/privacy`, `/cookie`, `/condizioni-di-vendita` (recesso 14 giorni, garanzia 12 mesi sull'usato, modulo di recesso). Dati in `src/data/site.json` → `legal`.
+- **Età**: conferma "almeno 18 anni" + condizioni obbligatoria in checkout e registrazione; avviso privacy nel modulo contatti.
+- **Intestazioni HTTP** (`security-headers.mjs`, applicate da `server.mjs` a ogni risposta): CSP che ammette solo il sito e Google Maps, HSTS e upgrade a HTTPS (solo su HTTPS), X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy che nega fotocamera, microfono, posizione, sensori.
+- Se si aggiunge un servizio esterno (es. endpoint del modulo contatti, Wix Headless), va aggiunto alla CSP e alla cookie policy.
+
 ## Da verificare con la proprietaria
 CAP 20125/20127, email reale, orari, policy (resi, privacy, spedizioni).

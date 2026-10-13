@@ -1,0 +1,49 @@
+---
+import LegalPage from '../components/LegalPage.astro';
+const toc: [string, string][] = [
+  ['cosa', 'Cosa usiamo, in breve'],
+  ['tecnici', 'Strumenti tecnici (sempre attivi)'],
+  ['terze', 'Contenuti di terze parti (solo con consenso)'],
+  ['scelta', 'Come cambiare la tua scelta'],
+];
+---
+<LegalPage title="Cookie policy" description="Quali cookie e strumenti usa il sito di LQ Milano e come gestire il consenso." toc={toc}>
+  <h2 id="cosa">Cosa usiamo, in breve</h2>
+  <div class="box">
+    <p><strong>Niente pubblicità, niente statistiche di terze parti, niente profilazione.</strong> Usiamo solo strumenti tecnici necessari al sito. Le mappe di Google si caricano unicamente se le accetti.</p>
+    <p><button type="button" class="btn btn-sm" data-consent-open>Apri le preferenze cookie</button></p>
+  </div>
+  <p>Questa pagina segue la direttiva ePrivacy, l’art. 122 del Codice privacy e le <a href="https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9677876" target="_blank" rel="noopener">Linee guida cookie del Garante (2021)</a>.</p>
+
+  <h2 id="tecnici">Strumenti tecnici (sempre attivi)</h2>
+  <p>Servono a far funzionare il sito e non richiedono consenso. Restano sul tuo dispositivo e non vengono usati per seguirti.</p>
+  <table>
+    <thead><tr><th>Nome</th><th>Tipo</th><th>A cosa serve</th><th>Durata</th></tr></thead>
+    <tbody>
+      <tr><td><code>lq-cart-v1</code></td><td>Memoria locale del browser</td><td>Ricordare i capi nel carrello</td><td>Finché non svuoti il carrello</td></tr>
+      <tr><td><code>lq-consent</code></td><td>Memoria locale del browser</td><td>Ricordare la tua scelta sui cookie</td><td>6 mesi</td></tr>
+      <tr><td><code>lq-intro</code></td><td>Memoria di sessione</td><td>Mostrare l’insegna al neon solo alla prima visita</td><td>Fino alla chiusura del browser</td></tr>
+      <tr><td><code>lq-shop-url</code>, <code>lq-shop-y</code></td><td>Memoria di sessione</td><td>Riportarti al punto dello shop e ai filtri da cui eri partito</td><td>Fino alla chiusura del browser</td></tr>
+      <tr><td><code>lq_admin</code></td><td>Cookie tecnico</td><td>Accesso dello staff all’area riservata (non riguarda i visitatori)</td><td>12 ore</td></tr>
+    </tbody>
+  </table>
+  <p>Durante il pagamento passi sulle pagine sicure del gestore dei pagamenti (Wix), che usa i propri cookie tecnici necessari a completare l’acquisto.</p>
+
+  <h2 id="terze">Contenuti di terze parti (solo con consenso)</h2>
+  <table>
+    <thead><tr><th>Servizio</th><th>Dove</th><th>Cosa comporta</th><th>Informativa</th></tr></thead>
+    <tbody>
+      <tr><td>Google Maps (Google Ireland Ltd.)</td><td>Home, Contatti</td><td>Google riceve il tuo indirizzo IP e può impostare cookie (ad es. <code>NID</code>, <code>AEC</code>, fino a 6 mesi)</td><td><a href="https://policies.google.com/privacy?hl=it" target="_blank" rel="noopener">Privacy Google</a></td></tr>
+      <tr><td>Street View (Google Ireland Ltd.)</td><td>Schermata di apertura</td><td>Google riceve il tuo indirizzo IP per mostrare l’immagine della via</td><td><a href="https://policies.google.com/privacy?hl=it" target="_blank" rel="noopener">Privacy Google</a></td></tr>
+    </tbody>
+  </table>
+  <p>Senza consenso vedi un segnaposto con il pulsante “Mostra la mappa” e il link per aprire Google Maps in una nuova scheda. I collegamenti a Instagram, TikTok, Vinted e WhatsApp sono semplici link: non caricano nulla finché non li apri.</p>
+
+  <h2 id="scelta">Come cambiare la tua scelta</h2>
+  <p>Puoi cambiare idea quando vuoi dal link <strong>Preferenze cookie</strong> in fondo a ogni pagina. Chiudere il banner con la X equivale a rifiutare. Puoi anche cancellare i dati del sito dalle impostazioni del browser.</p>
+</LegalPage>
+
+<script>
+  import { openConsentPreferences } from '../lib/consent';
+  document.querySelectorAll('[data-consent-open]').forEach((b) => b.addEventListener('click', openConsentPreferences));
+</script>

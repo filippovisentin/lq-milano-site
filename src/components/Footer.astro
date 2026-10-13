@@ -41,11 +41,25 @@ const a = site.address;
   <div class="container bottom">
     <NeonLogo size="sm" />
     <p>© {new Date().getFullYear()} LQ Milano · P.IVA {site.vat}</p>
+    <nav class="legal-links" aria-label="Informazioni legali">
+      <a href="/privacy">Privacy</a>
+      <a href="/cookie">Cookie</a>
+      <a href="/condizioni-di-vendita">Condizioni di vendita</a>
+      <button type="button" data-consent-open>Preferenze cookie</button>
+    </nav>
     <a href="#top" class="to-top">Torna su ↑</a>
   </div>
 </footer>
 
+<script>
+  import { openConsentPreferences } from '../lib/consent';
+  document.querySelectorAll('.site-footer [data-consent-open]').forEach((b) => b.addEventListener('click', openConsentPreferences));
+</script>
+
 <style>
+  .legal-links { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+  .legal-links a, .legal-links button { color: var(--on-night-2); font-size: 0.88rem; background: none; border: 0; padding: 8px 0; font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .legal-links a:hover, .legal-links button:hover { color: var(--gold); }
   .site-footer { padding-top: clamp(48px, 7vw, 96px); padding-bottom: env(safe-area-inset-bottom); }
   .top { display: grid; gap: 40px 32px; grid-template-columns: 1fr; }
   @media (min-width: 640px) { .top { grid-template-columns: 1fr 1fr; } .brand-col { grid-column: 1 / -1; } }

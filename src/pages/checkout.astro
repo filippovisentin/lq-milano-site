@@ -39,6 +39,11 @@ import Icon from '../components/Icon.astro';
           </div>
           <div class="field"><label for="co-tel">Telefono</label><input class="input" id="co-tel" type="tel" autocomplete="tel" inputmode="tel" /><p class="hint">Solo per comunicazioni sulla consegna.</p></div>
         </fieldset>
+        <label class="check" data-co-ok-label>
+          <input type="checkbox" id="co-ok" required aria-describedby="co-ok-h" />
+          <span>Dichiaro di avere <strong>almeno 18 anni</strong> e di aver letto le <a href="/condizioni-di-vendita" target="_blank">Condizioni di vendita</a>, compreso il diritto di recesso di 14 giorni.</span>
+        </label>
+        <p class="hint" id="co-ok-h">Usiamo i tuoi dati solo per gestire ordine e consegna: <a href="/privacy" target="_blank">informativa privacy</a>.</p>
         <button class="btn btn-lg" type="submit" aria-disabled="true">Continua alla spedizione</button>
         <p class="hint" data-co-msg role="status"></p>
       </form>
@@ -85,8 +90,18 @@ import Icon from '../components/Icon.astro';
     .map((i) => `<li><img src="${i.image}" alt="" /><span>${i.title.replace(/</g, '&lt;')}${i.size ? `<br><small class="muted">Taglia ${i.size}</small>` : ''}</span><strong class="tabular">${cart.euro(i.price * i.qty)}</strong></li>`)
     .join('');
   document.querySelector('[data-sub]')!.textContent = cart.euro(cart.subtotal());
+  const ok = document.querySelector<HTMLInputElement>('#co-ok')!;
+  const okLabel = document.querySelector<HTMLElement>('[data-co-ok-label]')!;
+  ok.addEventListener('change', () => ok.checked && okLabel.removeAttribute('data-invalid'));
   document.querySelector('[data-co]')!.addEventListener('submit', (e) => {
     e.preventDefault();
-    document.querySelector('[data-co-msg]')!.textContent = 'Anteprima: il pagamento online non è ancora attivo, nessun ordine è stato creato.';
+    const msg = document.querySelector('[data-co-msg]')!;
+    if (!ok.checked) {
+      okLabel.setAttribute('data-invalid', '');
+      msg.textContent = 'Per continuare conferma di essere maggiorenne e di aver letto le condizioni di vendita.';
+      ok.focus();
+      return;
+    }
+    msg.textContent = 'Anteprima: il pagamento online non è ancora attivo, nessun ordine è stato creato.';
   });
 </script>

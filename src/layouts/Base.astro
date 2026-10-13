@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CartDrawer from '../components/CartDrawer.astro';
 import Loader from '../components/Loader.astro';
+import CookieBanner from '../components/CookieBanner.astro';
 import site from '../data/site.json';
 
 interface Props {
@@ -55,6 +56,7 @@ const ld = [store, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])]
     <link rel="canonical" href={canonical.href} />
     {noindex && <meta name="robots" content="noindex" />}
     <meta name="theme-color" content="#171411" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta property="og:site_name" content="LQ Milano" />
     <meta property="og:locale" content="it_IT" />
@@ -80,6 +82,7 @@ const ld = [store, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])]
     </main>
     <Footer />
     <CartDrawer />
+    <CookieBanner />
     <script>
       // Reveal-on-scroll for elements marked .reveal (content is visible without JS).
       const io = 'IntersectionObserver' in window
