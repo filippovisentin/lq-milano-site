@@ -73,7 +73,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <ul class="svc-list" role="list">
         {services.map((s, i) => (
           <li class="reveal" style={`--i:${i}`}>
-            <a href={`/servizi#${s.id}`} class="svc">
+            <a href={`/servizi#${s.id}`} class="svc row-press">
               <span class="tile-n tabular">{pad(i + 1)}</span>
               <span class="svc-t">{s.title}</span>
               <span class="svc-d">{s.text}</span>
@@ -150,7 +150,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
           const past = isPast(e);
           return (
             <li>
-              <a class="ev-row" href={eventUrl(e.slug)}>
+              <a class="ev-row row-press" href={eventUrl(e.slug)}>
                 <time class="ev-date tabular" datetime={d.toISOString()}><span class="d">{fmtDay(d)}</span><span class="m">{fmtMonth(d)}</span></time>
                 <span class="ev-main"><span class="ev-t">{e.title}</span><span class="ev-meta">{fmtTime(d)} · {e.venue}</span></span>
                 <span class:list={['ev-status', !past && e.registration === 'aperta' && 'is-open']}>{past ? 'Concluso' : e.registration === 'aperta' ? 'Iscrizioni aperte' : e.registration === 'esaurita' ? 'Posti esauriti' : 'Iscrizioni chiuse'}</span>
@@ -220,21 +220,24 @@ const pad = (n: number) => String(n).padStart(2, '0');
   /* ---------- buttons (home only) ---------- */
   .home .btn {
     --bg: var(--ink); --fg: var(--paper); --bd: var(--ink);
-    position: relative; overflow: hidden; isolation: isolate; min-height: 52px; padding: 0 26px; border-radius: 2px; border-width: 1px;
-    font-size: 0.82rem; letter-spacing: 0.04em; text-transform: uppercase;
+    position: relative; overflow: hidden; isolation: isolate; min-height: 52px; padding: 0 28px; border-radius: var(--radius-pill); border-width: 1px;
+    font-size: 1rem;
   }
-  .home .btn::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--neon); transform: translateY(101%); transition: transform 280ms var(--ease-out); }
-  .home .btn:hover { --fg: var(--ink); --bg: var(--ink); --bd: var(--neon); }
-  .home .btn:hover::before { transform: none; }
+  /* hover: the fill fades in softly (no sliding block inside a pill) */
+  .home .btn::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--neon); opacity: 0; transition: opacity 220ms var(--ease-soft); }
+  @media (hover: hover) and (pointer: fine) {
+    .home .btn:hover { --fg: var(--ink); --bg: var(--ink); --bd: var(--neon); }
+    .home .btn:hover::before { opacity: 1; }
+  }
   .home .btn-ghost { --bg: transparent; --fg: var(--ink); --bd: var(--rule-strong); }
   .home .btn-ghost::before { background: var(--ink); }
-  .home .btn-ghost:hover { --fg: var(--paper); --bg: transparent; --bd: var(--ink); }
+  @media (hover: hover) and (pointer: fine) { .home .btn-ghost:hover { --fg: var(--paper); --bg: transparent; --bd: var(--ink); } }
   .home .visit-copy .btn-ghost { --fg: var(--on-night); --bd: rgba(244, 236, 221, 0.6); }
   .home .visit-copy .btn-ghost::before { background: var(--on-night); }
-  .home .visit-copy .btn-ghost:hover { --fg: var(--night); --bd: var(--on-night); }
-  .home .btn-neon { --bg: var(--neon); --fg: var(--night); --bd: var(--neon); }
+  @media (hover: hover) and (pointer: fine) { .home .visit-copy .btn-ghost:hover { --fg: var(--night); --bd: var(--on-night); } }
+  .home .btn-neon { --bg: var(--neon); --fg: var(--night); --bd: var(--neon); box-shadow: 0 8px 24px rgba(255, 91, 36, 0.3); }
   .home .btn-neon::before { background: var(--on-night); }
-  .home .btn-neon:hover { --fg: var(--night); --bg: var(--neon); --bd: var(--on-night); }
+  @media (hover: hover) and (pointer: fine) { .home .btn-neon:hover { --fg: var(--night); --bg: var(--neon); --bd: var(--on-night); } }
 
   /* ---------- hero: full-screen, picks up where the intro leaves off ---------- */
   .hero { position: relative; min-height: calc(100svh - var(--header-h)); display: grid; grid-template-rows: 1fr auto; overflow: hidden; isolation: isolate; }
@@ -251,9 +254,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .hero-copy { align-self: end; width: 100%; max-width: calc(var(--wide) + 2 * var(--gutter)); margin-inline: auto; padding: clamp(80px, 18vh, 200px) var(--gutter) clamp(20px, 3vw, 36px); }
   .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--neon); box-shadow: 0 0 10px var(--neon-glow); flex: none; }
   .hero-cta { display: flex; flex-wrap: wrap; gap: 10px; }
-  .home .hero .btn-ghost { --fg: var(--on-night); --bd: rgba(244, 236, 221, 0.6); }
+  /* over the photo: frosted glass, like iOS controls on an image */
+  .home .hero .btn-ghost {
+    --fg: var(--on-night); --bg: rgba(255, 252, 246, 0.14); --bd: rgba(255, 252, 246, 0.3);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4);
+  }
   .home .hero .btn-ghost::before { background: var(--on-night); }
-  .home .hero .btn-ghost:hover { --fg: var(--night); --bd: var(--on-night); }
+  @media (hover: hover) and (pointer: fine) { .home .hero .btn-ghost:hover { --fg: var(--night); --bd: var(--on-night); } }
   @media (min-width: 1000px) {
     .hero-bg :global(img) { object-position: 50% 42%; }
     .hero::before { background: radial-gradient(34% 45% at 50% 32%, rgba(255, 91, 36, 0.2), transparent 70%); }
@@ -285,7 +292,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 14px; }
   @media (min-width: 1100px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; } }
   .tile { display: grid; gap: 12px; color: var(--ink); text-decoration: none; }
-  .tile-img { display: block; overflow: hidden; aspect-ratio: 3 / 4; background: var(--paper-2); }
+  .tile-img { transition: transform 160ms var(--ease-out); isolation: isolate; }
+  .tile:active .tile-img { transform: scale(0.98); transition-duration: var(--t-press); }
+  .tile-img { display: block; overflow: hidden; aspect-ratio: 3 / 4; background: var(--paper-2); border-radius: var(--radius); }
   .tile-img :global(img) { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.92) contrast(1.04); transition: transform 900ms var(--ease-out); }
   .tile-row { display: flex; align-items: baseline; gap: 10px; padding-top: 10px; border-top: 1px solid var(--rule); }
   .tile-n { font: 500 0.76rem var(--font-mono); color: var(--neon-ink); }
@@ -316,7 +325,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   /* ---------- people ---------- */
   .people { display: grid; gap: 32px; }
   .people-img { margin: 0; }
-  .people-img :global(img) { width: 100%; aspect-ratio: 1; object-fit: cover; object-position: center 20%; }
+  .people-img :global(img) { width: 100%; aspect-ratio: 1; object-fit: cover; object-position: center 20%; border-radius: var(--radius-card); }
   .people-copy { display: grid; gap: 28px; align-content: start; padding-top: 18px; border-top: 1px solid var(--rule); }
   .quote { margin: 0; }
   .quote p:first-child { font-family: var(--font-body); font-weight: 500; font-size: clamp(1.35rem, 1.05rem + 1.3vw, 2.1rem); line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 12px; max-width: 30ch; }

@@ -71,7 +71,7 @@ import site from '../data/site.json';
       <div class="section-head"><div><p class="eyebrow">Collaborazioni</p><h2 id="partners-title">Con chi <em>lavoriamo</em></h2></div></div>
       <ul class="partners">
         <li>
-          <a href={site.partners[0].url} target="_blank" rel="noopener" class="partner">
+          <a href={site.partners[0].url} target="_blank" rel="noopener" class="partner row-press">
             <div class="p-logos">
               <Picture src={media.switchLogo} alt="Switch Magazine" widths={[340, 600]} sizes="300px" formats={['avif']} fallbackFormat="webp" loading="lazy" class="p-logo" />
               <Picture src={media.switchStyle} alt="" widths={[200, 400]} sizes="120px" formats={['avif']} fallbackFormat="webp" loading="lazy" class="p-cover" />
@@ -81,7 +81,7 @@ import site from '../data/site.json';
           </a>
         </li>
         <li>
-          <a href={site.partners[1].url} target="_blank" rel="noopener" class="partner">
+          <a href={site.partners[1].url} target="_blank" rel="noopener" class="partner row-press">
             <div class="p-logos"><Picture src={media.greenPlanner} alt="Green Planner" widths={[340, 600]} sizes="240px" formats={['avif']} fallbackFormat="webp" loading="lazy" class="p-logo" /></div>
             <span class="p-text"><strong>Green Planner</strong><span>Sostenibilità e innovazione: visita il sito</span></span>
             <Icon name="arrow" class="icon-sm" />

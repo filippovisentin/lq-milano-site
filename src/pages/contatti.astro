@@ -69,10 +69,10 @@ const topics = [
         <div class="info-card night">
           <h2 id="info-t" class="h3">Informazioni</h2>
           <ul class="channels">
-            <li><a href={site.whatsapp} target="_blank" rel="noopener"><Icon name="whatsapp" /><span><strong>WhatsApp</strong>{site.phone}</span></a></li>
-            <li><a href={site.phoneHref}><Icon name="phone" /><span><strong>Telefono</strong>{site.phone}</span></a></li>
-            <li><a href={`mailto:${site.email}`}><Icon name="mail" /><span><strong>Email</strong>{site.email}</span></a></li>
-            <li><a href={site.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" /><span><strong>Negozio</strong>{site.address.street}<br />{site.address.postcode} {site.address.city} {site.address.province}, Italia</span></a></li>
+            <li><a class="row-press" href={site.whatsapp} target="_blank" rel="noopener"><Icon name="whatsapp" /><span><strong>WhatsApp</strong>{site.phone}</span></a></li>
+            <li><a class="row-press" href={site.phoneHref}><Icon name="phone" /><span><strong>Telefono</strong>{site.phone}</span></a></li>
+            <li><a class="row-press" href={`mailto:${site.email}`}><Icon name="mail" /><span><strong>Email</strong>{site.email}</span></a></li>
+            <li><a class="row-press" href={site.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" /><span><strong>Negozio</strong>{site.address.street}<br />{site.address.postcode} {site.address.city} {site.address.province}, Italia</span></a></li>
           </ul>
           <p class="follow">Seguici</p>
           <ul class="social">
@@ -98,7 +98,7 @@ const topics = [
   .cform .btn { justify-self: start; }
   .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   .form-t { font-size: clamp(2.8rem, 1.8rem + 4vw, 5.6rem); margin: 6px 0 10px; }
-  .info-card { padding: 28px; border-left: 3px solid var(--neon); }
+  .info-card { padding: 28px; border-radius: var(--radius-card); }
   .info-card h2 { color: var(--on-night); }
   .channels { list-style: none; padding: 0; margin: 0; display: grid; }
   .channels a { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(244, 236, 221, 0.12); text-decoration: none; color: var(--on-night); }
@@ -109,7 +109,7 @@ const topics = [
   .follow { margin: 20px 0 4px; font: 500 0.76rem var(--font-mono); letter-spacing: 0.03em; text-transform: uppercase; color: var(--neon); }
   .social { list-style: none; padding: 0; margin: 0 0 0 -10px; display: flex; }
   .social .icon-btn:hover { background: rgba(244, 236, 221, 0.1); }
-  .map { margin-top: 0; overflow: hidden; aspect-ratio: 4 / 3; background: var(--paper-2); }
+  .map { margin-top: 0; overflow: hidden; aspect-ratio: 4 / 3; background: var(--paper-2); border-radius: var(--radius-card); }
   .map iframe { width: 100%; height: 100%; border: 0; display: block; }
 </style>
 

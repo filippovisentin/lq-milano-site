@@ -26,7 +26,7 @@ const anni = era(p.details.anni);
       {a && <img class="img-a" src={imgUrl('products', p.slug, a, 480)} srcset={srcset('products', p.slug, a)} sizes={sizes} alt={`${p.title}, vista frontale`} width={a.w} height={a.h} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : undefined} decoding="async" />}
       {b && <img class="img-b" src={imgUrl('products', p.slug, b, 480)} srcset={srcset('products', p.slug, b)} sizes={sizes} alt="" width={b.w} height={b.h} loading="lazy" decoding="async" />}
       <div class="tags">
-        {!available ? <span class="badge badge-dark">Venduto</span> : p.quantity === 1 && <span class="badge">Pezzo unico</span>}
+        {!available && <span class="badge badge-dark">Venduto</span>}
         {show3d(p) && <span class="badge badge-3d"><Icon name="cube" class="icon-xs" /> 3D</span>}
       </div>
     </div>
@@ -44,8 +44,13 @@ const anni = era(p.details.anni);
 <style>
   .card { position: relative; }
   .card-link { display: block; text-decoration: none; color: inherit; }
-  .card-media { position: relative; aspect-ratio: 3 / 4; background: #fff; overflow: hidden; }
-  .card-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 6%; transition: opacity 380ms var(--ease-out), transform 600ms var(--ease-out); }
+  .card-media {
+    position: relative; aspect-ratio: 3 / 4; background: var(--tile); overflow: hidden; border-radius: var(--radius); isolation: isolate;
+    transition: transform 160ms var(--ease-out);
+  }
+  .card-link { -webkit-tap-highlight-color: transparent; }
+  .card-link:active .card-media { transform: scale(0.98); transition-duration: var(--t-press); }
+  .card-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 7%; mix-blend-mode: multiply; filter: brightness(1.05); /* studio white → pure white, so it melts into the tile */ transition: opacity 380ms var(--ease-out), transform 600ms var(--ease-out); }
   .card-media .img-b { opacity: 0; }
   @media (hover: hover) and (pointer: fine) {
     .card-link:hover .img-a { transform: scale(1.03); }
@@ -60,5 +65,5 @@ const anni = era(p.details.anni);
   .card-link:hover .card-title { text-decoration: underline; text-underline-offset: 0.2em; }
   .card-meta { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; font-family: var(--font-mono); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.02em; color: var(--ink-2); }
   .price { color: var(--ink); font-weight: 500; font-size: 0.86rem; }
-  [data-available='0'] .card-media img { filter: grayscale(0.6); opacity: 0.7; }
+  [data-available='0'] .card-media img { filter: brightness(1.05) grayscale(0.6); opacity: 0.7; }
 </style>

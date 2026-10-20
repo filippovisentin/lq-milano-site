@@ -58,7 +58,7 @@ const past = events.filter(isPast);
   .ev-head h2 { font-size: clamp(2.6rem, 1.6rem + 4vw, 5.6rem); margin: 0; }
   .ev-count { margin: 0; font: 500 0.78rem var(--font-mono); text-transform: uppercase; color: var(--ink-2); }
   @media (min-width: 768px) { .ev-head { grid-template-columns: 1fr auto; } .ev-head .eyebrow { grid-column: 1 / -1; } }
-  .empty { display: flex; gap: 16px; align-items: flex-start; padding: 24px; background: var(--night); color: var(--on-night); border-left: 3px solid var(--neon); max-width: 820px; }
+  .empty { display: flex; gap: 16px; align-items: flex-start; padding: 24px; background: var(--night); color: var(--on-night); border-radius: var(--radius-card); max-width: 820px; }
   .empty p { color: var(--on-night-2); }
   .empty strong { color: var(--on-night); }
   .empty > :global(svg) { color: var(--neon); flex: none; }

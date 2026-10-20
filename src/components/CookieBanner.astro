@@ -36,7 +36,7 @@
 </section>
 
 <style>
-  .cb { position: fixed; z-index: 90; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); border-radius: 12px; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35); }
+  .cb { position: fixed; z-index: 90; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); border-radius: 22px; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35); overflow: hidden; }
   @media (min-width: 720px) { .cb { left: auto; right: 20px; bottom: 20px; width: min(520px, calc(100vw - 40px)); } }
   .cb-in { position: relative; padding: 20px 20px 18px; display: grid; gap: 12px; }
   .cb-x { position: absolute; top: 6px; right: 6px; color: var(--on-night-2); }
@@ -45,7 +45,7 @@
   .cb-text a { color: var(--gold); }
   .cb-prefs { display: grid; gap: 10px; padding: 12px 0 4px; border-top: 1px solid rgba(244, 236, 221, 0.14); }
   .cb-row { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; font-size: 0.9rem; color: var(--on-night-2); cursor: pointer; }
-  .cb-row input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--gold); }
+  .cb-row input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--gold); border-radius: 6px; }
   .cb-row strong { color: var(--on-night); }
   .cb-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .cb-actions .btn { min-height: 44px; justify-content: center; }
