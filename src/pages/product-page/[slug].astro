@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
 import ProductCard from '../../components/ProductCard.astro';
-import { getProduct, listProducts, productUrl, inStock, has3d, euro, imgUrl, srcset, modelBase, era, paragraphs } from '../../lib/catalog';
+import { getProduct, listProducts, productUrl, inStock, show3d, euro, imgUrl, srcset, modelBase, era, paragraphs } from '../../lib/catalog';
 import site from '../../data/site.json';
 
 export const prerender = false;
@@ -11,7 +11,7 @@ if (!p) return new Response(null, { status: 404, statusText: 'Not found' });
 const all = listProducts();
 const url = new URL(productUrl(p.slug), Astro.site).href;
 const available = inStock(p);
-const with3d = has3d(p);
+const with3d = show3d(p);
 const related = all
   .filter((x) => x.slug !== p.slug && inStock(x))
   .sort((a, b) => Number(b.category === p.category) - Number(a.category === p.category))
@@ -220,9 +220,7 @@ const base3d = modelBase(p);
 
   /* stage */
   .stage {
-    position: relative; aspect-ratio: 1 / 1; border-radius: 6px; overflow: hidden;
-    background:
-      radial-gradient(70% 55% at 50% 40%, #fffdf8 0%, #f1e9da 70%, #e7dcc8 100%);
+    position: relative; aspect-ratio: 1 / 1; overflow: hidden; background: #fff;
   }
   @media (max-width: 959px) { .stage { aspect-ratio: 4 / 5; margin-inline: calc(var(--gutter) * -1); border-radius: 0; } }
   .pane { position: absolute; inset: 0; }
@@ -251,36 +249,36 @@ const base3d = modelBase(p);
   }
   @keyframes hint { 10%, 75% { opacity: 1; } 100% { opacity: 0; } }
   .zoom-btn {
-    position: absolute; right: 12px; bottom: 12px; display: inline-flex; gap: 6px; align-items: center; min-height: 44px; padding: 0 16px;
-    border-radius: 999px; border: 1px solid var(--line); background: rgba(255, 252, 246, 0.95); font-weight: 600; font-size: 0.88rem; box-shadow: var(--shadow-1);
+    position: absolute; right: 0; bottom: 0; display: inline-flex; gap: 6px; align-items: center; min-height: 44px; padding: 0 16px;
+    border: 0; background: var(--night); color: var(--on-night); font: 500 0.76rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em;
   }
 
   .thumbs { display: flex; gap: 10px; margin-top: 12px; overflow-x: auto; padding: 4px 2px 8px; scrollbar-width: none; }
   .thumbs::-webkit-scrollbar { display: none; }
   .thumb {
-    flex: none; width: 76px; aspect-ratio: 4 / 5; padding: 0; border: 2px solid transparent; border-radius: 6px; background: #fff; overflow: hidden;
-    box-shadow: inset 0 0 0 1px var(--line); transition: border-color var(--t-fast);
+    flex: none; width: 76px; aspect-ratio: 3 / 4; padding: 0; border: 0; border-bottom: 2px solid transparent; background: #fff; overflow: hidden;
+    transition: border-color var(--t-fast), opacity var(--t-fast); opacity: 0.7;
   }
   .thumb img { width: 100%; height: 100%; object-fit: contain; }
-  .thumb[aria-selected='true'] { border-color: var(--ink); }
-  .thumb:hover { border-color: var(--line-strong); }
+  .thumb[aria-selected='true'] { border-color: var(--neon); opacity: 1; }
+  .thumb:hover { opacity: 1; }
   .thumb-3d { display: grid; place-items: center; align-content: center; gap: 2px; background: var(--night); color: #ffd9c7; font-weight: 700; font-size: 0.8rem; box-shadow: none; }
   .thumb-3d[aria-selected='true'] { border-color: var(--neon); }
 
   /* panel */
-  .pdp-title { font-size: clamp(1.9rem, 1.4rem + 2vw, 2.9rem); margin-bottom: 10px; }
-  .pdp-price { font-size: 1.5rem; font-weight: 600; margin-bottom: 16px; }
-  .vat { font-size: 0.85rem; font-weight: 400; color: var(--ink-2); margin-left: 6px; }
-  .facts { list-style: none; padding: 0; margin: 0 0 22px; display: flex; flex-wrap: wrap; gap: 8px; }
-  .facts li { display: inline-flex; gap: 6px; align-items: center; padding: 6px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 0.88rem; }
+  .pdp-title { font-size: clamp(2.6rem, 1.8rem + 3.4vw, 4.6rem); line-height: 0.86; margin: 6px 0 14px; }
+  .pdp-price { font: 500 1.5rem var(--font-mono); margin-bottom: 16px; }
+  .vat { font-size: 0.74rem; text-transform: uppercase; color: var(--ink-2); margin-left: 6px; }
+  .facts { list-style: none; padding: 0; margin: 0 0 22px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .facts li { display: inline-flex; gap: 6px; align-items: center; padding: 6px 10px; border: 1px solid var(--line-strong); font: 500 0.74rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em; }
   .facts :global(svg) { color: var(--gold-ink); }
   .buy { display: grid; gap: 12px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
   .sizes { border: 0; padding: 0; margin: 0 0 6px; display: grid; gap: 8px; }
   .size-opts { display: flex; gap: 8px; flex-wrap: wrap; }
   .size-opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
   .size-opt span {
-    display: grid; place-items: center; min-width: 56px; min-height: 48px; padding: 0 16px; border-radius: var(--radius-ctl);
-    border: 1.5px solid var(--line-strong); background: var(--surface); font-weight: 600; cursor: pointer;
+    display: grid; place-items: center; min-width: 56px; min-height: 48px; padding: 0 16px; border-radius: 2px;
+    border: 1px solid var(--line-strong); background: transparent; font: 500 0.9rem var(--font-mono); cursor: pointer;
   }
   .size-opt input:checked + span { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   .size-opt input:focus-visible + span { outline: 3px solid var(--olive); outline-offset: 3px; }
@@ -292,19 +290,20 @@ const base3d = modelBase(p);
   .accordions details { border-bottom: 1px solid var(--line); }
   .accordions summary {
     list-style: none; display: flex; align-items: center; justify-content: space-between; min-height: 56px; cursor: pointer;
-    font-family: var(--font-display); font-size: 1.2rem;
+    font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; text-transform: uppercase;
   }
   .accordions summary::-webkit-details-marker { display: none; }
   .accordions summary :global(svg) { transition: transform var(--t-fast); }
   .accordions details[open] summary :global(svg) { transform: rotate(180deg); }
   .acc-body { padding-bottom: 18px; }
   .measures { margin: 0 0 10px; display: grid; gap: 0; }
-  .measures div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px dashed var(--line); }
+  .measures div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
   .measures dt { color: var(--ink-2); }
-  .measures dd { margin: 0; font-weight: 600; text-align: right; }
+  .measures dd { margin: 0; font-family: var(--font-mono); font-weight: 500; text-align: right; }
   .plain { list-style: none; padding: 0; margin: 0; }
-  .tailor { display: flex; gap: 12px; align-items: flex-start; margin: 22px 0; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-ctl); }
-  .tailor :global(svg) { color: var(--olive); flex: none; margin-top: 2px; }
+  .tailor { display: flex; gap: 12px; align-items: flex-start; margin: 22px 0; padding: 16px; background: var(--night); color: var(--on-night); border-left: 3px solid var(--neon); }
+  .tailor :global(svg) { color: var(--neon); flex: none; margin-top: 2px; }
+  .tailor a { color: var(--on-night); }
   .tailor p { margin: 0; font-size: 0.95rem; }
   .share { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .share ul { list-style: none; display: flex; gap: 2px; padding: 0; margin: 0; }
@@ -325,11 +324,11 @@ const base3d = modelBase(p);
   .lightbox { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: #fff; }
   .lightbox::backdrop { background: #fff; }
   .lightbox img { width: 100%; height: 100%; object-fit: contain; padding: 56px 16px; }
-  .lb-btn { position: absolute; width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--line); background: rgba(255, 252, 246, 0.95); display: grid; place-items: center; box-shadow: var(--shadow-1); }
+  .lb-btn { position: absolute; width: 52px; height: 52px; border: 0; background: var(--night); color: var(--on-night); display: grid; place-items: center; }
   .lb-close { top: calc(12px + env(safe-area-inset-top)); right: 12px; }
   .lb-prev { left: 12px; top: 50%; transform: translateY(-50%); }
   .lb-next { right: 12px; top: 50%; transform: translateY(-50%); }
-  .lb-count { position: absolute; top: calc(22px + env(safe-area-inset-top)); left: 20px; margin: 0; font-weight: 600; }
+  .lb-count { position: absolute; top: calc(22px + env(safe-area-inset-top)); left: 20px; margin: 0; font: 500 0.82rem var(--font-mono); }
 </style>
 
 <script>

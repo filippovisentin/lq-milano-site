@@ -50,46 +50,50 @@ const services = [
     imageAlt="Cravatte vintage colorate esposte in negozio"
   >
     <nav class="jump" aria-label="Vai al servizio">
-      {services.map((s) => <a href={`#${s.id}`}>{s.title}</a>)}
+      {services.map((s, i) => <a href={`#${s.id}`}><span>0{i + 1}</span>{s.title}</a>)}
     </nav>
   </PageHero>
 
-  <section class="section">
-    <div class="container">
-      <ol class="services">
-        {services.map((s, i) => (
-          <li class="svc reveal" id={s.id}>
-            <div class="svc-media">
-              <Picture src={s.img} alt={s.alt} widths={[320, 520, 800]} sizes="(min-width: 1100px) 340px, (min-width: 700px) 42vw, 80vw" formats={['avif']} fallbackFormat="webp" loading={i < 2 ? 'eager' : 'lazy'} />
-            </div>
+  <section class="svc-wrap" aria-label="I servizi">
+    <ol class="services" role="list">
+      {services.map((s, i) => (
+        <li class="svc" id={s.id}>
+          <div class="svc-in">
+            <p class="svc-n" aria-hidden="true">0{i + 1}</p>
             <div class="svc-body">
-              <p class="svc-n tabular"><Icon name={s.icon} class="icon-sm" /> 0{i + 1}</p>
-              <h2 class="h3">{s.title}</h2>
+              <p class="svc-k"><Icon name={s.icon} class="icon-sm" /> Servizio 0{i + 1} di 0{services.length}</p>
+              <h2 class="svc-t">{s.title}</h2>
               {s.text.map((t) => <p>{t}</p>)}
               {s.extra && <p><a href={s.extra.href}>{s.extra.label}</a></p>}
               <a class="btn" href={s.href}>{s.cta} <Icon name="arrow" class="icon-sm" /></a>
             </div>
-          </li>
-        ))}
-      </ol>
-    </div>
+            <div class="svc-media reveal">
+              <Picture src={s.img} alt={s.alt} widths={[320, 520, 800]} sizes="(min-width: 1100px) 360px, (min-width: 700px) 40vw, 70vw" formats={['avif']} fallbackFormat="webp" loading={i < 2 ? 'eager' : 'lazy'} />
+            </div>
+          </div>
+        </li>
+      ))}
+    </ol>
   </section>
 </Base>
 
 <style>
-  .jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
-  .jump a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(244, 236, 221, 0.3); color: var(--on-night); text-decoration: none; font-size: 0.9rem; }
-  .jump a:hover { background: rgba(244, 236, 221, 0.1); }
-  .services { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
-  @media (min-width: 700px) { .services { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; } }
-  @media (min-width: 1100px) { .services { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  .svc { display: grid; grid-template-rows: auto 1fr; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; scroll-margin-top: calc(var(--header-h) + 20px); }
-  .svc:target { outline: 3px solid var(--gold); outline-offset: 2px; }
-  .svc-media { aspect-ratio: 16 / 10; display: grid; place-items: center; background: radial-gradient(70% 70% at 50% 50%, #fff, var(--paper-2)); padding: 18px; }
-  .svc-media :global(img) { max-height: 100%; width: auto; aspect-ratio: 1; object-fit: contain; border-radius: 50%; }
-  .svc-body { padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 4px; }
-  .svc-body p { color: var(--ink-2); margin-bottom: 10px; }
-  .svc-body .btn { margin-top: auto; align-self: flex-start; }
-  .svc-n { display: inline-flex; gap: 8px; align-items: center; color: var(--gold-ink) !important; font-weight: 700; font-size: 0.82rem; margin-bottom: 6px !important; }
-  .svc h2 { margin-bottom: 10px; }
+  .svc-wrap { padding-bottom: clamp(56px, 8vw, 112px); }
+  .services { list-style: none; margin: 0; padding: 0; }
+  .svc { border-bottom: 1px solid var(--line); scroll-margin-top: var(--header-h); }
+  .svc:nth-child(even) { background: var(--paper-2); }
+  .svc-in { width: 100%; max-width: calc(1440px + 2 * var(--gutter)); margin-inline: auto; padding: clamp(40px, 6vw, 88px) var(--gutter); display: grid; gap: 20px 40px; align-items: center; }
+  .svc-n { margin: 0; font: 900 clamp(4rem, 2.6rem + 6vw, 9rem)/0.8 var(--font-display); color: transparent; -webkit-text-stroke: 1.5px var(--neon); }
+  .svc-k { display: inline-flex; gap: 8px; align-items: center; margin: 0 0 6px; font: 500 0.76rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em; color: var(--neon-ink); }
+  .svc-t { font-size: clamp(2.2rem, 1.4rem + 3.4vw, 4.6rem); margin: 0 0 14px; }
+  .svc-body p:not(.svc-k) { color: var(--ink-2); max-width: 58ch; margin-bottom: 12px; }
+  .svc-body .btn { margin-top: 8px; }
+  .svc-media { justify-self: center; width: min(70vw, 360px); }
+  .svc-media :global(img) { width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; border-radius: 50%; }
+  .svc:target .svc-n { -webkit-text-stroke-color: var(--neon); color: var(--neon); }
+  @media (min-width: 900px) {
+    .svc-in { grid-template-columns: auto minmax(0, 1fr) auto; }
+    .svc-n { align-self: start; min-width: 2.2ch; }
+    .svc-media { width: clamp(240px, 26vw, 360px); }
+  }
 </style>

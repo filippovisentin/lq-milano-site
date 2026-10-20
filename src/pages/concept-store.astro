@@ -1,72 +1,222 @@
 ---
-import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import PageHero from '../components/PageHero.astro';
+import Pic from '../components/Pic.astro';
 import Icon from '../components/Icon.astro';
+import NeonLogo from '../components/NeonLogo.astro';
+import MapEmbed from '../components/MapEmbed.astro';
 import { media, rooms } from '../lib/media';
 import site from '../data/site.json';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const links: Record<string, { href: string; label: string }> = {
+  ingresso: { href: '/shop', label: 'Una parte della selezione è anche online' },
+  'angolo-creativo': { href: '/servizi#upcycling', label: 'Personalizza un capo' },
+  'stanza-segreta': { href: '/servizi#noleggio', label: 'Noleggio per professionisti' },
+};
+const details = [
+  { img: media.storefront, alt: 'La vetrina di LQ Milano in via Venini con capi e manichini', cap: 'La vetrina · via Venini 54' },
+  { img: media.servicesBanner, alt: 'Cravatte vintage di fantasie diverse, una accanto all’altra', cap: 'Cravatte d’archivio' },
+  { img: media.galleryBanner, alt: 'Una sala del negozio con stender, giacche e accessori', cap: 'Tra gli stender' },
+  { img: media.eventsBanner, alt: 'Il negozio pieno di capi colorati e accessori appesi al muro', cap: 'Il muro degli accessori' },
+];
 ---
 <Base title="Concept store" description="Fai il giro di LQ Milano a NoLo: l’ingresso, il corridoio con la stampa personalizzata, l’Angolo Creativo di sartoria e la Stanza Segreta d’archivio.">
-  <PageHero
-    title="Concept store"
-    eyebrow="Via Venini 54 · NoLo, Milano"
-    lead="Più di un negozio: un viaggio nella moda vintage in quattro stanze, con capi iconici, pezzi d’archivio, stampa personalizzata e sartoria."
-    image={media.storeBanner}
-    imageAlt="L’interno di LQ Milano con capi appesi e accessori"
-  >
-    <nav class="room-nav" aria-label="Le stanze">
-      {rooms.map((r, i) => <a href={`#${r.id}`}><span class="tabular">0{i + 1}</span> {r.title}</a>)}
-    </nav>
-  </PageHero>
+  <div class="cs">
+    <!-- ============ HERO: the sign switches on, like the intro ============ -->
+    <section class="cs-hero night" aria-labelledby="cs-title">
+      <div class="cs-bg" aria-hidden="true">
+        <Pic src={media.storeBanner} alt="" sizes="100vw" loading="eager" fetchpriority="high" />
+      </div>
+      <div class="cs-hero-in">
+        <nav aria-label="Percorso"><ol class="breadcrumb"><li><a href="/">Home</a></li><li aria-current="page">Concept store</li></ol></nav>
+        <NeonLogo size="lg" animated />
+        <h1 id="cs-title" class="cs-title">Il <em>negozio</em></h1>
+        <p class="cs-lead">Più di un negozio: un viaggio nella moda vintage in quattro stanze, con capi iconici, pezzi d’archivio, stampa personalizzata e sartoria.</p>
+        <ol class="cs-index" role="list" aria-label="Le stanze">
+          {rooms.map((r, i) => <li><a href={`#${r.id}`}><span class="n">{pad(i + 1)}</span><span class="t">{r.title}</span></a></li>)}
+        </ol>
+      </div>
+      <p class="cs-foot"><span><Icon name="pin" class="icon-sm" /> {site.address.street} · {site.address.area}, Milano</span><a href="#giro">Inizia il giro ↓</a></p>
+    </section>
 
-  <div class="rooms">
-    {rooms.map((r, i) => (
-      <section class:list={['room section', i % 2 && 'paper-2']} id={r.id} aria-labelledby={`${r.id}-t`}>
-        <div class:list={['container room-grid', i % 2 && 'flip']}>
-          <figure class="reveal">
-            <Picture src={r.img} alt={r.alt} widths={[480, 720, 1000, 1280]} sizes="(min-width: 900px) 45vw, 92vw" formats={['avif']} fallbackFormat="webp" loading={i === 0 ? 'eager' : 'lazy'} />
-          </figure>
-          <div class="room-copy">
-            <p class="eyebrow">Stanza 0{i + 1}</p>
-            <h2 id={`${r.id}-t`}>{r.title}</h2>
-            {r.tag && <p class="room-tag"><Icon name={r.id === 'stanza-segreta' ? 'film' : r.id === 'corridoio' ? 'sparkle' : 'scissors'} class="icon-sm" /> {r.tag}</p>}
-            <p class="prose">{r.text}</p>
-            {r.id === 'angolo-creativo' && <a class="link-arrow" href="/servizi#upcycling"><span>Personalizza un capo</span><Icon name="arrow" class="icon-sm" /></a>}
-            {r.id === 'stanza-segreta' && <a class="link-arrow" href="/servizi#noleggio"><span>Noleggio per professionisti</span><Icon name="arrow" class="icon-sm" /></a>}
-            {r.id === 'ingresso' && <a class="link-arrow" href="/shop"><span>Una parte della selezione è anche online</span><Icon name="arrow" class="icon-sm" /></a>}
-          </div>
+    <!-- ============ IL GIRO: sticky photo that changes with the room ============ -->
+    <section class="tour night" id="giro" aria-label="Il giro del negozio">
+      <div class="tour-stops">
+        {rooms.map((r, i) => (
+          <article class="stop" id={r.id} data-stop={i} aria-labelledby={`${r.id}-t`}>
+            <figure class="stop-img"><Pic src={r.img} alt={r.alt} sizes="100vw" /></figure>
+            <p class="stop-n" aria-hidden="true">{pad(i + 1)}</p>
+            <p class="label">Stanza {pad(i + 1)} di {pad(rooms.length)}</p>
+            <h2 id={`${r.id}-t`} class="stop-t">{r.title}</h2>
+            {r.tag && <p class="stop-tag">{r.tag}</p>}
+            <p class="stop-text">{r.text}</p>
+            {links[r.id] && <a class="link-arrow" href={links[r.id].href}><span>{links[r.id].label}</span><Icon name="arrow" class="icon-sm" /></a>}
+          </article>
+        ))}
+      </div>
+      <div class="tour-stage" aria-hidden="true">
+        <div class="stage-frame" data-stage>
+          {rooms.map((r, i) => (
+            <figure class:list={['stage-img', i === 0 && 'is-on']} data-shot={i}>
+              <Pic src={r.img} alt="" sizes="(min-width: 1000px) 50vw, 1px" loading={i === 0 ? 'eager' : 'lazy'} />
+            </figure>
+          ))}
+          <p class="stage-cap label"><span data-cap>{pad(1)} · {rooms[0].title}</span></p>
+          <ol class="stage-dots" role="list">{rooms.map((_, i) => <li class:list={[i === 0 && 'is-on']} data-dot={i}></li>)}</ol>
         </div>
-      </section>
-    ))}
-  </div>
+      </div>
+    </section>
 
-  <section class="visit night section-tight" aria-labelledby="v-title">
-    <div class="container visit-grid">
-      <div>
-        <h2 id="v-title">Passa a trovarci</h2>
-        <p class="lead">{site.address.street}, {site.address.postcode} {site.address.city}. Per una consulenza, una prova o un ritocco su misura, scrivici prima: ti aspettiamo.</p>
+    <!-- ============ DETTAGLI ============ -->
+    <section class="details" aria-labelledby="det-title">
+      <header class="det-head">
+        <p class="label"><span class="idx">05</span> Dettagli</p>
+        <h2 id="det-title" class="det-t">Da vicino</h2>
+        <p class="det-note">Scorri per vedere altri angoli del negozio.</p>
+      </header>
+      <ul class="det-strip" role="list">
+        {details.map((d) => (
+          <li>
+            <figure>
+              <Pic src={d.img} alt={d.alt} sizes="(min-width: 1000px) 30vw, 78vw" />
+              <figcaption class="label">{d.cap}</figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- ============ VISITA ============ -->
+    <section class="visit night" aria-labelledby="v-title">
+      <div class="visit-copy">
+        <p class="label">Passa a trovarci</p>
+        <h2 id="v-title" class="visit-t">Via Venini <em>54</em></h2>
+        <address>{site.address.street}<br />{site.address.postcode} {site.address.city} · {site.address.area}</address>
+        <p class="visit-note">Per una consulenza, una prova o un ritocco su misura, scrivici prima: ti aspettiamo.</p>
+        <div class="visit-cta">
+          <a class="btn btn-gold" href={site.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" class="icon-sm" /> Indicazioni<span class="sr-only"> (si apre in una nuova scheda)</span></a>
+          <a class="btn btn-ghost" href={site.whatsapp} target="_blank" rel="noopener"><Icon name="whatsapp" class="icon-sm" /> WhatsApp<span class="sr-only"> (si apre in una nuova scheda)</span></a>
+          <a class="btn btn-ghost" href={site.phoneHref}><Icon name="phone" class="icon-sm" /> Chiama</a>
+        </div>
       </div>
-      <div class="visit-cta">
-        <a class="btn btn-gold" href={site.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" class="icon-sm" /> Indicazioni</a>
-        <a class="btn btn-ghost" href={site.whatsapp} target="_blank" rel="noopener"><Icon name="whatsapp" class="icon-sm" /> WhatsApp</a>
-        <a class="btn btn-ghost" href={site.phoneHref}><Icon name="phone" class="icon-sm" /> Chiama</a>
-      </div>
-    </div>
-  </section>
+      <div class="visit-map"><MapEmbed title="Mappa di LQ Milano" /></div>
+    </section>
+  </div>
 </Base>
 
 <style>
-  .room-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
-  .room-nav a { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(244, 236, 221, 0.3); color: var(--on-night); text-decoration: none; font-size: 0.92rem; }
-  .room-nav a:hover { background: rgba(244, 236, 221, 0.1); }
-  .room-nav span { color: var(--gold); font-size: 0.78rem; font-weight: 700; }
-  .room-grid { display: grid; gap: 28px; align-items: center; }
-  @media (min-width: 900px) { .room-grid { grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 96px); } .room-grid.flip figure { order: 2; } }
-  .room figure { margin: 0; }
-  .room figure :global(img) { width: 100%; aspect-ratio: 4 / 5; max-height: 78vh; object-fit: cover; border-radius: 6px; }
-  .room-tag { display: inline-flex; gap: 8px; align-items: center; padding: 8px 14px; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: 0.88rem; font-weight: 500; }
-  .room-copy .prose { margin-bottom: 16px; }
-  .visit-grid { display: grid; gap: 24px; align-items: center; }
-  @media (min-width: 900px) { .visit-grid { grid-template-columns: 1.2fr 1fr; } .visit-cta { justify-content: flex-end; } }
-  .visit-cta { display: flex; flex-wrap: wrap; gap: 10px; }
+  .cs { --rule-n: rgba(244, 236, 221, 0.16); --wide: 1440px; }
+  .label { font: 500 0.76rem/1.3 var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--on-night-2); margin: 0; }
+  .idx { color: var(--neon-ink); margin-right: 10px; }
+
+  /* ---------- hero (same language as the intro loader) ---------- */
+  .cs-hero { position: relative; min-height: calc(100svh - var(--header-h)); display: grid; grid-template-rows: 1fr auto; overflow: hidden; isolation: isolate; }
+  .cs-bg { position: absolute; inset: -4%; z-index: -2; }
+  .cs-bg :global(img) { width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.35) brightness(0.34) contrast(1.1); }
+  .cs-bg::after { content: ''; position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 45%, transparent, rgba(23, 20, 17, 0.9)); }
+  .cs-hero::before { /* the wall lights up with the sign */
+    content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(45% 38% at 50% 40%, rgba(255, 91, 36, 0.24), transparent 70%);
+  }
+  .cs-hero-in { align-self: center; display: grid; justify-items: center; text-align: center; gap: 18px; padding: clamp(40px, 8vh, 96px) var(--gutter) 24px; }
+  .cs-hero-in .breadcrumb { justify-content: center; color: var(--on-night-2); margin: 0; }
+  .cs-title { font-size: clamp(4rem, 2rem + 11vw, 13rem); line-height: 0.82; margin: 4px 0 0; }
+  .cs-lead { max-width: 46ch; margin: 0; color: var(--on-night-2); font-size: clamp(1.02rem, 0.95rem + 0.35vw, 1.2rem); }
+  .cs-index { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .cs-index a { display: inline-flex; gap: 10px; align-items: center; min-height: 44px; padding: 0 16px; border: 1px solid var(--rule-n); color: var(--on-night); text-decoration: none; font: 500 0.8rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em; transition: border-color 160ms, background 160ms; }
+  .cs-index a:hover { border-color: var(--neon); background: rgba(255, 91, 36, 0.08); }
+  .cs-index .n { color: var(--neon); }
+  .cs-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 24px; margin: 0; padding: 8px var(--gutter); border-top: 1px solid var(--rule-n); font: 500 0.78rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em; color: var(--on-night-2); }
+  .cs-foot > * { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
+  .cs-foot a { color: var(--on-night); text-decoration: none; }
+  .cs-foot a:hover { color: var(--neon); }
+  @media (prefers-reduced-motion: no-preference) {
+    .cs-bg :global(img) { animation: drift 3.2s var(--ease-out) both; }
+    .cs-hero::before { animation: wall 1.4s 0.35s steps(1, end) both; }
+  }
+  @keyframes drift { from { transform: scale(1.12) translateX(1.5%); } to { transform: scale(1.02); } }
+  @keyframes wall { 0% { opacity: 0; } 20% { opacity: 0.7; } 28% { opacity: 0.1; } 45% { opacity: 1; } 100% { opacity: 1; } }
+
+  /* ---------- tour ---------- */
+  .tour { position: relative; border-top: 1px solid var(--rule-n); }
+  .tour-stops { padding-inline: var(--gutter); }
+  .stop { position: relative; padding-block: clamp(48px, 8vw, 96px); border-bottom: 1px solid var(--rule-n); scroll-margin-top: var(--header-h); }
+  .stop-img { margin: 0 0 24px; }
+  .stop-img :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; filter: saturate(0.92) contrast(1.04); }
+  .stop-n { margin: 0 0 6px; font: 900 clamp(4.5rem, 3rem + 7vw, 10rem)/0.8 var(--font-display); color: transparent; -webkit-text-stroke: 1.5px var(--neon); }
+  .stop-t { font-size: clamp(2.6rem, 1.6rem + 4vw, 5.2rem); margin: 10px 0 14px; }
+  .stop-tag { display: inline-flex; margin: 0 0 16px; padding: 6px 10px; background: var(--neon); color: var(--night); font: 500 0.74rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em; }
+  .stop-text { color: var(--on-night-2); max-width: 54ch; font-size: 1.04rem; line-height: 1.65; }
+  .stop .link-arrow { color: var(--on-night); }
+  .stop .link-arrow:hover { color: var(--neon); }
+  .tour-stage { display: none; }
+  @media (min-width: 1000px) {
+    .tour { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+    .tour-stops { padding-left: max(var(--gutter), calc((100% - var(--wide)) / 2 + var(--gutter))); padding-right: clamp(32px, 4vw, 72px); }
+    .stop { min-height: 88svh; display: flex; flex-direction: column; justify-content: center; }
+    .stop-img { display: none; }
+    .tour-stage { display: block; border-left: 1px solid var(--rule-n); }
+    .stage-frame { position: sticky; top: var(--header-h); height: calc(100svh - var(--header-h)); overflow: hidden; }
+    .stage-img { position: absolute; inset: 0; margin: 0; opacity: 0; transition: opacity 700ms var(--ease-out); }
+    .stage-img.is-on { opacity: 1; }
+    .stage-img :global(img) { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.92) contrast(1.04); transform: scale(1.04); transition: transform 1600ms var(--ease-out); }
+    .stage-img.is-on :global(img) { transform: none; }
+    .stage-cap { position: absolute; left: 20px; bottom: 20px; padding: 8px 12px; background: rgba(23, 20, 17, 0.82); color: var(--on-night); }
+    .stage-dots { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+    .stage-dots li { width: 8px; height: 8px; border: 1px solid var(--on-night); border-radius: 50%; transition: background 200ms, box-shadow 200ms; }
+    .stage-dots li.is-on { background: var(--neon); border-color: var(--neon); box-shadow: 0 0 10px var(--neon-glow); }
+  }
+  @media (prefers-reduced-motion: reduce) { .stage-img, .stage-img :global(img) { transition: none; transform: none; } }
+
+  /* ---------- details ---------- */
+  .details { padding: clamp(72px, 9vw, 144px) 0; background: var(--paper); }
+  .det-head { display: grid; gap: 10px 24px; padding: 18px var(--gutter) 0; margin: 0 auto clamp(28px, 4vw, 48px); max-width: calc(var(--wide) + 2 * var(--gutter)); border-top: 1px solid var(--line); }
+  .details .label { color: var(--ink-2); }
+  .det-t { font-size: clamp(2.6rem, 1.6rem + 4vw, 5.6rem); margin: 0; }
+  .det-note { margin: 0; color: var(--ink-2); font-size: 0.95rem; }
+  @media (min-width: 768px) { .det-head { grid-template-columns: 1fr auto; align-items: end; } .det-head .label { grid-column: 1 / -1; } }
+  .det-strip { list-style: none; margin: 0; padding: 0 var(--gutter); display: grid; grid-auto-flow: column; grid-auto-columns: 78%; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); scrollbar-width: thin; }
+  @media (min-width: 1000px) { .det-strip { grid-auto-columns: calc((100% - 2 * var(--gutter) - 48px) / 3.3); } }
+  .det-strip li { scroll-snap-align: start; }
+  .det-strip figure { margin: 0; display: grid; gap: 10px; }
+  .det-strip :global(img) { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; filter: saturate(0.92) contrast(1.04); }
+  .det-strip figcaption { text-align: center; color: var(--ink-2); }
+
+  /* ---------- visit ---------- */
+  .visit { display: grid; }
+  .visit-copy { display: grid; gap: 16px; justify-items: start; align-content: center; padding: clamp(56px, 8vw, 120px) var(--gutter); }
+  .visit-t { font-size: clamp(2.8rem, 1.8rem + 4.4vw, 6rem); margin: 0; }
+  .visit address { font-style: normal; font-weight: 500; font-size: clamp(1.15rem, 1rem + 0.5vw, 1.45rem); line-height: 1.35; }
+  .visit-note { color: var(--on-night-2); max-width: 44ch; margin: 0; }
+  .visit-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+  .visit-copy .btn-ghost { --fg: var(--on-night); --bd: rgba(244, 236, 221, 0.6); }
+  .visit-copy .btn-ghost:hover { --bg: rgba(244, 236, 221, 0.08); --bd: var(--on-night); }
+  .visit-map { min-height: 360px; display: grid; }
+  .visit-map :global(.mapx) { min-height: 360px; }
+  @media (min-width: 1000px) {
+    .visit { grid-template-columns: 1fr 1fr; }
+    .visit-copy { padding-left: max(var(--gutter), calc((100% - var(--wide)) / 2 + var(--gutter))); }
+    .visit-map, .visit-map :global(.mapx) { min-height: 560px; }
+  }
 </style>
+
+<script>
+  // Desktop tour: the sticky photo follows the room being read.
+  const stage = document.querySelector<HTMLElement>('[data-stage]');
+  const stops = [...document.querySelectorAll<HTMLElement>('[data-stop]')];
+  if (stage && stops.length && 'IntersectionObserver' in window) {
+    const shots = [...stage.querySelectorAll<HTMLElement>('[data-shot]')];
+    const dots = [...stage.querySelectorAll<HTMLElement>('[data-dot]')];
+    const cap = stage.querySelector<HTMLElement>('[data-cap]')!;
+    const show = (i: number) => {
+      shots.forEach((s, k) => s.classList.toggle('is-on', k === i));
+      dots.forEach((d, k) => d.classList.toggle('is-on', k === i));
+      const t = stops[i].querySelector('h2')?.textContent ?? '';
+      cap.textContent = `${String(i + 1).padStart(2, '0')} · ${t}`;
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) show(Number((e.target as HTMLElement).dataset.stop)); });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    stops.forEach((s) => io.observe(s));
+  }
+</script>

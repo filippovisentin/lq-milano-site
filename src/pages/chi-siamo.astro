@@ -18,13 +18,13 @@ import site from '../data/site.json';
 
   <article class="section person" id="lea" aria-labelledby="lea-name">
     <div class="container person-grid">
-      <figure class="portrait reveal">
+      <figure class="portrait reveal" data-n="01 · Lea">
         <Picture src={media.lea} alt="Ritratto di Lea Quattrocchi" widths={[480, 720, 1000]} sizes="(min-width: 900px) 40vw, 92vw" formats={['avif']} fallbackFormat="webp" loading="lazy" />
       </figure>
       <div class="bio">
         <p class="eyebrow">Titolare · campagne vendita ed eventi</p>
         <h2 id="lea-name">Lea Quattrocchi</h2>
-        <ul class="facts" aria-label="In breve">
+        <ul class="facts tagline-list" aria-label="In breve">
           <li>Milanese, titolare di LQ Milano</li>
           <li>Collaborazioni con artisti di Brera</li>
           <li>Eventi sostenibili con Green Planner</li>
@@ -43,13 +43,13 @@ import site from '../data/site.json';
 
   <article class="section person paper-2" id="antonio" aria-labelledby="antonio-name">
     <div class="container person-grid flip">
-      <figure class="portrait reveal">
+      <figure class="portrait reveal" data-n="02 · Antonio">
         <Picture src={media.antonio} alt="Ritratto di Antonio Casale in negozio, sotto l’insegna al neon" widths={[480, 720, 1000]} sizes="(min-width: 900px) 40vw, 92vw" formats={['avif']} fallbackFormat="webp" loading="lazy" />
       </figure>
       <div class="bio">
         <p class="eyebrow">Stylist e ricercatore · selezione uomo</p>
         <h2 id="antonio-name">Antonio Casale</h2>
-        <ul class="facts" aria-label="In breve">
+        <ul class="facts tagline-list" aria-label="In breve">
           <li>Moda e musica come un unico linguaggio</li>
           <li>Focus: anni ’70–’90</li>
           <li>Immagine per musicisti emergenti</li>
@@ -68,7 +68,7 @@ import site from '../data/site.json';
 
   <section class="section" aria-labelledby="partners-title">
     <div class="container">
-      <div class="section-head"><div><p class="eyebrow">Collaborazioni</p><h2 id="partners-title">Lavoriamo con i migliori clienti e partner</h2></div></div>
+      <div class="section-head"><div><p class="eyebrow">Collaborazioni</p><h2 id="partners-title">Con chi <em>lavoriamo</em></h2></div></div>
       <ul class="partners">
         <li>
           <a href={site.partners[0].url} target="_blank" rel="noopener" class="partner">
@@ -104,20 +104,22 @@ import site from '../data/site.json';
     .portrait { position: sticky; top: calc(var(--header-h) + 24px); }
   }
   .portrait { margin: 0; }
-  .portrait :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 6px; }
-  .bio h2 { font-size: clamp(2rem, 1.5rem + 2vw, 3.2rem); }
-  .facts { list-style: none; padding: 0; margin: 0 0 24px; display: flex; flex-wrap: wrap; gap: 8px; }
-  .facts li { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: 0.88rem; }
+  .portrait :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; filter: saturate(0.92) contrast(1.04); }
+  .portrait { position: relative; }
+  .portrait::after { content: attr(data-n); position: absolute; left: 0; bottom: 0; padding: 8px 12px; background: var(--night); color: var(--neon); font: 500 0.76rem var(--font-mono); text-transform: uppercase; }
+  .bio h2 { font-size: clamp(3rem, 1.8rem + 5vw, 6.5rem); line-height: 0.82; margin: 8px 0 20px; }
+  .facts { margin: 0 0 24px; }
   .bio .prose { margin-bottom: 16px; }
   .partners { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
   @media (min-width: 800px) { .partners { grid-template-columns: 1fr 1fr; } }
-  .partner { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; padding: 18px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); text-decoration: none; transition: border-color var(--t-fast), box-shadow var(--t-fast); }
-  .partner:hover { border-color: var(--ink); box-shadow: var(--shadow-1); }
+  .partner { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; padding: 18px 0; border-top: 1px solid var(--line-strong); text-decoration: none; }
+  .partner strong { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; text-transform: uppercase; line-height: 1; }
+  .partner:hover strong { color: var(--neon-ink); }
   .p-logos { display: flex; gap: 10px; align-items: center; }
   .p-logos :global(.p-logo) { width: 130px; height: auto; }
-  .p-logos :global(.p-cover) { width: 64px; height: 64px; object-fit: cover; border-radius: 4px; }
+  .p-logos :global(.p-cover) { width: 64px; height: 64px; object-fit: cover; }
   .p-text { display: grid; }
-  .p-text span { color: var(--ink-2); font-size: 0.9rem; }
+  .p-text span { color: var(--ink-2); font: 500 0.76rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.02em; margin-top: 6px; }
   @media (max-width: 520px) { .partner { grid-template-columns: 1fr auto; } .p-logos { grid-column: 1 / -1; } }
   .ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 40px; }
 </style>

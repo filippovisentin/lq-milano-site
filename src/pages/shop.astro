@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import ProductCard from '../components/ProductCard.astro';
 import Icon from '../components/Icon.astro';
-import { listProducts, CATEGORIES } from '../lib/catalog';
+import { listProducts, CATEGORIES, SHOW_3D } from '../lib/catalog';
 
 export const prerender = false;
 const products = listProducts();
@@ -14,18 +14,21 @@ const sizeOrder = (s: string) => {
 };
 const sizes = [...new Set(products.map((p) => p.size).filter(Boolean) as string[])].sort((a, b) => sizeOrder(a) - sizeOrder(b));
 const PAGE = 12;
+const inStockCount = products.filter((p) => p.available && p.quantity > 0).length;
+const catCount = (c: string) => products.filter((p) => p.category === c).length;
 ---
 <Base title="Shop" description={`Shop online di LQ Milano: ${products.length} capi vintage selezionati a mano, dagli anni ’60 ai 2000. Pezzi unici con misure e stato verificati.`}>
-  <header class="shop-head">
+  <header class="shop-head night">
     <div class="container">
       <nav aria-label="Percorso"><ol class="breadcrumb"><li><a href="/">Home</a></li><li aria-current="page">Shop</li></ol></nav>
       <div class="head-row">
-        <div>
-          <h1>Shop</h1>
-          <p class="lead">Capi vintage selezionati a mano a NoLo, dagli anni ’60 ai primi 2000. Ogni pezzo è unico: misure, materiale e stato sono indicati nella scheda.</p>
+        <h1 class="shop-title">Shop</h1>
+        <div class="head-side">
+          <p class="head-count"><span class="dot" aria-hidden="true"></span> <span class="tabular">{inStockCount}</span> capi disponibili · pezzi unici</p>
+          <p class="head-lead">Capi vintage selezionati a mano a NoLo, dagli anni ’60 ai primi 2000. Misure, materiale e stato sono indicati in ogni scheda.</p>
         </div>
-        <p class="hint-3d"><Icon name="cube" class="icon-sm" /> I capi con il badge <strong>3D</strong> si possono ruotare a 360°.</p>
       </div>
+      {SHOW_3D && <p class="hint-3d"><Icon name="cube" class="icon-sm" /> I capi con il badge <strong>3D</strong> si possono ruotare a 360°.</p>}
     </div>
   </header>
 
@@ -38,8 +41,8 @@ const PAGE = 12;
       </div>
       <div class="filter-row">
         <div class="chips" role="group" aria-label="Categoria">
-          <button type="button" class="chip" data-cat="" aria-pressed="true">Tutto</button>
-          {usedCats.map((c) => <button type="button" class="chip" data-cat={c} aria-pressed="false">{c}</button>)}
+          <button type="button" class="tab" data-cat="" aria-pressed="true">Tutto <sup class="tabular">{products.length}</sup></button>
+          {usedCats.map((c) => <button type="button" class="tab" data-cat={c} aria-pressed="false">{c} <sup class="tabular">{catCount(c)}</sup></button>)}
         </div>
         <div class="selects">
           <label class="sel">
@@ -62,7 +65,13 @@ const PAGE = 12;
       </div>
     </form>
 
-    <p class="count" role="status" aria-live="polite" data-count>{products.length} capi</p>
+    <div class="count-row">
+      <p class="count" role="status" aria-live="polite" data-count>{products.length} capi</p>
+      <div class="view" role="group" aria-label="Vista">
+        <button type="button" class="view-btn" data-view="grid" aria-pressed="true">Griglia</button>
+        <button type="button" class="view-btn" data-view="large" aria-pressed="false">Grande</button>
+      </div>
+    </div>
 
     <div class="grid products" data-grid>
       {products.map((p, i) => <ProductCard product={p} eager={i < 4} headingLevel="h2" />)}
@@ -82,34 +91,57 @@ const PAGE = 12;
 </Base>
 
 <style>
-  .shop-head { padding-top: 12px; padding-bottom: 8px; }
-  .head-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px 32px; }
-  .head-row h1 { margin-bottom: 8px; }
-  .hint-3d { display: inline-flex; gap: 8px; align-items: center; margin: 0; font-size: 0.92rem; color: var(--ink-2); }
+  .shop-head { position: relative; overflow: hidden; isolation: isolate; padding: 18px 0 clamp(28px, 4vw, 48px); }
+  .shop-head::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(40% 90% at 18% 70%, rgba(255, 91, 36, 0.2), transparent 70%); }
+  .shop-head .breadcrumb { color: var(--on-night-2); }
+  .head-row { display: grid; gap: 18px 48px; align-items: end; }
+  .shop-title { font-size: clamp(5rem, 2.4rem + 13vw, 15rem); line-height: 0.78; margin: 0; }
+  .head-side { display: grid; gap: 10px; max-width: 46ch; padding-bottom: 8px; }
+  .head-count { display: inline-flex; align-items: center; gap: 10px; margin: 0; font: 500 0.8rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em; color: var(--on-night); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--neon); box-shadow: 0 0 10px var(--neon-glow); }
+  .head-lead { margin: 0; color: var(--on-night-2); }
+  @media (min-width: 900px) { .head-row { grid-template-columns: auto 1fr; } }
+  .hint-3d { display: inline-flex; gap: 8px; align-items: center; margin: 16px 0 0; font-size: 0.92rem; color: var(--on-night-2); }
   .shop { padding-bottom: clamp(56px, 8vw, 112px); }
   .tools {
-    position: sticky; top: var(--header-h); z-index: 5; margin: 16px calc(var(--gutter) * -1) 0; padding: 12px var(--gutter);
-    background: rgba(247, 243, 234, 0.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); display: grid; gap: 12px;
+    position: sticky; top: var(--header-h); z-index: 5; margin: 0 calc(var(--gutter) * -1); padding: 10px var(--gutter);
+    background: rgba(247, 243, 234, 0.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line-strong); display: grid; gap: 12px;
   }
   .search { position: relative; }
   .search :global(svg) { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ink-2); pointer-events: none; }
-  .search .input { padding-left: 42px; }
+  .search .input { padding-left: 34px; border: 0; border-bottom: 1px solid var(--line-strong); border-radius: 0; background: transparent; font-size: 0.98rem; }
+  .search .input:focus { box-shadow: none; border-bottom-color: var(--neon); }
+  .search :global(svg) { left: 4px !important; }
   .filter-row { display: grid; gap: 10px; }
-  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px; margin: -2px; scrollbar-width: none; }
+  .chips { display: flex; gap: 22px; overflow-x: auto; padding: 2px; margin: -2px; scrollbar-width: none; }
   .chips::-webkit-scrollbar { display: none; }
-  .chip { flex: none; }
+  .tab { flex: none; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0; border: 0; background: none; color: var(--ink-2); font: 500 0.8rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 2px solid transparent; white-space: nowrap; }
+  .tab sup { font-size: 0.68rem; color: var(--ink-2); top: -0.5em; }
+  .tab:hover { color: var(--ink); }
+  .tab[aria-pressed='true'] { color: var(--ink); border-bottom-color: var(--neon); }
+  .tab[aria-pressed='true'] sup { color: var(--neon-ink); }
+  .selects .select { border-radius: 2px; font: 500 0.8rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.02em; min-height: 44px; background-color: transparent; }
+  @media (max-width: 899px) { .selects .select { font-size: 0.72rem; letter-spacing: 0; padding-left: 10px; padding-right: 30px; background-position: right 8px center; } }
   .selects { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   @media (min-width: 900px) {
-    .tools { grid-template-columns: minmax(220px, 320px) 1fr; align-items: center; }
-    .filter-row { grid-template-columns: 1fr auto; align-items: center; }
+    .tools { grid-template-columns: minmax(240px, 420px) 1fr; align-items: center; gap: 4px 24px; }
+    .filter-row { display: contents; }
+    .selects { grid-column: 2; grid-row: 1; justify-self: end; }
+    .chips { grid-column: 1 / -1; grid-row: 2; }
     .selects { grid-template-columns: auto auto; }
     .select { min-width: 190px; }
   }
-  .count { margin: 18px 0 16px; color: var(--ink-2); font-size: 0.95rem; }
+  .count-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 14px 0 18px; }
+  .count { margin: 0; color: var(--ink-2); font: 500 0.8rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em; }
+  .view { display: flex; gap: 16px; }
+  .view-btn { min-height: 44px; padding: 0; border: 0; background: none; color: var(--ink-2); font: 500 0.8rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 2px solid transparent; }
+  .view-btn[aria-pressed='true'] { color: var(--ink); border-bottom-color: var(--ink); }
   .products { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 14px; }
   @media (max-width: 339px) { .products { grid-template-columns: 1fr; } }
   @media (min-width: 640px) { .products { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px 20px; } }
   @media (min-width: 1100px) { .products { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 44px 24px; } }
+  .products.is-large { grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .products.is-large { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 56px 24px; } }
   .products :global([data-product][hidden]) { display: none; }
   .empty { padding: 48px 0; max-width: 52ch; }
   .more { display: grid; justify-items: center; gap: 10px; margin-top: 48px; }
@@ -195,6 +227,21 @@ const PAGE = 12;
     q.value = ''; sizeSel.value = ''; sortSel.value = '';
     apply();
   });
+
+  // grid / large view, remembered per visitor
+  const viewBtns = [...root.querySelectorAll<HTMLButtonElement>('[data-view]')];
+  const setView = (v: string) => {
+    grid.classList.toggle('is-large', v === 'large');
+    // bigger slots need bigger files: keep photos sharp in the large view
+    grid.querySelectorAll<HTMLImageElement>('.card-media img').forEach((img) => {
+      img.dataset.sizes ??= img.sizes;
+      img.sizes = v === 'large' ? '(min-width: 1440px) 700px, (min-width: 640px) 48vw, 100vw' : img.dataset.sizes;
+    });
+    viewBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === v)));
+    try { localStorage.setItem('lq-shop-view', v); } catch {}
+  };
+  viewBtns.forEach((b) => b.addEventListener('click', () => setView(b.dataset.view!)));
+  try { const v = localStorage.getItem('lq-shop-view'); if (v) setView(v); } catch {}
 
   apply();
   // restore scroll position when coming back from a product page

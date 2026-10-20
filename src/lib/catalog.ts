@@ -76,6 +76,10 @@ export function listProducts(): Product[] {
 export const getProduct = (slug: string) => listProducts().find((p) => p.slug === slug);
 export const inStock = (p: Product) => p.available && p.quantity > 0;
 export const has3d = (p: Product) => !p.model3d.disabled && !!p.model3d.version && existsSync(join(MODELS_DIR, p.slug, 'front.webp'));
+// Public 3D view (product viewer, "3D" badge). Off by client choice 2026-10-18;
+// models are still generated in /admin, so turning this back on is one line.
+export const SHOW_3D = false;
+export const show3d = (p: Product) => SHOW_3D && has3d(p);
 export function saveProduct(p: Product) { writeAtomic(join(PRODUCTS_DIR, `${p.slug}.json`), p); }
 export function deleteProduct(slug: string) {
   rmSync(join(PRODUCTS_DIR, `${slug}.json`), { force: true });

@@ -133,7 +133,7 @@ const path = decodeURI(Astro.url.pathname).replace(/\/$/, '') || '/';
     .primary > ul > li { position: relative; display: flex; align-items: center; }
     .primary > ul > li > a {
       display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 999px;
-      text-decoration: none; font-size: 0.95rem; font-weight: 500; color: var(--on-night-2); transition: color var(--t-fast), background var(--t-fast);
+      text-decoration: none; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.03em; color: var(--on-night-2); transition: color var(--t-fast), background var(--t-fast);
     }
     .primary > ul > li > a:hover { color: var(--on-night); background: rgba(244, 236, 221, 0.07); }
     .primary > ul > li > a { position: relative; }
@@ -190,7 +190,7 @@ const path = decodeURI(Astro.url.pathname).replace(/\/$/, '') || '/';
   .m-list > li { border-bottom: 1px solid rgba(244, 236, 221, 0.1); }
   .m-list a, .m-group summary {
     display: flex; align-items: center; justify-content: space-between; min-height: 56px; text-decoration: none;
-    font-family: var(--font-display); font-size: 1.45rem; color: var(--on-night);
+    font-family: var(--font-display); font-size: 1.9rem; font-weight: 800; text-transform: uppercase; color: var(--on-night);
   }
   .m-list a[aria-current='page'] { color: var(--gold); }
   .m-group summary { list-style: none; cursor: pointer; }

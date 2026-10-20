@@ -24,7 +24,7 @@ const past = events.filter(isPast);
 
   <section class="section" aria-labelledby="up-title">
     <div class="container">
-      <h2 id="up-title">In programma</h2>
+      <div class="ev-head"><p class="eyebrow">01 · Calendario</p><h2 id="up-title">In <em>programma</em></h2></div>
       <div class="grid evs">{upcoming.map((e) => <EventCard event={e} />)}</div>
       <div class="empty" hidden={upcoming.length > 0}>
         <Icon name="calendar" />
@@ -42,7 +42,7 @@ const past = events.filter(isPast);
   {past.length > 0 && (
     <section class="section paper-2" aria-labelledby="past-title">
       <div class="container">
-        <h2 id="past-title">Eventi passati</h2>
+        <div class="ev-head"><p class="eyebrow">02 · Archivio</p><h2 id="past-title">Eventi <em>passati</em></h2><p class="ev-count tabular">{past.length} eventi</p></div>
         <div class="grid evs">{past.map((e) => <EventCard event={e} />)}</div>
       </div>
     </section>
@@ -54,7 +54,16 @@ const past = events.filter(isPast);
   @media (min-width: 640px) { .evs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (min-width: 1024px) { .evs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   .evs:empty { display: none; }
-  .empty { display: flex; gap: 16px; align-items: flex-start; padding: 24px; border: 1px dashed var(--line-strong); border-radius: 8px; max-width: 760px; }
-  .empty > :global(svg) { color: var(--gold-ink); flex: none; }
+  .ev-head { display: grid; gap: 6px 24px; align-items: end; padding-top: 18px; border-top: 1px solid var(--line); margin-bottom: clamp(24px, 4vw, 48px); }
+  .ev-head h2 { font-size: clamp(2.6rem, 1.6rem + 4vw, 5.6rem); margin: 0; }
+  .ev-count { margin: 0; font: 500 0.78rem var(--font-mono); text-transform: uppercase; color: var(--ink-2); }
+  @media (min-width: 768px) { .ev-head { grid-template-columns: 1fr auto; } .ev-head .eyebrow { grid-column: 1 / -1; } }
+  .empty { display: flex; gap: 16px; align-items: flex-start; padding: 24px; background: var(--night); color: var(--on-night); border-left: 3px solid var(--neon); max-width: 820px; }
+  .empty p { color: var(--on-night-2); }
+  .empty strong { color: var(--on-night); }
+  .empty > :global(svg) { color: var(--neon); flex: none; }
+  .empty .btn-ghost { --fg: var(--on-night); --bd: rgba(244, 236, 221, 0.6); }
+  .empty .btn { --bg: var(--neon); --fg: var(--night); --bd: var(--neon); }
+  .empty .btn.btn-ghost { --bg: transparent; --fg: var(--on-night); --bd: rgba(244, 236, 221, 0.6); }
   .empty-cta { display: flex; flex-wrap: wrap; gap: 10px; }
 </style>

@@ -1,0 +1,123 @@
+---
+// Stand-alone view of the intro animation (the neon sign switching on), to
+// review and tune it without the site around it. Not linked from the menu.
+// The animation is kept in a <template> and cloned on every replay.
+import '../styles/global.css';
+import Loader from '../components/Loader.astro';
+---
+<!doctype html>
+<html lang="it" class="js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>Animazione di ingresso · LQ Milano</title>
+    <link rel="icon" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/favicon.svg`} type="image/svg+xml" />
+  </head>
+  <body class="intro-page">
+    <template id="intro"><Loader preview /></template>
+    <div id="stage"></div>
+
+    <div class="bar" role="toolbar" aria-label="Comandi dell’animazione">
+      <button type="button" id="replay" class="b primary">↻ Riproduci <kbd>R</kbd></button>
+      <span class="row" role="group" aria-label="Velocità">
+        {[0.25, 0.5, 1].map((v) => <button type="button" class="b speed" data-rate={v} aria-pressed={v === 1 ? 'true' : 'false'}>{v === 1 ? '1×' : `${v}×`}</button>)}
+      </span>
+      <label class="b chk"><input type="checkbox" id="loop" /> In loop</label>
+      <label class="b chk"><input type="checkbox" id="exit" checked /> Uscita</label>
+      <span class="time" id="time">0,00 s</span>
+      <button type="button" class="b" id="hide">Nascondi <kbd>H</kbd></button>
+      <a class="b" href={import.meta.env.BASE_URL}>Sito →</a>
+    </div>
+
+    <button type="button" class="b show" id="show" hidden>Comandi</button>
+
+    <style>
+      html, body { margin: 0; height: 100%; background: var(--night); color: var(--on-night); }
+      .intro-page #stage { position: fixed; inset: 0; }
+      /* the site fades the intro into the home: here we fade to the bare background */
+      .intro-page :global(.loader.is-done) { opacity: 0; visibility: visible; }
+      .bar {
+        position: fixed; left: 50%; bottom: max(14px, env(safe-area-inset-bottom)); transform: translateX(-50%);
+        z-index: 200; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px;
+        width: max-content; max-width: calc(100% - 24px); padding: 8px;
+        background: rgba(23, 20, 17, 0.8); border: 1px solid rgba(244, 236, 221, 0.18); border-radius: 12px;
+        backdrop-filter: blur(10px); font: 500 0.76rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em;
+      }
+      .row { display: inline-flex; gap: 4px; }
+      .b {
+        display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border-radius: 8px;
+        border: 1px solid rgba(244, 236, 221, 0.22); background: transparent; color: var(--on-night);
+        font: inherit; letter-spacing: inherit; text-transform: inherit; text-decoration: none; cursor: pointer;
+      }
+      .b:hover { border-color: var(--neon); }
+      .b[aria-pressed='true'] { background: var(--neon); border-color: var(--neon); color: var(--night); }
+      .b.primary { border-color: var(--neon); color: var(--neon); }
+      .b:focus-visible { outline: 2px solid var(--neon); outline-offset: 2px; }
+      .chk input { accent-color: var(--neon); width: 16px; height: 16px; margin: 0; }
+      kbd { font: inherit; opacity: 0.6; }
+      .time { min-width: 6ch; text-align: right; padding: 0 8px; color: var(--on-night-2); font-variant-numeric: tabular-nums; }
+      .bar.is-hidden { display: none; }
+      .show { position: fixed; right: 12px; bottom: 12px; z-index: 200; opacity: 0.35; }
+      .show:hover, .show:focus-visible { opacity: 1; }
+      .show[hidden] { display: none; }
+      @media (max-width: 640px) { .b { min-height: 36px; padding: 0 9px; } .bar { font-size: 0.7rem; } }
+    </style>
+
+    <script>
+      const HOLD = 2300; // same timing as the inline script in Loader.astro
+      const FADE = 520;
+      const stage = document.getElementById('stage')!;
+      const template = document.getElementById('intro') as HTMLTemplateElement;
+      const time = document.getElementById('time')!;
+      const loop = document.getElementById('loop') as HTMLInputElement;
+      const exit = document.getElementById('exit') as HTMLInputElement;
+      let rate = 1;
+      let start = 0, fadeAt = 0, raf = 0;
+
+      const el = () => stage.firstElementChild as HTMLElement;
+      const applyRate = () => stage.getAnimations({ subtree: true }).forEach((a) => (a.playbackRate = rate));
+
+      function play() {
+        stage.replaceChildren(template.content.cloneNode(true)); // fresh nodes = animations restart
+        el().style.setProperty('transition-duration', `${FADE / rate}ms`);
+        requestAnimationFrame(applyRate);
+        start = performance.now();
+        fadeAt = 0;
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(tick);
+      }
+
+      function tick(now: number) {
+        const t = (now - start) * rate;
+        time.textContent = `${(t / 1000).toFixed(2).replace('.', ',')} s`;
+        if (exit.checked && !fadeAt && t >= HOLD) { el().classList.add('is-done'); fadeAt = t; }
+        const end = exit.checked ? HOLD + FADE + 700 : 3600;
+        if (t >= end) return loop.checked ? play() : undefined;
+        raf = requestAnimationFrame(tick);
+      }
+
+      document.getElementById('replay')!.addEventListener('click', play);
+      document.querySelectorAll<HTMLButtonElement>('.speed').forEach((b) =>
+        b.addEventListener('click', () => {
+          rate = Number(b.dataset.rate);
+          document.querySelectorAll('.speed').forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+          play();
+        }),
+      );
+      loop.addEventListener('change', () => loop.checked && play());
+      const bar = document.querySelector<HTMLElement>('.bar')!;
+      const show = document.getElementById('show')!;
+      const toggleBar = (hide = !bar.classList.contains('is-hidden')) => { bar.classList.toggle('is-hidden', hide); show.hidden = !hide; };
+      document.getElementById('hide')!.addEventListener('click', () => toggleBar(true));
+      show.addEventListener('click', () => toggleBar(false));
+      stage.addEventListener('click', play); // click on the animation = replay
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'r' || e.key === 'R') play();
+        if (e.key === 'h' || e.key === 'H') toggleBar();
+      });
+      play();
+    </script>
+  </body>
+</html>

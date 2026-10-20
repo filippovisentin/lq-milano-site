@@ -28,7 +28,8 @@ const topics = [
   <section class="section">
     <div class="container contact-grid">
       <div class="form-col">
-        <h2>Contattaci</h2>
+        <p class="eyebrow">Modulo</p>
+        <h2 class="form-t">Scrivi<em>ci</em></h2>
         <p class="muted">I campi con <span class="req">*</span> sono obbligatori.</p>
         <form class="cform" data-contact data-endpoint={endpoint} novalidate>
           <div class="row2">
@@ -96,17 +97,19 @@ const topics = [
   @media (min-width: 560px) { .row2 { grid-template-columns: 1fr 1fr; } }
   .cform .btn { justify-self: start; }
   .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-  .info-card { padding: 28px; border-radius: 10px; }
+  .form-t { font-size: clamp(2.8rem, 1.8rem + 4vw, 5.6rem); margin: 6px 0 10px; }
+  .info-card { padding: 28px; border-left: 3px solid var(--neon); }
+  .info-card h2 { color: var(--on-night); }
   .channels { list-style: none; padding: 0; margin: 0; display: grid; }
   .channels a { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(244, 236, 221, 0.12); text-decoration: none; color: var(--on-night); }
   .channels a:hover strong { text-decoration: underline; }
   .channels :global(svg) { color: var(--gold); flex: none; margin-top: 2px; }
   .channels span { display: grid; color: var(--on-night-2); line-height: 1.45; }
-  .channels strong { color: var(--on-night); font-weight: 600; }
-  .follow { margin: 20px 0 4px; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+  .channels strong { color: var(--on-night); font: 500 0.76rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 2px; }
+  .follow { margin: 20px 0 4px; font: 500 0.76rem var(--font-mono); letter-spacing: 0.03em; text-transform: uppercase; color: var(--neon); }
   .social { list-style: none; padding: 0; margin: 0 0 0 -10px; display: flex; }
   .social .icon-btn:hover { background: rgba(244, 236, 221, 0.1); }
-  .map { margin-top: 16px; border-radius: 10px; overflow: hidden; aspect-ratio: 4 / 3; background: var(--paper-2); }
+  .map { margin-top: 0; overflow: hidden; aspect-ratio: 4 / 3; background: var(--paper-2); }
   .map iframe { width: 100%; height: 100%; border: 0; display: block; }
 </style>
 

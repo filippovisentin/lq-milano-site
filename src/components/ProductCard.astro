@@ -1,6 +1,6 @@
 ---
 import type { Product } from '../lib/catalog';
-import { productUrl, inStock, has3d, euro, imgUrl, srcset, era } from '../lib/catalog';
+import { productUrl, inStock, show3d, euro, imgUrl, srcset, era } from '../lib/catalog';
 import Icon from './Icon.astro';
 
 interface Props { product: Product; eager?: boolean; headingLevel?: 'h2' | 'h3' }
@@ -27,7 +27,7 @@ const anni = era(p.details.anni);
       {b && <img class="img-b" src={imgUrl('products', p.slug, b, 480)} srcset={srcset('products', p.slug, b)} sizes={sizes} alt="" width={b.w} height={b.h} loading="lazy" decoding="async" />}
       <div class="tags">
         {!available ? <span class="badge badge-dark">Venduto</span> : p.quantity === 1 && <span class="badge">Pezzo unico</span>}
-        {has3d(p) && <span class="badge badge-3d"><Icon name="cube" class="icon-xs" /> 3D</span>}
+        {show3d(p) && <span class="badge badge-3d"><Icon name="cube" class="icon-xs" /> 3D</span>}
       </div>
     </div>
     <div class="card-body">
@@ -43,8 +43,8 @@ const anni = era(p.details.anni);
 
 <style>
   .card { position: relative; }
-  .card-link { display: block; text-decoration: none; color: inherit; border-radius: var(--radius); }
-  .card-media { position: relative; aspect-ratio: 4 / 5; background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: inset 0 0 0 1px rgba(37, 37, 31, 0.05); }
+  .card-link { display: block; text-decoration: none; color: inherit; }
+  .card-media { position: relative; aspect-ratio: 3 / 4; background: #fff; overflow: hidden; }
   .card-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 6%; transition: opacity 380ms var(--ease-out), transform 600ms var(--ease-out); }
   .card-media .img-b { opacity: 0; }
   @media (hover: hover) and (pointer: fine) {
@@ -56,9 +56,9 @@ const anni = era(p.details.anni);
   .badge-3d { margin-left: auto; background: rgba(23, 20, 17, 0.86); color: #ffd9c7; box-shadow: 0 0 10px rgba(255, 91, 36, 0.35); }
   :global(.icon-xs) { width: 14px; height: 14px; }
   .card-body { padding: 14px 2px 0; }
-  .card-title { font-family: var(--font-body); font-size: 1rem; font-weight: 600; line-height: 1.35; margin: 0 0 4px; letter-spacing: 0; }
+  .card-title { font-family: var(--font-body); font-size: 0.98rem; font-weight: 500; line-height: 1.3; margin: 0 0 6px; letter-spacing: -0.005em; text-transform: none; }
   .card-link:hover .card-title { text-decoration: underline; text-underline-offset: 0.2em; }
-  .card-meta { margin: 0; display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: 0.92rem; color: var(--ink-2); }
-  .price { color: var(--ink); font-weight: 600; }
+  .card-meta { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; font-family: var(--font-mono); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.02em; color: var(--ink-2); }
+  .price { color: var(--ink); font-weight: 500; font-size: 0.86rem; }
   [data-available='0'] .card-media img { filter: grayscale(0.6); opacity: 0.7; }
 </style>
