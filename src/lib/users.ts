@@ -1,0 +1,47 @@
+import { existsSync, mkdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { DATA_DIR } from './catalog';
+
+export type Role = 'proprietario' | 'sviluppatore';
+
+export type AdminUser = {
+  user: string;
+  role: Role;
+  passwordHash: string;
+  totpSecret: string;
+  lastTotpStep: number;
+  sessionVersion: number;
+  createdAt: string;
+};
+
+export const USERS_FILE = join(DATA_DIR, 'private', 'users.json');
+
+// Cache keyed on mtime+size (mtime alone can miss two quick writes).
+let cache: { key: string; users: AdminUser[] } | null = null;
+
+export function readUsers(): AdminUser[] {
+  if (!existsSync(USERS_FILE)) return [];
+  const st = statSync(USERS_FILE);
+  const key = `${st.mtimeMs}:${st.size}`;
+  if (cache && cache.key === key) return cache.users;
+  const users = JSON.parse(readFileSync(USERS_FILE, 'utf8')) as AdminUser[];
+  cache = { key, users };
+  return users;
+}
+
+export function getUser(name: string): AdminUser | undefined {
+  return readUsers().find((u) => u.user === name);
+}
+
+export function writeUsers(users: AdminUser[]): void {
+  mkdirSync(dirname(USERS_FILE), { recursive: true });
+  const tmp = `${USERS_FILE}.tmp`;
+  writeFileSync(tmp, JSON.stringify(users, null, 2));
+  renameSync(tmp, USERS_FILE);
+  cache = null;
+}
+
+export function bumpSessionVersion(name: string): void {
+  const users = readUsers().map((u) => (u.user === name ? { ...u, sessionVersion: u.sessionVersion + 1 } : u));
+  writeUsers(users);
+}

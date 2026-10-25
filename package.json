@@ -14,7 +14,8 @@
     "admin:create": "node scripts/create-admin.mjs",
     "3d:all": "node scripts/rebuild-3d.mjs",
     "media": "node scripts/normalize-media.mjs",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "vitest run"
   },
   "dependencies": {
     "@astrojs/node": "11.1.6",
@@ -25,5 +26,8 @@
     "sharp": "^0.35.5",
     "three": "^0.186.1",
     "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.5"
   }
 }
