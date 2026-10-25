@@ -1,9 +1,9 @@
 ---
 import Admin from '../../../layouts/Admin.astro';
 import Icon from '../../../components/Icon.astro';
-import { listProducts, euro, imgUrl, has3d, inStock, productUrl } from '../../../lib/catalog';
+import { listAllProducts, euro, imgUrl, has3d, inStock, productUrl } from '../../../lib/catalog';
 export const prerender = false;
-const products = listProducts();
+const products = listAllProducts();
 const deleted = Astro.url.searchParams.get('eliminato');
 const stats = {
   total: products.length,
@@ -35,7 +35,7 @@ const stats = {
           <a class="row" href={`/admin/prodotti/${encodeURIComponent(p.slug)}`}>
             <span class="thumb">{p.images[0] && <img src={imgUrl('products', p.slug, p.images[0], 480)} alt="" loading="lazy" width="64" height="80" />}</span>
             <span class="info">
-              <strong>{p.title}</strong>
+              <strong>{p.title}{p.draft && <span class="badge badge-warn"> Bozza</span>}</strong>
               <span class="muted">{p.category}{p.size && ` · Tg. ${p.size}`} · ordine {p.order}</span>
             </span>
             <span class="price tabular">{euro(p.price)}</span>

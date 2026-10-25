@@ -1,12 +1,12 @@
 ---
 import Admin from '../../../layouts/Admin.astro';
 import Icon from '../../../components/Icon.astro';
-import { getProduct, listProducts, CATEGORIES, CONDITIONS, imgUrl, has3d, modelBase, productUrl, euro } from '../../../lib/catalog';
+import { getAnyProduct, listAllProducts, CATEGORIES, CONDITIONS, imgUrl, has3d, modelBase, productUrl, euro } from '../../../lib/catalog';
 export const prerender = false;
 
 const slug = decodeURIComponent(Astro.params.slug ?? '');
 const isNew = slug === 'nuovo';
-const p = isNew ? null : getProduct(slug);
+const p = isNew ? null : getAnyProduct(slug);
 if (!isNew && !p) return Astro.redirect('/admin/prodotti');
 const saved = Astro.url.searchParams.has('salvato');
 const warn = Astro.url.searchParams.get('avviso');
@@ -15,7 +15,7 @@ const photos = (p?.images ?? []).map((im, i) => ({
   ref: `id:${im.id}`, src: imgUrl('products', p!.slug, im, 480),
   front: p!.model3d.front === i, back: p!.model3d.back === i,
 }));
-const nextOrder = listProducts().length + 1;
+const nextOrder = listAllProducts().length + 1;
 ---
 <Admin title={isNew ? 'Nuovo prodotto' : p!.title} section="prodotti">
   <nav aria-label="Percorso"><ol class="breadcrumb"><li><a href="/admin/prodotti">Prodotti</a></li><li aria-current="page">{isNew ? 'Nuovo' : p!.title}</li></ol></nav>

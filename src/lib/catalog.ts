@@ -32,6 +32,10 @@ export interface Product {
   images: ProductImage[];
   model3d: { front: number; back: number | null; tolerance: number; disabled: boolean; version: number | null; hasBack: boolean };
   seoDescription?: string;
+  // Set while a product created by Misura is waiting to be published: hidden from the public site.
+  draft?: { source: 'misura'; misuraId: string; createdBy: string; createdAt: string };
+  // Provenance of a product that came from Misura (kept after publishing).
+  origin?: { source: 'misura'; misuraId: string; publishedBy?: string; confirmed: { madeIn: boolean; composition: boolean } };
   createdAt: string;
   updatedAt: string;
 }
@@ -70,9 +74,16 @@ function writeAtomic(path: string, data: unknown) {
 }
 
 // ---------- products ----------
-export function listProducts(): Product[] {
+export const isDraft = (p: Product) => !!p.draft;
+// Admin only: every product, drafts included.
+export function listAllProducts(): Product[] {
   return [...readAll<Product>(PRODUCTS_DIR)].sort((a, b) => a.order - b.order || a.title.localeCompare(b.title, 'it'));
 }
+export const getAnyProduct = (slug: string) => listAllProducts().find((p) => p.slug === slug);
+export const findByMisuraId = (id: string) =>
+  listAllProducts().find((p) => p.draft?.misuraId === id || p.origin?.misuraId === id);
+// Public: drafts never show up.
+export const listProducts = () => listAllProducts().filter((p) => !isDraft(p));
 export const getProduct = (slug: string) => listProducts().find((p) => p.slug === slug);
 export const inStock = (p: Product) => p.available && p.quantity > 0;
 export const has3d = (p: Product) => !p.model3d.disabled && !!p.model3d.version && existsSync(join(MODELS_DIR, p.slug, 'front.webp'));

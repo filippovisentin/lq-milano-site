@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { processImage } from '../../scripts/lib/images.mjs';
 import { buildGarment3D, plainness } from '../../scripts/lib/garment3d.mjs';
 import {
-  UPLOADS_DIR, MODELS_DIR, CATEGORIES, CONDITIONS, listProducts, getProduct, saveProduct, slugify, uniqueSlug,
+  UPLOADS_DIR, MODELS_DIR, CATEGORIES, CONDITIONS, listAllProducts, getAnyProduct, saveProduct, slugify, uniqueSlug,
   listEvents, getEvent, saveEvent, IMAGE_WIDTHS, type Product, type ProductImage, type LqEvent,
 } from './catalog';
 
@@ -34,7 +34,7 @@ function dropImage(dir: string, img: ProductImage) {
 
 export async function saveProductFromForm(form: FormData): Promise<{ product: Product; built3d: boolean; warning?: string }> {
   const existingSlug = str(form, 'slug', 120);
-  const old = existingSlug ? getProduct(existingSlug) : undefined;
+  const old = existingSlug ? getAnyProduct(existingSlug) : undefined;
   if (existingSlug && !old) throw new InputError('Prodotto non trovato.');
 
   const title = str(form, 'title', 120);
@@ -47,7 +47,7 @@ export async function saveProductFromForm(form: FormData): Promise<{ product: Pr
   if (stato && !(CONDITIONS as readonly string[]).includes(stato)) throw new InputError('Stato non valido.');
   const quantity = Math.max(0, Math.min(99, Math.round(Number(str(form, 'quantity', 4) || '1'))));
 
-  const slug = old?.slug ?? uniqueSlug(slugify(title), (s) => !!getProduct(s));
+  const slug = old?.slug ?? uniqueSlug(slugify(title), (s) => !!getAnyProduct(s));
   const dir = join(UPLOADS_DIR, 'products', slug);
 
   // photos: "order" is a JSON list of refs: "id:<existing id>" or "new:<file index>"
@@ -82,12 +82,15 @@ export async function saveProductFromForm(form: FormData): Promise<{ product: Pr
   const product: Product = {
     slug, title, price: Math.round(price * 100) / 100, size: str(form, 'size', 20) || null, category,
     available: bool(form, 'available'), quantity, featured: bool(form, 'featured'),
-    order: Number(str(form, 'order_n', 6)) || old?.order || listProducts().length + 1,
+    order: Number(str(form, 'order_n', 6)) || old?.order || listAllProducts().length + 1,
     description: str(form, 'description', 6000),
     details: { misure: lines(form, 'misure'), materiale: lines(form, 'materiale'), stato, anni: str(form, 'anni', 40) || null },
     images,
     model3d: { front, back, tolerance, disabled, version: old?.model3d.version ?? null, hasBack: old?.model3d.hasBack ?? false },
     seoDescription: str(form, 'seoDescription', 300) || undefined,
+    // carried over: the form never edits draft state or Misura provenance
+    ...(old?.draft ? { draft: old.draft } : {}),
+    ...(old?.origin ? { origin: old.origin } : {}),
     createdAt: old?.createdAt ?? now,
     updatedAt: now,
   };

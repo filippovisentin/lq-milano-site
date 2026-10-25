@@ -7,8 +7,9 @@
 // at the moment of the export (re-run it to publish new products).
 import { spawn } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { draftProductIds, publicProductIds } from './lib/public-ids.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const BASE = (process.env.PAGES_BASE ?? '').replace(/\/$/, '');
@@ -67,7 +68,7 @@ async function main() {
     .filter((d) => d.isDirectory() && !d.name.startsWith('_') && existsSync(join(ROOT, 'dist', 'client', d.name, 'index.html')))
     .map((d) => `/${d.name}`);
   const queue = ['/', ...prerendered,
-    ...ids('products').map((s) => `/product-page/${encodeURIComponent(s)}`),
+    ...publicProductIds(join(ROOT, 'data')).map((s) => `/product-page/${encodeURIComponent(s)}`),
     ...ids('events').map((s) => `/event-details/${encodeURIComponent(s)}`)];
   const seen = new Set(queue);
   const pages = new Map();
@@ -87,10 +88,13 @@ async function main() {
   // assets: built client files + media from data/
   cpSync(join(ROOT, 'dist', 'client'), OUT, { recursive: true });
   // the 2400px masters only feed the 3D builder: pages use the renditions
+  // drafts' photos and 3D files stay out of the copy
+  const draftDirs = draftProductIds(join(ROOT, 'data')).flatMap((id) => [join(ROOT, 'data', 'uploads', 'products', id), join(ROOT, 'data', '3d', id)]);
+  const isDraftFile = (src) => draftDirs.some((d) => src === d || src.startsWith(d + sep));
   cpSync(join(ROOT, 'data', 'uploads'), join(OUT, 'media', 'uploads'), {
-    recursive: true, filter: (src) => !/[\\/][0-9a-f]{12}\.webp$/.test(src),
+    recursive: true, filter: (src) => !/[\\/][0-9a-f]{12}\.webp$/.test(src) && !isDraftFile(src),
   });
-  cpSync(join(ROOT, 'data', '3d'), join(OUT, 'media', '3d'), { recursive: true });
+  cpSync(join(ROOT, 'data', '3d'), join(OUT, 'media', '3d'), { recursive: true, filter: (src) => !isDraftFile(src) });
 
   SEGMENTS = [...new Set([
     ...readdirSync(OUT),
