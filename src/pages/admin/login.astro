@@ -15,6 +15,7 @@ const next = Astro.url.searchParams.get('next') ?? '/admin/prodotti';
       <h1 class="h3">Pannello del negozio</h1>
       {e === '1' && <p class="notice notice-error" role="alert"><Icon name="alert" class="icon-sm" /> Utente o password non corretti.</p>}
       {e === 'wait' && <p class="notice notice-error" role="alert"><Icon name="alert" class="icon-sm" /> Troppi tentativi: riprova tra 15 minuti.</p>}
+      {e === 'expired' && <p class="notice notice-error" role="alert"><Icon name="alert" class="icon-sm" /> Codice scaduto: accedi di nuovo.</p>}
       {out && <p class="notice notice-ok" role="status">Sei uscito dal pannello.</p>}
       <input type="hidden" name="next" value={next} />
       <div class="field"><label for="user">Utente</label><input class="input" id="user" name="user" autocomplete="username" required autofocus /></div>

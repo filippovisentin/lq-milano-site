@@ -1,8 +1,14 @@
 import { defineMiddleware } from 'astro:middleware';
 import { readSession } from './lib/auth';
+import { pruneAudit } from './lib/audit';
 
-// Everything under /admin and /api/admin requires the owner session, except
-// the login page and login endpoint. State-changing requests must also come
+// Trim the audit log once per server start.
+pruneAudit();
+
+const OPEN_PATHS = new Set(['/admin/login', '/admin/login/codice', '/api/admin/login', '/api/admin/login-code']);
+
+// Everything under /admin and /api/admin requires the admin session, except
+// the login pages and login endpoints. State-changing requests must also come
 // from this origin (CSRF guard on top of the SameSite=Strict cookie).
 export const onRequest = defineMiddleware(async (ctx, next) => {
   const path = ctx.url.pathname;
@@ -13,7 +19,7 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
     const origin = ctx.request.headers.get('origin');
     if (origin && origin !== ctx.url.origin) return new Response('Origine non valida', { status: 403 });
   }
-  const open = path === '/admin/login' || path === '/api/admin/login';
+  const open = OPEN_PATHS.has(path);
   const session = readSession(ctx.cookies);
   ctx.locals.admin = session;
   if (!open && !session) {

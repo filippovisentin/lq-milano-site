@@ -12,6 +12,7 @@
     "start": "node server.mjs",
     "preview": "npm run build && npm start",
     "admin:create": "node scripts/create-admin.mjs",
+    "admin:remove": "node scripts/remove-admin.mjs",
     "3d:all": "node scripts/rebuild-3d.mjs",
     "media": "node scripts/normalize-media.mjs",
     "astro": "astro",

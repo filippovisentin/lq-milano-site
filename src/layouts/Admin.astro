@@ -29,6 +29,10 @@ const user = Astro.locals.admin?.user;
             <span class="a-user">{user}</span>
             <button class="btn btn-ghost" type="submit">Esci</button>
           </form>
+          <form method="post" action="/api/admin/logout" class="a-out">
+            <input type="hidden" name="all" value="1" />
+            <button class="btn btn-ghost" type="submit" title="Chiude la sessione su ogni dispositivo">Esci da tutti i dispositivi</button>
+          </form>
         </div>
       </header>
     )}
@@ -51,6 +55,7 @@ const user = Astro.locals.admin?.user;
   .a-bar nav a[aria-current='page'] { background: rgba(244, 236, 221, 0.12); color: var(--on-night); }
   .a-out { display: flex; align-items: center; gap: 10px; }
   .a-user { color: var(--on-night-2); font-size: 0.9rem; }
+  .a-bar .a-out + .a-out { margin-left: -14px; }
   .a-out .btn { min-height: 40px; padding: 8px 16px; }
   .a-main { max-width: 1280px; margin: 0 auto; padding: clamp(20px, 3vw, 40px) clamp(16px, 3vw, 32px) 80px; }
   .a-title { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 24px; }

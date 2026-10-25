@@ -1,0 +1,43 @@
+---
+import Admin from '../../../layouts/Admin.astro';
+import NeonLogo from '../../../components/NeonLogo.astro';
+import Icon from '../../../components/Icon.astro';
+import { readPending, safeNext } from '../../../lib/auth';
+export const prerender = false;
+if (Astro.locals.admin) return Astro.redirect('/admin/prodotti');
+const next = safeNext(Astro.url.searchParams.get('next') ?? '/admin/prodotti');
+// Step 1 (password) must come first: without its cookie go back to the login.
+const pending = readPending(Astro.cookies);
+if (!pending) return Astro.redirect(`/admin/login?e=expired&next=${encodeURIComponent(next)}`);
+const e = Astro.url.searchParams.get('e');
+---
+<Admin title="Codice di verifica">
+  <div class="login night">
+    <form class="login-card" method="post" action="/api/admin/login-code">
+      <NeonLogo size="md" />
+      <h1 class="h3">Codice di verifica</h1>
+      <p class="hint">Ciao {pending.user}. Inserisci il codice a 6 cifre dell'app di autenticazione.</p>
+      {e === '1' && <p class="notice notice-error" role="alert"><Icon name="alert" class="icon-sm" /> Codice non corretto.</p>}
+      {e === 'wait' && <p class="notice notice-error" role="alert"><Icon name="alert" class="icon-sm" /> Troppi tentativi: riprova tra 15 minuti.</p>}
+      <input type="hidden" name="next" value={next} />
+      <div class="field">
+        <label for="code">Codice</label>
+        <input class="input code" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required autofocus />
+      </div>
+      <button class="btn btn-gold btn-lg btn-block" type="submit">Conferma</button>
+      <p class="back"><a href="/admin/login">Torna all'accesso</a></p>
+    </form>
+  </div>
+</Admin>
+<style>
+  .login { min-height: 100svh; margin: calc(clamp(20px, 3vw, 40px) * -1) calc(clamp(16px, 3vw, 32px) * -1) -80px; display: grid; place-items: center; padding: 24px;
+    background: radial-gradient(50% 40% at 50% 30%, rgba(255, 91, 36, 0.14), transparent 70%), var(--night); }
+  .login-card { width: min(400px, 100%); display: grid; gap: 16px; justify-items: stretch; background: rgba(255, 252, 246, 0.04); border: 1px solid rgba(244, 236, 221, 0.12); border-radius: 16px; padding: 32px 24px; }
+  .login-card :global(.neon-logo) { justify-self: center; }
+  .login-card h1 { text-align: center; margin: 0; color: var(--on-night); }
+  .login-card label { color: var(--on-night); }
+  .login-card p.hint { margin: 0; text-align: center; color: var(--on-night-2); }
+  .code { text-align: center; font-size: 1.5rem; letter-spacing: 0.4em; font-variant-numeric: tabular-nums; }
+  .back { text-align: center; }
+  .back a { color: var(--on-night-2); }
+</style>

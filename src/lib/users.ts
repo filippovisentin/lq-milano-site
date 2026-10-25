@@ -24,7 +24,14 @@ export function readUsers(): AdminUser[] {
   const st = statSync(USERS_FILE);
   const key = `${st.mtimeMs}:${st.size}`;
   if (cache && cache.key === key) return cache.users;
-  const users = JSON.parse(readFileSync(USERS_FILE, 'utf8')) as AdminUser[];
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(readFileSync(USERS_FILE, 'utf8'));
+  } catch {
+    throw new Error('users.json non leggibile (JSON non valido)');
+  }
+  if (!Array.isArray(parsed)) throw new Error('users.json non valido (atteso un elenco)');
+  const users = parsed as AdminUser[];
   cache = { key, users };
   return users;
 }
@@ -44,4 +51,8 @@ export function writeUsers(users: AdminUser[]): void {
 export function bumpSessionVersion(name: string): void {
   const users = readUsers().map((u) => (u.user === name ? { ...u, sessionVersion: u.sessionVersion + 1 } : u));
   writeUsers(users);
+}
+
+export function setLastTotpStep(name: string, step: number): void {
+  writeUsers(readUsers().map((u) => (u.user === name ? { ...u, lastTotpStep: step } : u)));
 }

@@ -1,5 +1,5 @@
 declare namespace App {
   interface Locals {
-    admin: { user: string } | null;
+    admin: { user: string; role: import('./lib/users').Role } | null;
   }
 }
