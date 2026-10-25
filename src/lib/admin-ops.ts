@@ -12,7 +12,9 @@ import {
 const MAX_FILE = 25 * 1024 * 1024;
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/heic', 'image/heif'];
 
-export class InputError extends Error {}
+export class InputError extends Error {
+  constructor(message: string, public blockers?: string[]) { super(message); }
+}
 
 const str = (f: FormData, k: string, max = 300) => String(f.get(k) ?? '').trim().slice(0, max);
 const lines = (f: FormData, k: string) => str(f, k, 4000).split(/\r?\n/).map((l) => l.trim()).filter(Boolean).slice(0, 30);

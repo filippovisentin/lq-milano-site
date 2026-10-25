@@ -1,6 +1,7 @@
 ---
 import Admin from '../../../layouts/Admin.astro';
 import Icon from '../../../components/Icon.astro';
+import { publishBlockers } from '../../../lib/misura-item';
 import { getAnyProduct, listAllProducts, CATEGORIES, CONDITIONS, imgUrl, has3d, modelBase, productUrl, euro } from '../../../lib/catalog';
 export const prerender = false;
 
@@ -15,6 +16,11 @@ const photos = (p?.images ?? []).map((im, i) => ({
   ref: `id:${im.id}`, src: imgUrl('products', p!.slug, im, 480),
   front: p!.model3d.front === i, back: p!.model3d.back === i,
 }));
+// Misura draft: what is still missing before it can go live
+const isDraftP = !!p?.draft;
+const blockers = p && isDraftP ? publishBlockers(p) : [];
+const askMadeIn = !!(p?.origin?.madeIn && !p.origin.confirmed.madeIn);
+const askComposition = !!(p?.origin && !p.origin.confirmed.composition && p.details.materiale.some((l) => !l.startsWith('Indicazione in etichetta:')));
 const nextOrder = listAllProducts().length + 1;
 ---
 <Admin title={isNew ? 'Nuovo prodotto' : p!.title} section="prodotti">
@@ -25,6 +31,27 @@ const nextOrder = listAllProducts().length + 1;
   </div>
   {saved && <p class="notice notice-ok" role="status"><Icon name="check" class="icon-sm" /> Salvato.{built && ' Vista 3D generata.'} Le modifiche sono già online.</p>}
   {warn && <p class="notice" role="status"><Icon name="alert" class="icon-sm" /> {warn}</p>}
+
+  {p && isDraftP && (
+    <section class="a-card draft-card" aria-labelledby="dr-t" data-draft data-slug={p.slug}>
+      <h2 id="dr-t">Bozza da Misura <span class="badge badge-warn">Non visibile nel negozio</span></h2>
+      {blockers.length > 0 ? (
+        <>
+          <p class="muted">Prima di pubblicare manca:</p>
+          <ul class="todo">{blockers.map((b) => <li>{b}</li>)}</ul>
+        </>
+      ) : <p class="muted">Tutto a posto: puoi pubblicarlo.</p>}
+      {askMadeIn && (
+        <label class="switch"><input type="checkbox" data-confirm-madein /><span>Confermo che in etichetta c’è scritto “Made in {p.origin!.madeIn}”</span></label>
+      )}
+      {askComposition && (
+        <label class="switch"><input type="checkbox" data-confirm-composition /><span>Confermo che la composizione ({p.details.materiale.filter((l) => !l.startsWith('Indicazione in etichetta:')).join(', ')}) corrisponde all’etichetta</span></label>
+      )}
+      <p class="notice" role="alert" data-draft-msg hidden></p>
+      <button class="btn btn-lg" type="button" data-draft-publish>Pubblica nel negozio</button>
+      <p class="hint">Salva prima le eventuali modifiche al modulo qui sotto.</p>
+    </section>
+  )}
 
   <form class="edit" data-edit novalidate data-slug={p?.slug ?? ''}>
     <input type="hidden" name="slug" value={p?.slug ?? ''} />
@@ -141,6 +168,8 @@ const nextOrder = listAllProducts().length + 1;
   .v3d :global(canvas) { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
   .v3d .poster { position: absolute; inset: 8%; width: 84%; height: 84%; object-fit: contain; transition: opacity 300ms; }
   .v3d:global(.is-ready) .poster { opacity: 0; }
+  .draft-card { margin-bottom: 16px; }
+  .todo { margin: 6px 0 12px; padding-left: 20px; }
   .v-btns { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
 </style>
 
@@ -254,6 +283,24 @@ const nextOrder = listAllProducts().length + 1;
     const res = await fetch(`/api/admin/products/${encodeURIComponent(form.dataset.slug!)}`, { method: 'DELETE' });
     if (res.ok) { dirty = false; location.href = `/admin/prodotti?eliminato=${encodeURIComponent(title)}`; }
     else status.textContent = 'Eliminazione non riuscita.';
+  });
+
+  // Publish a Misura draft (confirmations are sent with the request)
+  const draft = document.querySelector<HTMLElement>('[data-draft]');
+  draft?.querySelector('[data-draft-publish]')?.addEventListener('click', async (ev) => {
+    const btn = ev.currentTarget as HTMLButtonElement;
+    const msg = draft.querySelector<HTMLElement>('[data-draft-msg]')!;
+    const body = new URLSearchParams({ slug: draft.dataset.slug! });
+    if (draft.querySelector<HTMLInputElement>('[data-confirm-madein]')?.checked) body.set('confirmMadeIn', 'on');
+    if (draft.querySelector<HTMLInputElement>('[data-confirm-composition]')?.checked) body.set('confirmComposition', 'on');
+    btn.disabled = true; msg.hidden = true;
+    try {
+      const res = await fetch('/api/admin/products/publish', { method: 'POST', body });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) { dirty = false; location.href = `/admin/prodotti/${encodeURIComponent(draft.dataset.slug!)}?salvato=1`; return; }
+      msg.textContent = [data.error ?? 'Pubblicazione non riuscita.', ...(data.blockers ?? [])].join(' · ');
+    } catch { msg.textContent = 'Connessione non riuscita. Riprova.'; }
+    msg.hidden = false; btn.disabled = false;
   });
 
   // 3D preview

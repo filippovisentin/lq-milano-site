@@ -35,7 +35,7 @@ export interface Product {
   // Set while a product created by Misura is waiting to be published: hidden from the public site.
   draft?: { source: 'misura'; misuraId: string; createdBy: string; createdAt: string };
   // Provenance of a product that came from Misura (kept after publishing).
-  origin?: { source: 'misura'; misuraId: string; publishedBy?: string; confirmed: { madeIn: boolean; composition: boolean } };
+  origin?: { source: 'misura'; misuraId: string; madeIn?: string; publishedBy?: string; confirmed: { madeIn: boolean; composition: boolean } };
   createdAt: string;
   updatedAt: string;
 }

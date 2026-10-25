@@ -17,6 +17,7 @@ const stats = {
     <h1>Prodotti</h1>
     <a class="btn btn-lg" href="/admin/prodotti/nuovo"><Icon name="plus" class="icon-sm" /> Nuovo prodotto</a>
   </div>
+  <div class="notice" role="alert" data-pub-msg hidden></div>
   {deleted && <p class="notice notice-ok" role="status">Prodotto “{deleted}” eliminato.</p>}
 
   <ul class="stats">
@@ -35,7 +36,7 @@ const stats = {
           <a class="row" href={`/admin/prodotti/${encodeURIComponent(p.slug)}`}>
             <span class="thumb">{p.images[0] && <img src={imgUrl('products', p.slug, p.images[0], 480)} alt="" loading="lazy" width="64" height="80" />}</span>
             <span class="info">
-              <strong>{p.title}{p.draft && <span class="badge badge-warn"> Bozza</span>}</strong>
+              <strong>{p.title}{p.draft && <span class="badge badge-warn"> Bozza da Misura</span>}</strong>
               <span class="muted">{p.category}{p.size && ` · Tg. ${p.size}`} · ordine {p.order}</span>
             </span>
             <span class="price tabular">{euro(p.price)}</span>
@@ -46,6 +47,7 @@ const stats = {
             </span>
             <Icon name="chevron" class="icon-sm chev" />
           </a>
+          {p.draft && <button class="btn btn-sm pub" type="button" data-publish={p.slug} aria-label={`Pubblica ${p.title}`}>Pubblica</button>}
           <a class="view" href={productUrl(p.slug)} target="_blank" rel="noopener" aria-label={`Apri ${p.title} sul sito`}>↗</a>
         </li>
       ))}
@@ -68,6 +70,7 @@ const stats = {
   .price { font-weight: 600; }
   .flags { display: flex; flex-wrap: wrap; gap: 6px; grid-column: 2 / -1; }
   .chev { display: none; }
+  .pub { margin-right: 6px; flex: none; }
   .view { width: 44px; height: 44px; display: grid; place-items: center; text-decoration: none; color: var(--ink-2); border-radius: 50%; }
   .view:hover { background: var(--paper-2); }
   @media (min-width: 860px) {
@@ -82,6 +85,36 @@ const stats = {
 </style>
 
 <script>
+  // Publish a Misura draft; if something is missing, say what and link to the product page.
+  const msg = document.querySelector<HTMLElement>('[data-pub-msg]')!;
+  document.querySelectorAll<HTMLButtonElement>('[data-publish]').forEach((btn) => btn.addEventListener('click', async () => {
+    const slug = btn.dataset.publish!;
+    btn.disabled = true;
+    msg.hidden = true;
+    try {
+      const res = await fetch('/api/admin/products/publish', { method: 'POST', body: new URLSearchParams({ slug }) });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) { location.reload(); return; }
+      msg.replaceChildren();
+      msg.append(`Non posso ancora pubblicarlo: ${data.error ?? 'errore imprevisto'} `);
+      if (Array.isArray(data.blockers)) {
+        const ul = document.createElement('ul');
+        for (const b of data.blockers) { const li = document.createElement('li'); li.textContent = b; ul.append(li); }
+        msg.append(ul);
+      }
+      const a = document.createElement('a');
+      a.href = `/admin/prodotti/${encodeURIComponent(slug)}`;
+      a.textContent = 'Apri la scheda per completarlo';
+      msg.append(a);
+      msg.hidden = false;
+      msg.scrollIntoView({ block: 'nearest' });
+    } catch {
+      msg.textContent = 'Connessione non riuscita. Riprova.';
+      msg.hidden = false;
+    }
+    btn.disabled = false;
+  }));
+
   const input = document.querySelector<HTMLInputElement>('[data-filter]')!;
   const rows = [...document.querySelectorAll<HTMLElement>('[data-row]')];
   input.addEventListener('input', () => {
