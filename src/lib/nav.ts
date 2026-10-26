@@ -21,8 +21,7 @@ export const mainNav = [
     ],
   },
   { href: '/eventi', label: 'Eventi' },
-  { href: '/chi-siamo', label: 'Chi siamo' },
-  { href: '/contatti', label: 'Contatti' },
+  { href: '/contatti', label: 'Chi siamo e contatti' },
 ] as const;
 
 export const footerNav = [
@@ -47,8 +46,7 @@ export const footerNav = [
   {
     title: 'LQ Milano',
     links: [
-      { href: '/chi-siamo', label: 'Chi siamo' },
-      { href: '/contatti', label: 'Contatti' },
+      { href: '/contatti', label: 'Chi siamo e contatti' },
       { href: '/account', label: 'Accedi' },
       { href: '/cart-page', label: 'Carrello' },
     ],

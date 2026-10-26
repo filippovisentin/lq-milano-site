@@ -1,4 +1,5 @@
 ---
+import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import Icon from '../components/Icon.astro';
@@ -22,10 +23,51 @@ const topics = [
   ['eventi', 'Eventi e workshop'],
 ];
 ---
-<Base title="Contatti" description={`Contatta LQ Milano: ${site.phone}, ${site.email}, WhatsApp. ${site.address.street}, ${site.address.postcode} Milano (NoLo).`}>
-  <PageHero title="Contatti" eyebrow="Scrivici o passa in negozio" image={media.servicesBanner} imageAlt="Cravatte vintage colorate esposte in negozio" />
+<Base title="Chi siamo e contatti" description={`Lea Quattrocchi e Antonio Casale, le persone di LQ Milano. Contattaci: ${site.phone}, ${site.email}, WhatsApp. ${site.address.street}, ${site.address.postcode} Milano (NoLo).`}>
+  <PageHero
+    title="Chi siamo e contatti"
+    eyebrow="Le persone, il negozio, come trovarci"
+    lead="Lea cura lo spazio, i brand e gli eventi; Antonio la ricerca uomo, tra moda e musica. Scrivici o passa in via Venini."
+    image={media.aboutBanner}
+    imageAlt="Giacca di jeans decorata e cappello in esposizione da LQ Milano"
+    position="center 30%"
+  >
+    <nav class="jump" aria-label="In questa pagina"><a href="#chi-siamo">Chi siamo</a><a href="#scrivici">Scrivici</a></nav>
+  </PageHero>
 
-  <section class="section">
+  <section class="section-tight" id="chi-siamo" aria-labelledby="about-t">
+    <div class="container">
+      <h2 id="about-t" class="sr-only">Chi siamo</h2>
+      <div class="people">
+        <article class="person" aria-labelledby="lea-name">
+          <Picture src={media.lea} alt="Ritratto di Lea Quattrocchi" widths={[320, 640]} sizes="(min-width: 900px) 200px, 120px" formats={['avif']} fallbackFormat="webp" loading="lazy" class="person-img" />
+          <div>
+            <p class="eyebrow">Titolare · campagne vendita ed eventi</p>
+            <h3 id="lea-name" class="person-n">Lea Quattrocchi</h3>
+            <p>Milanese, esperta di vintage. Gestisce le collaborazioni con i brand, lavora con gli artisti dell’Accademia di Brera e con Green Planner per eventi sostenibili, e noleggia capi per film e serie TV.</p>
+            <a class="link-arrow" href="/servizi#consulenza-moda"><span>Consulenza moda con Lea</span><Icon name="arrow" class="icon-sm" /></a>
+          </div>
+        </article>
+        <article class="person" aria-labelledby="antonio-name">
+          <Picture src={media.antonio} alt="Ritratto di Antonio Casale in negozio, sotto l’insegna al neon" widths={[320, 640]} sizes="(min-width: 900px) 200px, 120px" formats={['avif']} fallbackFormat="webp" loading="lazy" class="person-img" />
+          <div>
+            <p class="eyebrow">Stylist e ricercatore · selezione uomo</p>
+            <h3 id="antonio-name" class="person-n">Antonio Casale</h3>
+            <p>Per lui moda e musica sono un unico linguaggio. Cura la selezione uomo, con un focus sugli anni ’70–’90, e aiuta i musicisti emergenti a costruire la propria immagine.</p>
+            <a class="link-arrow" href="/shop?cat=Capispalla"><span>La selezione uomo nello shop</span><Icon name="arrow" class="icon-sm" /></a>
+          </div>
+        </article>
+      </div>
+      <ul class="partners" aria-label="Collaborazioni">
+        <li><span class="eyebrow">Collaborazioni</span></li>
+        {site.partners.map((p) => (
+          <li><a href={p.url} target="_blank" rel="noopener">{p.name}<span class="sr-only"> (si apre in una nuova scheda)</span> <Icon name="arrow" class="icon-sm" /></a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section-tight contact" id="scrivici" aria-label="Contatti">
     <div class="container">
       <p class="fast">Il modo più veloce è WhatsApp: rispondiamo in giornata.</p>
       <dl class="practical">
@@ -98,6 +140,22 @@ const topics = [
 </Base>
 
 <style>
+  .jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .jump a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border: 1px solid rgba(242, 239, 232, 0.4); border-radius: var(--radius-pill); color: var(--on-night); text-decoration: none; }
+  .jump a:hover { background: var(--on-night); color: var(--night); }
+  .people { display: grid; gap: 16px; }
+  @media (min-width: 900px) { .people { grid-template-columns: 1fr 1fr; gap: 20px; } }
+  .person { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 20px; align-items: start; padding: 22px; background: var(--paper-2); border-radius: var(--radius-card); }
+  @media (min-width: 900px) { .person { grid-template-columns: 180px minmax(0, 1fr); padding: 28px; } }
+  .person :global(.person-img) { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--radius); }
+  @media (max-width: 520px) { .person { grid-template-columns: 1fr; } .person :global(.person-img) { width: 120px; } }
+  .person-n { font-size: clamp(1.8rem, 1.3rem + 1.6vw, 2.6rem); line-height: 1; margin: 0 0 12px; }
+  .person p:not(.eyebrow) { color: var(--ink-2); margin: 0 0 14px; max-width: 54ch; }
+  .partners { list-style: none; margin: 20px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 28px; align-items: center; }
+  .partners .eyebrow { margin: 0; }
+  .partners a { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; color: var(--ink); font-weight: 500; text-decoration: none; }
+  .partners a:hover { color: var(--neon-ink); }
+  .contact { border-top: 1px solid var(--line); scroll-margin-top: var(--header-h); }
   .practical { display: grid; gap: 12px 32px; margin: 0 0 clamp(28px, 4vw, 48px); padding-bottom: 20px; border-bottom: 1px solid var(--line); }
   @media (min-width: 700px) { .practical { grid-template-columns: repeat(3, auto); justify-content: start; } }
   .fast { margin: 0 0 16px; font-size: 1.1rem; }

@@ -5,93 +5,92 @@ import PageHero from '../components/PageHero.astro';
 import Icon from '../components/Icon.astro';
 import { media } from '../lib/media';
 
-// Copy preserved verbatim from the original Servizi page; CTAs keep their
-// original destinations with clearer, service-specific labels.
+// One compact card per service: a short text and a single CTA each.
+// The wholesale furs (B2B) get their own band below the four cards.
 const services = [
   {
     id: 'consulenza-moda', title: 'Consulenza moda', icon: 'sparkle', img: media.sConsulenza, alt: 'Consulenza moda: capi selezionati su stand',
-    text: ['Per brand nuovi e affermati: Lea imposta campagne vendita e consulenze di stile, con anni di lavoro negli showroom alle spalle.'],
-    cta: 'Scrivi a Lea', href: '/contatti?motivo=consulenza',
+    text: 'Per brand nuovi e affermati: Lea imposta campagne vendita e consulenze di stile, con anni di lavoro negli showroom alle spalle.',
+    cta: 'Scrivi a Lea', href: '/contatti?motivo=consulenza#scrivici',
   },
   {
     id: 'noleggio', title: 'Noleggio per cinema e spettacolo', icon: 'film', img: media.sNoleggio, alt: 'Abiti vintage d’epoca disponibili per il noleggio',
-    text: [],
-    cta: 'Chiedi un preventivo di noleggio', href: '/contatti?motivo=noleggio',
+    text: 'Capi e accessori dagli anni ’50 ai 2000 per film, teatro, shooting e video. Ci dici scena ed epoca, noi prepariamo una selezione.',
+    cta: 'Chiedi un preventivo', href: '/contatti?motivo=noleggio#scrivici',
   },
   {
-    id: 'workshop', title: 'Workshop', icon: 'ticket', img: media.sEventi, alt: 'Uno spazio del negozio allestito per un evento',
-    text: ['Hai un brand o un progetto? Puoi usare uno spazio del negozio per un giorno e presentarlo.'],
-    cta: 'Proponi il tuo progetto', href: '/contatti?motivo=eventi',
+    id: 'upcycling', title: 'Upcycling e sartoria', icon: 'recycle', img: media.sUpcycling, alt: 'Capo vintage trasformato con tessuti di recupero',
+    text: 'Diamo nuova vita ai capi vintage con tessuti di recupero. Orli, ritocchi e stampa personalizzata nell’Angolo Creativo del negozio.',
+    cta: 'Personalizza un capo', href: '/contatti?motivo=upcycling#scrivici',
   },
   {
-    id: 'upcycling', title: 'Upcycling', icon: 'recycle', img: media.sUpcycling, alt: 'Capo vintage trasformato con tessuti di recupero',
-    text: ['Riuso creativo. Diamo nuova anima a capi vintage trasformandoli o reinventandoli aggiungendo tessuti di recupero, che li rendono ancora più unici. Crediamo fermamente nella moda sostenibile e nel riciclo degli abiti. Dare nuova vita al passato è la nostra missione.'],
-    extra: { label: 'Orli, ritocchi e stampa personalizzata: scopri l’Angolo Creativo', href: '/concept-store#angolo-creativo' },
-    cta: 'Personalizza un capo', href: '/contatti?motivo=upcycling',
-  },
-  {
-    id: 'pellicce-vintage', title: 'Pellicce vintage', icon: 'hanger', img: media.sPellicce, alt: 'Pelliccia vintage su manichino',
-    text: ['LQ Milano Vintage offre la possibilità ai rivenditori l’opportunità di acquistare pellicce vintage all’ingrosso, da proporre nei propri store.', 'Ogni capo è accuratamente scelto e catalogato in base all’anno di produzione, per garantire autenticità e qualità a chi cerca pezzi unici dal fascino intramontabile.'],
-    cta: 'Scopri la fornitura', href: '/fornitura',
+    id: 'workshop', title: 'Workshop ed eventi', icon: 'ticket', img: media.sEventi, alt: 'Uno spazio del negozio allestito per un evento',
+    text: 'Hai un brand o un progetto? Puoi usare uno spazio del negozio per un giorno e presentarlo.',
+    cta: 'Proponi il tuo progetto', href: '/contatti?motivo=eventi#scrivici',
   },
 ];
 ---
-<Base title="Servizi" description="Consulenza moda, noleggio per cinema e spettacolo, concept store, workshop, upcycling e pellicce vintage all’ingrosso: i servizi di LQ Milano.">
+<Base title="Servizi" description="Consulenza moda, noleggio per cinema e spettacolo, upcycling, workshop e pellicce vintage all’ingrosso: i servizi di LQ Milano.">
   <PageHero
     title="Servizi"
-    eyebrow="Per privati, brand e professionisti"
-    lead="Cinque modi di lavorare con noi: per chi compra, per i brand e per le produzioni."
+    eyebrow="Per privati, brand e produzioni"
+    lead="Oltre allo shop: consulenza, noleggio, sartoria, eventi e fornitura per rivenditori."
     image={media.servicesBanner}
     imageAlt="Cravatte vintage colorate esposte in negozio"
-  >
-    <nav class="jump" aria-label="Vai al servizio">
-      {services.map((s, i) => <a href={`#${s.id}`}><span>0{i + 1}</span>{s.title}</a>)}
-    </nav>
-  </PageHero>
+  />
 
-  <section class="svc-wrap" aria-label="I servizi">
-    <ol class="services" role="list">
-      {services.map((s, i) => (
-        <li class="svc" id={s.id}>
-          <div class="svc-in">
-            <p class="svc-n" aria-hidden="true">0{i + 1}</p>
+  <section class="section-tight" aria-label="I servizi">
+    <div class="container">
+      <ol class="svc-grid" role="list">
+        {services.map((s, i) => (
+          <li class="svc reveal" id={s.id}>
+            <div class="svc-img">
+              <Picture src={s.img} alt={s.alt} widths={[240, 480]} sizes="(min-width: 900px) 160px, 112px" formats={['avif']} fallbackFormat="webp" loading={i < 2 ? 'eager' : 'lazy'} />
+            </div>
             <div class="svc-body">
-              <p class="svc-k"><Icon name={s.icon} class="icon-sm" /> Servizio 0{i + 1} di 0{services.length}</p>
+              <p class="svc-k"><Icon name={s.icon} class="icon-sm" /> 0{i + 1}</p>
               <h2 class="svc-t">{s.title}</h2>
-              {s.text.map((t) => <p>{t}</p>)}
-              {s.id === 'noleggio' && <p>Capi e accessori dagli anni '50 ai 2000 per film, teatro, shooting e video. Ci dici scena ed epoca, noi prepariamo una selezione.</p>}
-              {s.extra && <p><a href={s.extra.href}>{s.extra.label}</a></p>}
-              <a class="btn" href={s.href}>{s.cta} <Icon name="arrow" class="icon-sm" /></a>
+              <p class="svc-d">{s.text}</p>
+              <a class="link-arrow" href={s.href}><span>{s.cta}</span><Icon name="arrow" class="icon-sm" /></a>
             </div>
-            <div class="svc-media reveal">
-              <Picture src={s.img} alt={s.alt} widths={[320, 520, 800]} sizes="(min-width: 1100px) 360px, (min-width: 700px) 40vw, 70vw" formats={['avif']} fallbackFormat="webp" loading={i < 2 ? 'eager' : 'lazy'} />
-            </div>
-          </div>
-        </li>
-      ))}
-    </ol>
-    <p class="shop-link"><a class="link-arrow" href="/concept-store"><span>Il negozio</span> <Icon name="arrow" class="icon-sm" /></a></p>
+          </li>
+        ))}
+      </ol>
+
+      <div class="b2b night reveal" id="pellicce-vintage">
+        <div class="b2b-img">
+          <Picture src={media.sPellicce} alt="Pelliccia vintage su manichino" widths={[240, 480]} sizes="160px" formats={['avif']} fallbackFormat="webp" loading="lazy" />
+        </div>
+        <div>
+          <p class="eyebrow">Per rivenditori</p>
+          <h2 class="svc-t">Pellicce vintage all’ingrosso</h2>
+          <p class="b2b-d">Pellicce scelte e catalogate per anno di produzione, da proporre nel tuo store.</p>
+        </div>
+        <a class="btn btn-gold" href="/fornitura">Scopri la fornitura <Icon name="arrow" class="icon-sm" /></a>
+      </div>
+    </div>
   </section>
 </Base>
 
 <style>
-  .svc-wrap { padding-bottom: clamp(56px, 8vw, 112px); }
-  .shop-link { width: 100%; max-width: calc(1440px + 2 * var(--gutter)); margin: 28px auto 0; padding-inline: var(--gutter); }
-  .services { list-style: none; margin: 0; padding: 0; }
-  .svc { border-bottom: 1px solid var(--line); scroll-margin-top: var(--header-h); }
-  .svc:nth-child(even) { background: var(--paper-2); }
-  .svc-in { width: 100%; max-width: calc(1440px + 2 * var(--gutter)); margin-inline: auto; padding: clamp(40px, 6vw, 88px) var(--gutter); display: grid; gap: 20px 40px; align-items: center; }
-  .svc-n { margin: 0; font: 400 clamp(4rem, 2.6rem + 6vw, 9rem)/0.9 var(--font-display); color: transparent; -webkit-text-stroke: 1.5px var(--accent); }
-  .svc-k { display: inline-flex; gap: 8px; align-items: center; margin: 0 0 6px; font: 500 0.76rem var(--font-label); text-transform: uppercase; letter-spacing: 0.06em; color: var(--neon-ink); }
-  .svc-t { font-size: clamp(2.2rem, 1.4rem + 3.4vw, 4.6rem); margin: 0 0 14px; }
-  .svc-body p:not(.svc-k) { color: var(--ink-2); max-width: 58ch; margin-bottom: 12px; }
-  .svc-body .btn { margin-top: 8px; }
-  .svc-media { justify-self: center; width: min(70vw, 360px); }
-  .svc-media :global(img) { width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; border-radius: 50%; }
-  .svc:target .svc-n { -webkit-text-stroke-color: var(--accent); color: var(--accent); }
+  .svc-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+  @media (min-width: 900px) { .svc-grid { grid-template-columns: 1fr 1fr; gap: 20px; } }
+  .svc { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 20px; align-items: start; padding: 22px; background: var(--paper-2); border-radius: var(--radius-card); scroll-margin-top: calc(var(--header-h) + 16px); }
+  @media (min-width: 900px) { .svc { grid-template-columns: 160px minmax(0, 1fr); padding: 28px; } }
+  .svc-img :global(img), .b2b-img :global(img) { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius); }
+  .svc-k { display: inline-flex; gap: 8px; align-items: center; margin: 0 0 6px; font: 500 0.76rem var(--font-label); letter-spacing: 0.06em; color: var(--neon-ink); }
+  .svc-t { font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.3rem); line-height: 1; margin: 0 0 10px; }
+  .svc-d { color: var(--ink-2); margin: 0 0 14px; max-width: 52ch; }
+  .svc:target { outline: 2px solid var(--neon-ink); outline-offset: 2px; }
+  @media (max-width: 520px) { .svc { grid-template-columns: 1fr; } .svc-img { width: 96px; } }
+
+  .b2b { display: grid; gap: 18px 28px; align-items: center; margin-top: 20px; padding: 24px; border-radius: var(--radius-card); scroll-margin-top: calc(var(--header-h) + 16px); }
+  .b2b-img { width: 96px; }
+  .b2b .svc-t { color: var(--on-night); }
+  .b2b-d { color: var(--on-night-2); margin: 0; max-width: 52ch; }
+  .b2b .btn { justify-self: start; }
   @media (min-width: 900px) {
-    .svc-in { grid-template-columns: auto minmax(0, 1fr) auto; }
-    .svc-n { align-self: start; min-width: 2.2ch; }
-    .svc-media { width: clamp(240px, 26vw, 360px); }
+    .b2b { grid-template-columns: 160px minmax(0, 1fr) auto; padding: 28px; }
+    .b2b-img { width: 160px; }
   }
 </style>
