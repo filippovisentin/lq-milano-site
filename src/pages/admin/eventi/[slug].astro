@@ -81,5 +81,6 @@ const local = (iso: string | null | undefined) => {
     if (!confirm(`Eliminare l’evento “${t}”?`)) return;
     const res = await fetch(`/api/admin/events/${encodeURIComponent(form.dataset.slug!)}`, { method: 'DELETE' });
     if (res.ok) location.href = `/admin/eventi?eliminato=${encodeURIComponent(t)}`;
+    else alert(res.status === 401 ? 'Sessione scaduta: accedi di nuovo.' : 'Eliminazione non riuscita.');
   });
 </script>

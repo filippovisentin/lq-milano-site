@@ -1,10 +1,11 @@
 import type { AdminUser, Role } from './users';
 
-export type Perm = 'misura';
+// misura: Misura upload and publishing; catalogo: product and event editing.
+export type Perm = 'misura' | 'catalogo';
 
 const PERMS: Record<Role, Set<Perm>> = {
-  proprietario: new Set<Perm>(['misura']),
-  sviluppatore: new Set<Perm>(['misura']),
+  proprietario: new Set<Perm>(['misura', 'catalogo']),
+  sviluppatore: new Set<Perm>(['misura', 'catalogo']),
 };
 
 // Unknown roles and anonymous users get nothing.

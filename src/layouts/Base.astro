@@ -6,6 +6,7 @@ import CartDrawer from '../components/CartDrawer.astro';
 import Loader from '../components/Loader.astro';
 import CookieBanner from '../components/CookieBanner.astro';
 import site from '../data/site.json';
+import { jsonForScript } from '../lib/json-script';
 
 interface Props {
   title: string;
@@ -70,7 +71,7 @@ const ld = [store, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])]
       document.documentElement.classList.add('js');
       try { if (sessionStorage.getItem('lq-intro')) document.documentElement.classList.add('intro-seen'); } catch (e) {}
     </script>
-    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    <script type="application/ld+json" set:html={jsonForScript(ld)} />
     <slot name="head" />
   </head>
   <body>

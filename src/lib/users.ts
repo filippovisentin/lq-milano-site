@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { DATA_DIR } from './catalog';
 
@@ -41,9 +41,12 @@ export function getUser(name: string): AdminUser | undefined {
 }
 
 export function writeUsers(users: AdminUser[]): void {
-  mkdirSync(dirname(USERS_FILE), { recursive: true });
+  // password hashes and TOTP keys: owner-only, whatever the umask
+  mkdirSync(dirname(USERS_FILE), { recursive: true, mode: 0o700 });
+  chmodSync(dirname(USERS_FILE), 0o700);
   const tmp = `${USERS_FILE}.tmp`;
-  writeFileSync(tmp, JSON.stringify(users, null, 2));
+  writeFileSync(tmp, JSON.stringify(users, null, 2), { mode: 0o600 });
+  chmodSync(tmp, 0o600);
   renameSync(tmp, USERS_FILE);
   cache = null;
 }

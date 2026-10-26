@@ -2,6 +2,7 @@
 import Admin from '../../../layouts/Admin.astro';
 import Icon from '../../../components/Icon.astro';
 import { publishBlockers } from '../../../lib/misura-item';
+import { jsonForScript } from '../../../lib/json-script';
 import { getAnyProduct, listAllProducts, CATEGORIES, CONDITIONS, imgUrl, has3d, modelBase, productUrl, euro } from '../../../lib/catalog';
 export const prerender = false;
 
@@ -128,7 +129,7 @@ const nextOrder = listAllProducts().length + 1;
       </aside>
     </div>
   </form>
-  <script type="application/json" id="photos-data" set:html={JSON.stringify(photos)} />
+  <script type="application/json" id="photos-data" set:html={jsonForScript(photos)} />
 </Admin>
 
 <style>

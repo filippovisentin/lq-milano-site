@@ -10,7 +10,7 @@
 // LQ_ENV_FILE overrides the .env path (credentials file goes next to it).
 import { fileURLToPath } from 'node:url';
 process.chdir(fileURLToPath(new URL('..', import.meta.url)));
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { scryptSync, randomBytes, randomInt } from 'node:crypto';
 import { ROLES, USERS_FILE, base32Encode, readUsersFile, writeUsersFile } from './admin-store.mjs';
@@ -80,7 +80,10 @@ if (!sec || sec.length < 32) {
   if (i >= 0) keep.splice(i, 1);
   keep.push(`SESSION_SECRET=${randomBytes(48).toString('base64url')}`);
 }
-writeFileSync(envFile, keep.join('\n') + '\n');
+// SESSION_SECRET and the credentials file are owner-only (the mode option only
+// applies when a file is created, so chmod existing files too).
+writeFileSync(envFile, keep.join('\n') + '\n', { mode: 0o600 });
+chmodSync(envFile, 0o600);
 
 const uri = (user, key) => `otpauth://totp/${encodeURIComponent('LQ Milano')}:${encodeURIComponent(user)}?secret=${key}&issuer=${encodeURIComponent('LQ Milano')}&algorithm=SHA1&digits=6&period=30`;
 const out = ['Accesso amministratore LQ Milano', '', 'Indirizzo:  <sito>/admin   (in locale: http://localhost:4321/admin)', ''];
@@ -93,5 +96,6 @@ for (const c of created) {
 out.push("Aggiungi la chiave in un'app di autenticazione (Google Authenticator, Authy, 1Password...).");
 out.push('Per ruotare: npm run admin:create -- <utente> <ruolo>');
 out.push('Tienila riservata. Questo file non viene caricato su GitHub (.gitignore).', '');
-writeFileSync(credFile, out.join('\n'));
+writeFileSync(credFile, out.join('\n'), { mode: 0o600 });
+chmodSync(credFile, 0o600);
 console.log(`Fatto: ${created.map((c) => c.user).join(', ')}. Dati in ${USERS_FILE}, credenziali in ${credFile}. Riavvia il server.`);

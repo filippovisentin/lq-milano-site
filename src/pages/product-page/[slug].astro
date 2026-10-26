@@ -4,6 +4,7 @@ import Icon from '../../components/Icon.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import { getProduct, listProducts, productUrl, inStock, show3d, euro, imgUrl, srcset, modelBase, era, paragraphs } from '../../lib/catalog';
 import site from '../../data/site.json';
+import { jsonForScript } from '../../lib/json-script';
 
 export const prerender = false;
 const p = getProduct(decodeURIComponent(Astro.params.slug ?? ''));
@@ -206,7 +207,7 @@ const base3d = modelBase(p);
     <button class="lb-btn lb-prev" type="button" data-lb-prev aria-label="Foto precedente"><Icon name="chevron-left" /></button>
     <button class="lb-btn lb-next" type="button" data-lb-next aria-label="Foto successiva"><Icon name="chevron" /></button>
   </dialog>
-  <script type="application/json" id="lb-data" set:html={JSON.stringify(p.images.map((img, i) => ({ src: imgUrl('products', p.slug, img, 1600), alt: `${p.title}, foto ${i + 1}` })))} />
+  <script type="application/json" id="lb-data" set:html={jsonForScript(p.images.map((img, i) => ({ src: imgUrl('products', p.slug, img, 1600), alt: `${p.title}, foto ${i + 1}` })))} />
 </Base>
 
 <style>

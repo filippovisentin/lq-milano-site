@@ -1,6 +1,6 @@
 // Shared helpers for create-admin / remove-admin: users.json access
 // (same file and shape as src/lib/users.ts) and base32 for TOTP keys.
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
 export const ROLES = ['proprietario', 'sviluppatore'];
@@ -18,9 +18,12 @@ export function readUsersFile() {
 }
 
 export function writeUsersFile(users) {
-  mkdirSync(dirname(USERS_FILE), { recursive: true });
+  // password hashes and TOTP keys: owner-only, whatever the umask
+  mkdirSync(dirname(USERS_FILE), { recursive: true, mode: 0o700 });
+  chmodSync(dirname(USERS_FILE), 0o700);
   const tmp = `${USERS_FILE}.tmp`;
-  writeFileSync(tmp, JSON.stringify(users, null, 2));
+  writeFileSync(tmp, JSON.stringify(users, null, 2), { mode: 0o600 });
+  chmodSync(tmp, 0o600);
   renameSync(tmp, USERS_FILE);
 }
 
