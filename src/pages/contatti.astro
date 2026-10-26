@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import Icon from '../components/Icon.astro';
 import MapEmbed from '../components/MapEmbed.astro';
+import Tbc from '../components/Tbc.astro';
 import { media } from '../lib/media';
 import site from '../data/site.json';
 
@@ -23,13 +24,21 @@ const topics = [
 ];
 ---
 <Base title="Contatti" description={`Contatta LQ Milano: ${site.phone}, ${site.email}, WhatsApp. ${site.address.street}, ${site.address.postcode} Milano (NoLo).`}>
-  <PageHero title="Contatti" eyebrow="Scrivici, chiamaci, passa in negozio" lead="Rispondiamo a domande sui capi, richieste di noleggio, consulenze e fornitura. Il modo più veloce è WhatsApp." image={media.servicesBanner} imageAlt="Cravatte vintage colorate esposte in negozio" />
+  <PageHero title="Contatti" eyebrow="Scrivici o passa in negozio" image={media.servicesBanner} imageAlt="Cravatte vintage colorate esposte in negozio" />
 
   <section class="section">
+    <div class="container">
+      <p class="fast">Il modo più veloce è WhatsApp: rispondiamo <Tbc q="tempi di risposta su WhatsApp">in giornata</Tbc>.</p>
+      <dl class="practical">
+        <div><dt>Orari</dt><dd><Tbc q="orari di apertura e giorno di chiusura">10:30–19:30</Tbc></dd></div>
+        <div><dt>Fermata</dt><dd><Tbc q="fermata della metro">M1 Turro / Gorla</Tbc></dd></div>
+        <div><dt>Noleggio</dt><dd>Per il noleggio <Tbc q="serve prenotare?">prenota un appuntamento</Tbc>.</dd></div>
+      </dl>
+    </div>
     <div class="container contact-grid">
       <div class="form-col">
         <p class="eyebrow">Modulo</p>
-        <h2 class="form-t">Scrivi<em>ci</em></h2>
+        <h2 class="form-t">Scrivici</h2>
         <p class="muted">I campi con <span class="req">*</span> sono obbligatori.</p>
         <form class="cform" data-contact data-endpoint={endpoint} novalidate>
           <div class="row2">
@@ -60,7 +69,7 @@ const topics = [
           </div>
           <div class="hp" aria-hidden="true"><label>Lascia vuoto <input name="sito" tabindex="-1" autocomplete="off" /></label></div>
           <p class="hint privacy-note">Usiamo i tuoi dati solo per risponderti e li cancelliamo dopo 12 mesi. <a href="/privacy">Informativa privacy</a></p>
-          <button class="btn btn-lg" type="submit" data-submit>Invia messaggio</button>
+          <button class="btn btn-lg" type="submit" data-submit>Invia</button>
           <div data-result role="status" aria-live="polite"></div>
         </form>
       </div>
@@ -90,6 +99,11 @@ const topics = [
 </Base>
 
 <style>
+  .practical { display: grid; gap: 12px 32px; margin: 0 0 clamp(28px, 4vw, 48px); padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+  @media (min-width: 700px) { .practical { grid-template-columns: repeat(3, auto); justify-content: start; } }
+  .fast { margin: 0 0 16px; font-size: 1.1rem; }
+  .practical dt { font: 500 0.76rem var(--font-label); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); }
+  .practical dd { margin: 2px 0 0; }
   .contact-grid { display: grid; gap: 40px; }
   @media (min-width: 960px) { .contact-grid { grid-template-columns: 1.1fr 0.9fr; gap: clamp(40px, 5vw, 80px); align-items: start; } }
   .cform { display: grid; gap: 18px; margin-top: 20px; }
@@ -101,14 +115,14 @@ const topics = [
   .info-card { padding: 28px; border-radius: var(--radius-card); }
   .info-card h2 { color: var(--on-night); }
   .channels { list-style: none; padding: 0; margin: 0; display: grid; }
-  .channels a { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(244, 236, 221, 0.12); text-decoration: none; color: var(--on-night); }
+  .channels a { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(242, 239, 232, 0.12); text-decoration: none; color: var(--on-night); }
   .channels a:hover strong { text-decoration: underline; }
   .channels :global(svg) { color: var(--gold); flex: none; margin-top: 2px; }
   .channels span { display: grid; color: var(--on-night-2); line-height: 1.45; }
-  .channels strong { color: var(--on-night); font: 500 0.76rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 2px; }
-  .follow { margin: 20px 0 4px; font: 500 0.76rem var(--font-mono); letter-spacing: 0.03em; text-transform: uppercase; color: var(--neon); }
+  .channels strong { color: var(--on-night); font: 500 0.76rem var(--font-label); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+  .follow { margin: 20px 0 4px; font: 500 0.76rem var(--font-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--neon); }
   .social { list-style: none; padding: 0; margin: 0 0 0 -10px; display: flex; }
-  .social .icon-btn:hover { background: rgba(244, 236, 221, 0.1); }
+  .social .icon-btn:hover { background: rgba(242, 239, 232, 0.1); }
   .map { margin-top: 0; overflow: hidden; aspect-ratio: 4 / 3; background: var(--paper-2); border-radius: var(--radius-card); }
   .map iframe { width: 100%; height: 100%; border: 0; display: block; }
 </style>

@@ -1,7 +1,6 @@
 export const services = [
   { id: 'consulenza-moda', title: 'Consulenza moda', short: 'Campagne vendita e consulenza stilistica per brand' },
   { id: 'noleggio', title: 'Noleggio per cinema e spettacolo', short: 'Capi e accessori d’epoca per set, teatro e shooting' },
-  { id: 'concept-store', title: 'Concept store', short: 'Il negozio in NoLo: capi iconici e pezzi d’archivio' },
   { id: 'workshop', title: 'Workshop ed eventi', short: 'Uno spazio per giovani creativi e brand emergenti' },
   { id: 'upcycling', title: 'Upcycling e sartoria', short: 'Capi vintage trasformati con tessuti di recupero' },
   { id: 'pellicce-vintage', title: 'Pellicce vintage all’ingrosso', short: 'Fornitura per rivenditori, catalogata per anno' },
@@ -9,7 +8,7 @@ export const services = [
 
 export const mainNav = [
   { href: '/shop', label: 'Shop' },
-  { href: '/concept-store', label: 'Concept store' },
+  { href: '/concept-store', label: 'Il negozio' },
   {
     label: 'Servizi',
     href: '/servizi',
@@ -18,7 +17,7 @@ export const mainNav = [
     ],
     extra: [
       { href: '/fornitura', label: 'Fornitura pellicce', desc: 'Richiedi il linesheet' },
-      { href: '/galleria', label: 'Galleria · Capi iconici', desc: 'L’archivio raccontato' },
+      { href: '/galleria', label: 'Archivio per noleggio', desc: 'L’archivio raccontato' },
     ],
   },
   { href: '/eventi', label: 'Eventi' },
@@ -30,9 +29,9 @@ export const footerNav = [
   {
     title: 'Negozio',
     links: [
-      { href: '/shop', label: 'Shop online' },
-      { href: '/concept-store', label: 'Il concept store' },
-      { href: '/galleria', label: 'Galleria · Capi iconici' },
+      { href: '/shop', label: 'Shop' },
+      { href: '/concept-store', label: 'Il negozio' },
+      { href: '/galleria', label: 'Archivio per noleggio' },
       { href: '/eventi', label: 'Eventi e workshop' },
     ],
   },
@@ -50,7 +49,7 @@ export const footerNav = [
     links: [
       { href: '/chi-siamo', label: 'Chi siamo' },
       { href: '/contatti', label: 'Contatti' },
-      { href: '/account', label: 'Accedi o registrati' },
+      { href: '/account', label: 'Accedi' },
       { href: '/cart-page', label: 'Carrello' },
     ],
   },

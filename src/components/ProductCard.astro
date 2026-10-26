@@ -1,6 +1,6 @@
 ---
 import type { Product } from '../lib/catalog';
-import { productUrl, inStock, show3d, euro, imgUrl, srcset, era } from '../lib/catalog';
+import { productUrl, inStock, show3d, euro, imgUrl, srcset, eraLabel, eraDecade } from '../lib/catalog';
 import Icon from './Icon.astro';
 
 interface Props { product: Product; eager?: boolean; headingLevel?: 'h2' | 'h3' }
@@ -9,7 +9,8 @@ const H = headingLevel;
 const available = inStock(p);
 const sizes = '(min-width: 1280px) 300px, (min-width: 1024px) 23vw, (min-width: 640px) 31vw, 46vw';
 const [a, b] = p.images;
-const anni = era(p.details.anni);
+const anni = eraLabel(p.details.anni);
+const decade = eraDecade(p.details.anni);
 ---
 <article
   class="card"
@@ -19,6 +20,8 @@ const anni = era(p.details.anni);
   data-size={p.size ?? ''}
   data-price={p.price}
   data-order={p.order}
+  data-created={p.createdAt}
+  data-era={decade ?? ''}
   data-available={available ? '1' : '0'}
 >
   <a class="card-link" href={productUrl(p.slug)}>
@@ -33,9 +36,9 @@ const anni = era(p.details.anni);
     <div class="card-body">
       <H class="card-title">{p.title}</H>
       <p class="card-meta">
-        <span class="price tabular">{euro(p.price)}</span>
+        <span class:list={['price', 'tabular', !available && 'is-sold']}>{euro(p.price)}</span>
         {p.size && <span class="size">Taglia {p.size}</span>}
-        {anni && <span class="era">Anni {anni}</span>}
+        {anni && <span class="era">{anni}</span>}
       </p>
     </div>
   </a>
@@ -58,12 +61,13 @@ const anni = era(p.details.anni);
     .card-link:hover .card-media:has(.img-b) .img-a { opacity: 0; }
   }
   .tags { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 6px; flex-wrap: wrap; pointer-events: none; }
-  .badge-3d { margin-left: auto; background: rgba(23, 20, 17, 0.86); color: #ffd9c7; box-shadow: 0 0 10px rgba(255, 91, 36, 0.35); }
+  .badge-3d { margin-left: auto; background: rgba(20, 18, 27, 0.86); color: #d3eada; box-shadow: 0 0 10px rgba(111, 178, 125, 0.35); }
   :global(.icon-xs) { width: 14px; height: 14px; }
   .card-body { padding: 14px 2px 0; }
   .card-title { font-family: var(--font-body); font-size: 0.98rem; font-weight: 500; line-height: 1.3; margin: 0 0 6px; letter-spacing: -0.005em; text-transform: none; }
   .card-link:hover .card-title { text-decoration: underline; text-underline-offset: 0.2em; }
-  .card-meta { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; font-family: var(--font-mono); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.02em; color: var(--ink-2); }
+  .card-meta { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; font-family: var(--font-label); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); }
+  .price.is-sold { text-decoration: line-through; }
   .price { color: var(--ink); font-weight: 500; font-size: 0.86rem; }
   [data-available='0'] .card-media img { filter: brightness(1.05) grayscale(0.6); opacity: 0.7; }
 </style>

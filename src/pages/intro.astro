@@ -42,13 +42,13 @@ import Loader from '../components/Loader.astro';
         position: fixed; left: 50%; bottom: max(14px, env(safe-area-inset-bottom)); transform: translateX(-50%);
         z-index: 200; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px;
         width: max-content; max-width: calc(100% - 24px); padding: 8px;
-        background: rgba(23, 20, 17, 0.8); border: 1px solid rgba(244, 236, 221, 0.18); border-radius: 12px;
-        backdrop-filter: blur(10px); font: 500 0.76rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em;
+        background: rgba(20, 18, 27, 0.8); border: 1px solid rgba(242, 239, 232, 0.18); border-radius: 12px;
+        backdrop-filter: blur(10px); font: 500 0.76rem var(--font-label); text-transform: uppercase; letter-spacing: 0.06em;
       }
       .row { display: inline-flex; gap: 4px; }
       .b {
         display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border-radius: 8px;
-        border: 1px solid rgba(244, 236, 221, 0.22); background: transparent; color: var(--on-night);
+        border: 1px solid rgba(242, 239, 232, 0.22); background: transparent; color: var(--on-night);
         font: inherit; letter-spacing: inherit; text-transform: inherit; text-decoration: none; cursor: pointer;
       }
       .b:hover { border-color: var(--neon); }

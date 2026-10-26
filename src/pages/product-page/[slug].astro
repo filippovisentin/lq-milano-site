@@ -1,8 +1,9 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
+import Tbc from '../../components/Tbc.astro';
 import ProductCard from '../../components/ProductCard.astro';
-import { getProduct, listProducts, productUrl, inStock, show3d, euro, imgUrl, srcset, modelBase, era, paragraphs } from '../../lib/catalog';
+import { getProduct, listProducts, productUrl, inStock, show3d, euro, imgUrl, srcset, modelBase, era, eraLabel, paragraphs } from '../../lib/catalog';
 import site from '../../data/site.json';
 
 export const prerender = false;
@@ -14,7 +15,7 @@ const available = inStock(p);
 const with3d = show3d(p);
 const related = all
   .filter((x) => x.slug !== p.slug && inStock(x))
-  .sort((a, b) => Number(b.category === p.category) - Number(a.category === p.category))
+  .sort((a, b) => Number(b.details.anni === p.details.anni) - Number(a.details.anni === p.details.anni))
   .slice(0, 4);
 const paras = paragraphs(p.description);
 const description = paras[0] ?? p.title;
@@ -36,7 +37,11 @@ const crumbsLd = {
   ],
 };
 const anni = era(p.details.anni);
+const epoca = eraLabel(p.details.anni); // "Anni '90", or a single year as is
 const base3d = modelBase(p);
+const shortLabel = (k: string) => (/spall/i.test(k) ? 'Spalle' : /torace|petto/i.test(k) ? 'Petto' : /manica/i.test(k) ? 'Manica' : /lunghezza/i.test(k) ? 'Lunghezza' : k);
+const difetti = (p.details as any).difetti ?? (p.details as any).difetto ?? null;
+const difettiText = Array.isArray(difetti) ? difetti.join(', ') : difetti || null; // never claim "no defects" unless someone wrote it
 ---
 <Base title={p.title} description={p.seoDescription ?? `${description} ${euro(p.price)}${p.size ? ` · Taglia ${p.size}` : ''}. Vintage selezionato da LQ Milano.`} image={og} type="product" jsonLd={[productLd, crumbsLd]}>
   <div class="container pdp">
@@ -89,25 +94,25 @@ const base3d = modelBase(p);
       </section>
 
       <section class="panel" aria-labelledby="pdp-title">
-        <p class="eyebrow">{p.category}{anni && ` · Anni ${anni}`}</p>
+        <p class="eyebrow">{p.category}{epoca && ` · ${epoca}`}</p>
         <h1 id="pdp-title" class="pdp-title">{p.title}</h1>
         <p class="pdp-price tabular">{euro(p.price)} <span class="vat">IVA inclusa</span></p>
 
         <ul class="facts" aria-label="In breve">
-          {p.quantity === 1 && available && <li><Icon name="sparkle" class="icon-sm" /> Pezzo unico</li>}
-          {p.details.stato && <li><Icon name="check" class="icon-sm" /> Stato: {p.details.stato}</li>}
-          {anni && <li><Icon name="clock" class="icon-sm" /> Anni {anni}</li>}
+          {p.quantity === 1 && available && <li><Icon name="sparkle" class="icon-sm" /> Uno solo</li>}
+          {p.details.stato && <li><Icon name="check" class="icon-sm" /> Stato {p.details.stato.toLowerCase()}</li>}
+          {epoca && <li><Icon name="clock" class="icon-sm" /> {epoca}</li>}
         </ul>
 
         <form class="buy" data-buy novalidate data-id={p.slug} data-title={p.title} data-price={p.price}
           data-image={p.images[0] ? imgUrl('products', p.slug, p.images[0], 480) : ''} data-url={productUrl(p.slug)} data-max={available ? p.quantity : 0}>
           {p.size && (
             <fieldset class="sizes">
-              <legend class="label">Taglia <span class="req" aria-hidden="true">*</span></legend>
+              <legend class="label">Taglia</legend>
               <div class="size-opts">
                 <label class="size-opt"><input type="radio" name="size" value={p.size} checked required /><span>{p.size}</span></label>
               </div>
-              <p class="hint">Taglia unica disponibile per questo capo. Controlla le misure qui sotto: le taglie vintage possono vestire diversamente.</p>
+              <p class="hint">Taglia {p.size} (sull'etichetta). Le taglie di una volta vestono diverse: guarda le misure qui sotto.</p>
             </fieldset>
           )}
           {available ? (
@@ -116,9 +121,17 @@ const base3d = modelBase(p);
               <p class="buy-status" data-buy-status role="status"></p>
             </>
           ) : (
-            <p class="notice"><Icon name="info" class="icon-sm" /> Questo capo è già stato venduto. Scrivici: potremmo avere qualcosa di simile.</p>
+            <p class="notice"><Icon name="info" class="icon-sm" /> <strong>Venduto.</strong> Questo capo ha già trovato casa. <a href={`${site.whatsapp}?text=${encodeURIComponent('Ciao! Avvisami se arriva qualcosa di simile a: ' + p.title)}`} target="_blank" rel="noopener">Avvisami se arriva qualcosa di simile →</a></p>
           )}
-          <a class="btn btn-ghost btn-block" href={`${site.whatsapp}?text=${waText}`} target="_blank" rel="noopener"><Icon name="whatsapp" class="icon-sm" /> Chiedi info su WhatsApp</a>
+          <a class="btn btn-ghost btn-block" href={`${site.whatsapp}?text=${waText}`} target="_blank" rel="noopener"><Icon name="whatsapp" class="icon-sm" /> Chiedi a Lea su WhatsApp</a>
+          <div class="ship">
+            <p class="label">Spedizione e resi</p>
+            <ul class="plain">
+              <li>Spedizione in Italia in <Tbc q="tempi di spedizione">2–4 giorni</Tbc>.</li>
+              <li>Reso entro <Tbc q="giorni per il reso e rimborso">14 giorni con rimborso</Tbc>: non facciamo cambi, perché ogni capo c'è una volta sola.</li>
+              <li><Tbc q="ritiro in negozio gratuito">Ritiro gratuito in negozio.</Tbc></li>
+            </ul>
+          </div>
         </form>
 
         <div class="accordions">
@@ -133,13 +146,17 @@ const base3d = modelBase(p);
                 <dl class="measures">
                   {p.details.misure.map((m) => {
                     const [k, ...v] = m.split(':');
-                    return v.length ? <div><dt>{k.trim()}</dt><dd class="tabular">{v.join(':').trim()}</dd></div> : <div><dd>{m}</dd></div>;
+                    return v.length ? <div><dt>{shortLabel(k.trim())}</dt><dd class="tabular">{v.join(':').trim()}</dd></div> : <div><dd>{m}</dd></div>;
                   })}
                 </dl>
               ) : (
                 <p class="muted">Misure non ancora inserite. <a href={`${site.whatsapp}?text=${waText}`} target="_blank" rel="noopener">Chiedile su WhatsApp</a>.</p>
               )}
-              <p class="hint">Misure prese a capo disteso.</p>
+              <p class="hint">Misure in cm, prese a capo steso.</p>
+              <details class="how" id="come-misuriamo">
+                <summary>Come misuriamo →</summary>
+                <p>Il capo è steso su un piano. Le misure sono in cm, da cucitura a cucitura.</p>
+              </details>
             </div>
           </details>
           {p.details.materiale.length > 0 && (
@@ -154,7 +171,8 @@ const base3d = modelBase(p);
               <div class="acc-body">
                 <dl class="measures">
                   {p.details.stato && <div><dt>Stato</dt><dd>{p.details.stato}</dd></div>}
-                  {anni && <div><dt>Anni</dt><dd>{anni}</dd></div>}
+                  {difettiText && <div><dt>Difetti</dt><dd>{difettiText}</dd></div>}
+                  {epoca && <div><dt>Epoca</dt><dd>{epoca} (stimata)</dd></div>}
                 </dl>
               </div>
             </details>
@@ -163,7 +181,7 @@ const base3d = modelBase(p);
 
         <aside class="tailor">
           <Icon name="scissors" />
-          <p><strong>Su misura, come vuoi tu.</strong> Orli, ritocchi e personalizzazioni nel nostro <a href="/concept-store#angolo-creativo">Angolo Creativo</a>.</p>
+          <p><strong>Lo vuoi più corto o più stretto?</strong> Orli e ritocchi li facciamo in negozio, nell'<a href="/concept-store#angolo-creativo">Angolo creativo</a>.</p>
         </aside>
 
         <div class="share">
@@ -184,7 +202,7 @@ const base3d = modelBase(p);
     <section class="section paper-2" aria-labelledby="rel-title">
       <div class="container">
         <div class="section-head">
-          <div><p class="eyebrow">Continua a cercare</p><h2 id="rel-title">Potrebbero piacerti</h2></div>
+          <div><h2 id="rel-title">Della stessa epoca</h2></div>
           <a class="link-arrow" href="/shop"><span>Tutto lo shop</span><Icon name="arrow" class="icon-sm" /></a>
         </div>
         <div class="grid related">{related.map((r) => <ProductCard product={r} />)}</div>
@@ -238,7 +256,7 @@ const base3d = modelBase(p);
   .v-loading .spinner { width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
   .v-controls { position: absolute; left: 12px; bottom: 12px; display: flex; gap: 6px; flex-wrap: wrap; }
   .v-btn {
-    display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(37, 37, 31, 0.12);
+    display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(26, 25, 25, 0.12);
     background: rgba(255, 252, 246, 0.92); font-size: 0.86rem; font-weight: 600; box-shadow: var(--shadow-1); backdrop-filter: blur(6px);
   }
   .v-btn { transition: background-color 200ms var(--ease-soft), transform 160ms var(--ease-out); }
@@ -246,18 +264,18 @@ const base3d = modelBase(p);
   .v-btn:active { transform: scale(0.96); transition-duration: var(--t-press); }
   .v-hint {
     position: absolute; top: 14px; left: 50%; transform: translateX(-50%); margin: 0; display: inline-flex; gap: 6px; align-items: center;
-    padding: 6px 12px; border-radius: 999px; background: rgba(23, 20, 17, 0.78); color: #fff; font-size: 0.82rem; pointer-events: none;
+    padding: 6px 12px; border-radius: 999px; background: rgba(20, 18, 27, 0.78); color: #fff; font-size: 0.82rem; pointer-events: none;
     animation: hint 4.5s 0.8s var(--ease-out) forwards; opacity: 0;
   }
   @keyframes hint { 10%, 75% { opacity: 1; } 100% { opacity: 0; } }
   /* floating, frosted pill (like the controls over a photo in iOS) */
   .zoom-btn {
     position: absolute; right: 12px; bottom: 12px; display: inline-flex; gap: 6px; align-items: center; min-height: 44px; padding: 0 18px;
-    border: 0; border-radius: var(--radius-pill); background: rgba(23, 20, 17, 0.78); -webkit-backdrop-filter: blur(12px) saturate(1.4); backdrop-filter: blur(12px) saturate(1.4);
+    border: 0; border-radius: var(--radius-pill); background: rgba(20, 18, 27, 0.78); -webkit-backdrop-filter: blur(12px) saturate(1.4); backdrop-filter: blur(12px) saturate(1.4);
     color: var(--on-night); font: 600 0.9rem var(--font-body);
     transition: background-color 200ms var(--ease-soft), transform 160ms var(--ease-out);
   }
-  .zoom-btn:hover { background: rgba(23, 20, 17, 0.9); }
+  .zoom-btn:hover { background: rgba(20, 18, 27, 0.9); }
   .zoom-btn:active { transform: scale(0.96); transition-duration: var(--t-press); }
 
   .thumbs { display: flex; gap: 10px; margin-top: 12px; overflow-x: auto; padding: 5px 5px 8px; scrollbar-width: none; }
@@ -268,32 +286,38 @@ const base3d = modelBase(p);
   }
   .thumb:active { transform: scale(0.96); transition-duration: var(--t-press); }
   .thumb img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; filter: brightness(1.05); }
-  .thumb[aria-selected='true'] { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--neon); opacity: 1; }
+  .thumb[aria-selected='true'] { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--accent); opacity: 1; }
   .thumb:hover { opacity: 1; }
-  .thumb-3d { display: grid; place-items: center; align-content: center; gap: 2px; background: var(--night); color: #ffd9c7; font-weight: 700; font-size: 0.8rem; box-shadow: none; }
-  .thumb-3d[aria-selected='true'] { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--neon); }
+  .thumb-3d { display: grid; place-items: center; align-content: center; gap: 2px; background: var(--night); color: #d3eada; font-weight: 700; font-size: 0.8rem; box-shadow: none; }
+  .thumb-3d[aria-selected='true'] { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--accent); }
 
   /* panel */
   .pdp-title { font-size: clamp(2.6rem, 1.8rem + 3.4vw, 4.6rem); line-height: 0.86; margin: 6px 0 14px; }
-  .pdp-price { font: 500 1.5rem var(--font-mono); margin-bottom: 16px; }
+  .pdp-price { font: 500 1.5rem var(--font-label); margin-bottom: 16px; }
   .vat { font-size: 0.74rem; text-transform: uppercase; color: var(--ink-2); margin-left: 6px; }
   .facts { list-style: none; padding: 0; margin: 0 0 22px; display: flex; flex-wrap: wrap; gap: 6px; }
-  .facts li { display: inline-flex; gap: 6px; align-items: center; padding: 6px 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-pill); font: 500 0.74rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em; }
+  .facts li { display: inline-flex; gap: 6px; align-items: center; padding: 6px 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-pill); font: 500 0.74rem var(--font-label); text-transform: uppercase; letter-spacing: 0.06em; }
   .facts :global(svg) { color: var(--gold-ink); }
   .buy { display: grid; gap: 12px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
   .sizes { border: 0; padding: 0; margin: 0 0 6px; display: grid; gap: 8px; }
-  .sizes .label { font: 500 0.76rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-2); }
+  .sizes .label { font: 500 0.76rem var(--font-label); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); }
   .size-opts { display: flex; gap: 8px; flex-wrap: wrap; }
   .size-opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
   .size-opt span {
     display: grid; place-items: center; min-width: 60px; min-height: 48px; padding: 0 18px; border-radius: var(--radius-pill);
-    border: 1px solid var(--line-strong); background: transparent; font: 500 0.9rem var(--font-mono); cursor: pointer;
+    border: 1px solid var(--line-strong); background: transparent; font: 500 0.9rem var(--font-label); cursor: pointer;
     transition: background-color 200ms var(--ease-soft), border-color 200ms var(--ease-soft), color 200ms var(--ease-soft), transform 160ms var(--ease-out);
   }
   .size-opt span:hover { border-color: var(--ink); }
   .size-opt:active span { transform: scale(0.95); transition-duration: var(--t-press); }
   .size-opt input:checked + span { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   .size-opt input:focus-visible + span { outline: 2.5px solid var(--olive); outline-offset: 3px; }
+  .ship { display: grid; gap: 6px; font-size: 0.92rem; color: var(--ink-2); }
+  .ship .label { font: 500 0.76rem var(--font-label); text-transform: uppercase; letter-spacing: 0.06em; }
+  .ship li { padding: 2px 0; }
+  .accordions .how { margin-top: 4px; font-size: 0.9rem; border-bottom: 0; }
+  .accordions .how summary { min-height: 0; font: 500 0.86rem var(--font-label); display: block; }
+  .accordions .how summary :global(svg) { display: none; }
   .hint { font-size: 0.86rem; color: var(--ink-2); margin: 0; }
   .add-btn:global(.is-added) { --bg: var(--ink); --bd: var(--ink); }
   .buy-status { margin: 0; font-size: 0.92rem; min-height: 1.2em; color: var(--ok); font-weight: 500; }
@@ -302,7 +326,7 @@ const base3d = modelBase(p);
   .accordions details { border-bottom: 1px solid var(--line); }
   .accordions summary {
     list-style: none; display: flex; align-items: center; justify-content: space-between; min-height: 56px; cursor: pointer;
-    font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; text-transform: uppercase;
+    font-family: var(--font-display); font-size: 1.35rem; font-weight: 400;
   }
   .accordions summary::-webkit-details-marker { display: none; }
   .accordions summary :global(svg) { transition: transform var(--t-fast); }
@@ -311,7 +335,7 @@ const base3d = modelBase(p);
   .measures { margin: 0 0 10px; display: grid; gap: 0; }
   .measures div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
   .measures dt { color: var(--ink-2); }
-  .measures dd { margin: 0; font-family: var(--font-mono); font-weight: 500; text-align: right; }
+  .measures dd { margin: 0; font-family: var(--font-label); font-weight: 500; text-align: right; }
   .plain { list-style: none; padding: 0; margin: 0; }
   .tailor { display: flex; gap: 12px; align-items: flex-start; margin: 22px 0; padding: 18px; border-radius: var(--radius); background: var(--night); color: var(--on-night); }
   .tailor :global(svg) { color: var(--neon); flex: none; margin-top: 2px; }
@@ -327,7 +351,7 @@ const base3d = modelBase(p);
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between; gap: 12px;
     padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom)); background: rgba(255, 252, 246, 0.82); border-top: 1px solid var(--line);
     -webkit-backdrop-filter: blur(18px) saturate(1.6); backdrop-filter: blur(18px) saturate(1.6);
-    box-shadow: 0 -8px 24px rgba(37, 37, 31, 0.08); transform: translateY(110%); transition: transform 260ms var(--ease-out);
+    box-shadow: 0 -8px 24px rgba(26, 25, 25, 0.08); transform: translateY(110%); transition: transform 260ms var(--ease-out);
   }
   .sticky-buy > div { display: grid; min-width: 0; font-size: 0.9rem; }
   .s-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -338,7 +362,7 @@ const base3d = modelBase(p);
   .lightbox::backdrop { background: #fff; }
   .lightbox img { width: 100%; height: 100%; object-fit: contain; padding: 56px 16px; }
   .lb-btn {
-    position: absolute; width: 48px; height: 48px; border: 0; border-radius: 50%; background: rgba(23, 20, 17, 0.78); color: var(--on-night); display: grid; place-items: center;
+    position: absolute; width: 48px; height: 48px; border: 0; border-radius: 50%; background: rgba(20, 18, 27, 0.78); color: var(--on-night); display: grid; place-items: center;
     -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); transition: background-color 200ms var(--ease-soft), scale 160ms var(--ease-out);
   }
   .lb-btn:hover { background: var(--night); }
@@ -346,7 +370,7 @@ const base3d = modelBase(p);
   .lb-close { top: calc(12px + env(safe-area-inset-top)); right: 12px; }
   .lb-prev { left: 12px; top: 50%; transform: translateY(-50%); }
   .lb-next { right: 12px; top: 50%; transform: translateY(-50%); }
-  .lb-count { position: absolute; top: calc(22px + env(safe-area-inset-top)); left: 20px; margin: 0; font: 500 0.82rem var(--font-mono); }
+  .lb-count { position: absolute; top: calc(22px + env(safe-area-inset-top)); left: 20px; margin: 0; font: 500 0.82rem var(--font-label); }
 </style>
 
 <script>

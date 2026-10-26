@@ -37,12 +37,15 @@ let n = 0;
       0 0 0.06em var(--neon),
       0 0 0.14em var(--neon),
       0 0 0.32em var(--neon-glow),
-      0 0 0.7em rgba(255, 70, 10, 0.5);
+      0 0 0.7em var(--neon-glow);
     /* a hint of tube thickness: neon script fonts are hairline */
-    -webkit-text-stroke: 0.006em rgba(255, 210, 180, 0.9);
+    -webkit-text-stroke: 0.006em rgba(220, 255, 230, 0.9);
     padding: 0.08em 0.12em 0.18em;
   }
   .neon-line { display: block; }
+  /* second tube in violet, like the L of the logo; the first stays green like the Q */
+  .l2 { --neon: var(--neon-2); --neon-glow: var(--neon-2-glow); color: #f6f2ff;
+    text-shadow: 0 0 1px #fff, 0 0 0.06em var(--neon), 0 0 0.14em var(--neon), 0 0 0.32em var(--neon-glow), 0 0 0.7em var(--neon-glow); }
   .l1 { padding-right: 0.5em; }
   .l2 { padding-left: 1.1em; margin-top: -0.06em; }
   .neon-sm { --fs: 1.45rem; }
@@ -54,21 +57,21 @@ let n = 0;
   .sp { display: inline-block; width: 0.28em; }
 
   .is-animated .tube {
-    color: #4a2416;
+    color: #1f3a28;
     text-shadow: none;
-    -webkit-text-stroke: 0.012em #5b2a18;
+    -webkit-text-stroke: 0.012em #24442f;
     animation: tube-on 1.15s var(--d) steps(1, end) forwards;
   }
   @keyframes tube-on {
-    0%   { color: #4a2416; text-shadow: none; }
+    0%   { color: #1f3a28; text-shadow: none; }
     12%  { color: var(--neon-core); text-shadow: 0 0 0.14em var(--neon), 0 0 0.32em var(--neon-glow); }
-    18%  { color: #4a2416; text-shadow: none; }
+    18%  { color: #1f3a28; text-shadow: none; }
     30%  { color: var(--neon-core); text-shadow: 0 0 0.14em var(--neon), 0 0 0.32em var(--neon-glow); }
-    36%  { color: #6a301a; text-shadow: 0 0 0.1em rgba(255, 80, 20, 0.3); }
+    36%  { color: #2c5238; text-shadow: 0 0 0.1em rgba(111, 178, 125, 0.3); }
     52%, 100% {
       color: var(--neon-core);
-      -webkit-text-stroke: 0.006em rgba(255, 210, 180, 0.9);
-      text-shadow: 0 0 1px #fff, 0 0 0.06em var(--neon), 0 0 0.14em var(--neon), 0 0 0.32em var(--neon-glow), 0 0 0.7em rgba(255, 70, 10, 0.5);
+      -webkit-text-stroke: 0.006em rgba(220, 255, 230, 0.9);
+      text-shadow: 0 0 1px #fff, 0 0 0.06em var(--neon), 0 0 0.14em var(--neon), 0 0 0.32em var(--neon-glow), 0 0 0.7em var(--neon-glow);
     }
   }
   @media (prefers-reduced-motion: reduce) {

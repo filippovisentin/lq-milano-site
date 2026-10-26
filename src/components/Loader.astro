@@ -39,7 +39,7 @@ const fallback = `/img/${stem}-1100.webp`;
     position: fixed; inset: 0; z-index: var(--z-loader); overflow: hidden;
     display: grid; place-items: center; padding: 24px;
     background:
-      radial-gradient(60% 50% at 50% 48%, rgba(255, 91, 36, 0.08), transparent 70%),
+      radial-gradient(60% 50% at 50% 48%, rgba(111, 178, 125, 0.08), transparent 70%),
       radial-gradient(120% 90% at 50% 120%, #2a221b, transparent 60%),
       var(--night);
     transition: opacity 520ms var(--ease-out), visibility 0s linear 520ms;
@@ -50,7 +50,7 @@ const fallback = `/img/${stem}-1100.webp`;
     filter: grayscale(0.35) brightness(0.32) contrast(1.1) blur(1.5px);
     animation: drift 3.2s var(--ease-out) forwards;
   }
-  .loader-bg::after { content: ''; position: absolute; inset: 0; background: radial-gradient(60% 55% at 50% 48%, transparent, rgba(23, 20, 17, 0.85)); }
+  .loader-bg::after { content: ''; position: absolute; inset: 0; background: radial-gradient(60% 55% at 50% 48%, transparent, rgba(20, 18, 27, 0.85)); }
   @keyframes drift { from { transform: scale(1.12) translateX(1.5%); } to { transform: scale(1.02) translateX(0); } }
   .loader-credit { position: absolute; right: 12px; bottom: 10px; font-size: 0.7rem; color: rgba(255, 255, 255, 0.55); }
   .loader-inner { position: relative; z-index: 2; display: grid; justify-items: center; gap: 32px; transform: translateY(-2vh); }
@@ -66,7 +66,7 @@ const fallback = `/img/${stem}-1100.webp`;
   /* the wall lights up with the sign */
   .loader::before {
     content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
-    background: radial-gradient(45% 35% at 50% 46%, rgba(255, 91, 36, 0.17), transparent 70%);
+    background: radial-gradient(45% 35% at 50% 46%, rgba(111, 178, 125, 0.17), transparent 70%);
     opacity: 0; animation: wall 1.4s 0.35s steps(1, end) forwards;
   }
   @keyframes wall { 0% { opacity: 0; } 20% { opacity: 0.7; } 28% { opacity: 0.1; } 45% { opacity: 1; } 100% { opacity: 1; } }

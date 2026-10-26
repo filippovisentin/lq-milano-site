@@ -3,6 +3,7 @@ import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import Icon from '../components/Icon.astro';
+import Tbc from '../components/Tbc.astro';
 import { media } from '../lib/media';
 
 // Copy preserved verbatim from the original Servizi page; CTAs keep their
@@ -10,23 +11,18 @@ import { media } from '../lib/media';
 const services = [
   {
     id: 'consulenza-moda', title: 'Consulenza moda', icon: 'sparkle', img: media.sConsulenza, alt: 'Consulenza moda: capi selezionati su stand',
-    text: ['Che siate un brand emergente o un marchio affermato, LQ Vintage vi affianca nei vostri progetti con la consulenza di Lea Quattrocchi. Con un background pluriennale nel mondo degli showroom, Lea sarà la vostra alleata di fiducia per impostare campagne vendita e offrire consulenze stilistiche mirate, aiutandovi a far crescere e valorizzare il vostro brand.'],
-    cta: 'Richiedi una consulenza', href: '/contatti?motivo=consulenza',
+    text: ['Per brand nuovi e affermati: Lea imposta campagne vendita e consulenze di stile, con anni di lavoro negli showroom alle spalle.'],
+    cta: 'Scrivi a Lea', href: '/contatti?motivo=consulenza',
   },
   {
     id: 'noleggio', title: 'Noleggio per cinema e spettacolo', icon: 'film', img: media.sNoleggio, alt: 'Abiti vintage d’epoca disponibili per il noleggio',
-    text: ['Cerchi abiti vintage per un film, uno spettacolo teatrale, uno shooting fotografico o un video?', 'Offriamo il noleggio di capi e accessori unici e di tutte le epoche, perfetti per dare carattere e autenticità ai tuoi progetti.'],
-    cta: 'Parliamo del tuo progetto', href: '/contatti?motivo=noleggio',
-  },
-  {
-    id: 'concept-store', title: 'Concept store', icon: 'store', img: media.sConcept, alt: 'La vetrina del concept store LQ Milano',
-    text: ['Ci troviamo nel cuore di Nolo - Milano. Il nostro è più di un negozio, è un viaggio nella moda vintage con una proposta di capi iconici, pezzi d’archivio unici e dettagli senza tempo. Tutto selezionato con cura per chi ama distinguersi.'],
-    cta: 'Visita il concept store', href: '/concept-store',
+    text: [],
+    cta: 'Chiedi un preventivo di noleggio', href: '/contatti?motivo=noleggio',
   },
   {
     id: 'workshop', title: 'Workshop', icon: 'ticket', img: media.sEventi, alt: 'Uno spazio del negozio allestito per un evento',
-    text: ['Da LQ Milano Vintage ci impegniamo a dare spazio ai giovani talenti offrendo l’opportunità a creativi e artisti emergenti di allestire uno spazio dedicato all’interno del nostro negozio per presentare il proprio brand e i propri prodotti.', 'Gli eventi si svolgono generalmente in una singola giornata, offrendo un’occasione unica per far conoscere il proprio lavoro esponendolo al pubblico.'],
-    cta: 'Esplora eventi e workshop', href: '/eventi',
+    text: ['Hai un brand o un progetto? Puoi usare uno spazio del negozio per un giorno e presentarlo.'],
+    cta: 'Proponi il tuo progetto', href: '/contatti?motivo=eventi',
   },
   {
     id: 'upcycling', title: 'Upcycling', icon: 'recycle', img: media.sUpcycling, alt: 'Capo vintage trasformato con tessuti di recupero',
@@ -45,7 +41,7 @@ const services = [
   <PageHero
     title="Servizi"
     eyebrow="Per privati, brand e professionisti"
-    lead="Dalla consulenza per brand al noleggio per il set, dalla sartoria al riuso creativo: sei modi di lavorare con LQ Milano."
+    lead="Cinque modi di lavorare con noi: per chi compra, per i brand e per le produzioni."
     image={media.servicesBanner}
     imageAlt="Cravatte vintage colorate esposte in negozio"
   >
@@ -64,6 +60,7 @@ const services = [
               <p class="svc-k"><Icon name={s.icon} class="icon-sm" /> Servizio 0{i + 1} di 0{services.length}</p>
               <h2 class="svc-t">{s.title}</h2>
               {s.text.map((t) => <p>{t}</p>)}
+              {s.id === 'noleggio' && <p>Capi e accessori <Tbc q="arco di epoche dell'archivio">dagli anni '50 ai 2000</Tbc> per film, teatro, shooting e video. Ci dici scena ed epoca, noi prepariamo una selezione.</p>}
               {s.extra && <p><a href={s.extra.href}>{s.extra.label}</a></p>}
               <a class="btn" href={s.href}>{s.cta} <Icon name="arrow" class="icon-sm" /></a>
             </div>
@@ -74,23 +71,25 @@ const services = [
         </li>
       ))}
     </ol>
+    <p class="shop-link"><a class="link-arrow" href="/concept-store"><span>Il negozio</span> <Icon name="arrow" class="icon-sm" /></a></p>
   </section>
 </Base>
 
 <style>
   .svc-wrap { padding-bottom: clamp(56px, 8vw, 112px); }
+  .shop-link { width: 100%; max-width: calc(1440px + 2 * var(--gutter)); margin: 28px auto 0; padding-inline: var(--gutter); }
   .services { list-style: none; margin: 0; padding: 0; }
   .svc { border-bottom: 1px solid var(--line); scroll-margin-top: var(--header-h); }
   .svc:nth-child(even) { background: var(--paper-2); }
   .svc-in { width: 100%; max-width: calc(1440px + 2 * var(--gutter)); margin-inline: auto; padding: clamp(40px, 6vw, 88px) var(--gutter); display: grid; gap: 20px 40px; align-items: center; }
-  .svc-n { margin: 0; font: 900 clamp(4rem, 2.6rem + 6vw, 9rem)/0.8 var(--font-display); color: transparent; -webkit-text-stroke: 1.5px var(--neon); }
-  .svc-k { display: inline-flex; gap: 8px; align-items: center; margin: 0 0 6px; font: 500 0.76rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em; color: var(--neon-ink); }
+  .svc-n { margin: 0; font: 400 clamp(4rem, 2.6rem + 6vw, 9rem)/0.9 var(--font-display); color: transparent; -webkit-text-stroke: 1.5px var(--accent); }
+  .svc-k { display: inline-flex; gap: 8px; align-items: center; margin: 0 0 6px; font: 500 0.76rem var(--font-label); text-transform: uppercase; letter-spacing: 0.06em; color: var(--neon-ink); }
   .svc-t { font-size: clamp(2.2rem, 1.4rem + 3.4vw, 4.6rem); margin: 0 0 14px; }
   .svc-body p:not(.svc-k) { color: var(--ink-2); max-width: 58ch; margin-bottom: 12px; }
   .svc-body .btn { margin-top: 8px; }
   .svc-media { justify-self: center; width: min(70vw, 360px); }
   .svc-media :global(img) { width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; border-radius: 50%; }
-  .svc:target .svc-n { -webkit-text-stroke-color: var(--neon); color: var(--neon); }
+  .svc:target .svc-n { -webkit-text-stroke-color: var(--accent); color: var(--accent); }
   @media (min-width: 900px) {
     .svc-in { grid-template-columns: auto minmax(0, 1fr) auto; }
     .svc-n { align-self: start; min-width: 2.2ch; }

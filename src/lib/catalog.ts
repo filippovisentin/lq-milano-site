@@ -129,5 +129,19 @@ export const fmtDay = (d: Date) => rome({ day: 'numeric' }).format(d);
 export const fmtMonth = (d: Date) => rome({ month: 'short' }).format(d).replace('.', '');
 export const fmtYear = (d: Date) => rome({ year: 'numeric' }).format(d);
 export const fmtTime = (d: Date) => rome({ hour: '2-digit', minute: '2-digit' }).format(d);
-export const era = (anni: string | null) => anni?.replace(/^'/, '’') ?? null;
+export const era = (anni: string | null) => anni?.replace(/'(?=\d)/g, '’') ?? null;
+// Display label: "Anni ’90-2000", but a specific year ("2007") stays as is.
+export const eraLabel = (anni: string | null) => {
+  const e = era(anni);
+  if (!e) return null;
+  return /\b(?!2000\b|2010\b)(19|20)\d{2}\b/.test(e) ? e : `Anni ${e}`;
+};
+// Decade (1960, 1970... 2000, 2010) from the first year/decade in the era string, for the shop filter.
+export const eraDecade = (anni: string | null): number | null => {
+  const m = anni?.match(/(\d{4})|(\d{2})/);
+  if (!m) return null;
+  const y = m[1] ? +m[1] : +m[2] >= 30 ? 1900 + +m[2] : 2000 + +m[2];
+  return Math.floor(y / 10) * 10;
+};
+export const decadeLabel = (d: number) => (d < 2000 ? `Anni ’${String(d).slice(2)}` : `Anni ${d}`);
 export const paragraphs = (s: string) => s.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);

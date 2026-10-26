@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import Tbc from './Tbc.astro';
 ---
 <dialog class="drawer drawer-right" id="cart-drawer" aria-labelledby="cart-title">
   <div class="drawer-head">
@@ -10,15 +11,15 @@ import Icon from './Icon.astro';
     <div class="cart-empty" data-cart-empty>
       <Icon name="bag" class="empty-icon" />
       <p class="h3">Il carrello è vuoto</p>
-      <p class="muted">Ogni capo è un pezzo unico: quando ne trovi uno che ti somiglia, aggiungilo qui.</p>
-      <a class="btn" href="/shop">Esplora lo shop</a>
+      <p class="muted">Ogni capo c’è una volta sola. Guarda cosa è arrivato questa settimana.</p>
+      <a class="btn" href="/shop">Vai ai nuovi arrivi</a>
     </div>
     <ul class="cart-lines" data-cart-lines></ul>
   </div>
   <div class="cart-foot" data-cart-foot>
     <div class="row"><span>Subtotale</span><strong class="tabular" data-cart-subtotal>0,00 €</strong></div>
-    <p class="fine">Spedizione, sconti e totale finale vengono calcolati al checkout.</p>
-    <button class="btn btn-lg btn-block" type="button" data-checkout>Procedi al checkout <Icon name="arrow" class="icon-sm" /></button>
+    <p class="fine">Spedizione e totale li vedi al passo successivo. <Tbc q="riserva del capo nel carrello">Il capo resta tuo per 15 minuti.</Tbc></p>
+    <button class="btn btn-lg btn-block" type="button" data-checkout>Vai al pagamento <Icon name="arrow" class="icon-sm" /></button>
     <a class="btn btn-ghost btn-block" href="/cart-page">Vedi carrello completo</a>
   </div>
 </dialog>
@@ -61,7 +62,7 @@ import Icon from './Icon.astro';
   :global(.line-actions) { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
   :global(.qty) { display: inline-flex; align-items: center; border: 1.5px solid var(--line-strong); border-radius: 999px; }
   :global(.qty-btn) { width: 40px; height: 40px; display: grid; place-items: center; border: 0; background: none; border-radius: 999px; transition: background-color 200ms var(--ease-soft), transform 160ms var(--ease-out); }
-  :global(.qty-btn:hover:not(:disabled)) { background: rgba(37, 37, 31, 0.07); }
+  :global(.qty-btn:hover:not(:disabled)) { background: rgba(26, 25, 25, 0.07); }
   :global(.qty-btn:active:not(:disabled)) { transform: scale(0.9); }
   :global(.qty-btn:disabled) { opacity: 0.35; cursor: not-allowed; }
   :global(.qty-val) { min-width: 22px; text-align: center; font-weight: 600; }

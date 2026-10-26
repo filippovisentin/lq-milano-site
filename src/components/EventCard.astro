@@ -38,14 +38,14 @@ const status = past ? 'Concluso' : e.registration === 'aperta' ? 'Iscrizioni ape
   .ev-link { -webkit-tap-highlight-color: transparent; }
   .ev-link:active .ev-media { transform: scale(0.98); transition-duration: var(--t-press); }
   .ev-media img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
-  .ev-date { position: absolute; top: 10px; left: 10px; display: grid; justify-items: center; min-width: 64px; padding: 10px 12px 8px; border-radius: 14px; background: rgba(23, 20, 17, 0.82); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: var(--on-night); line-height: 1; }
-  .ev-date .d { font-family: var(--font-display); font-size: 2.4rem; font-weight: 900; color: var(--neon); }
-  .ev-date .m { font-family: var(--font-mono); text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.04em; margin-top: 4px; }
-  .ev-date .y { font-family: var(--font-mono); font-size: 0.68rem; color: var(--on-night-2); margin-top: 2px; }
+  .ev-date { position: absolute; top: 10px; left: 10px; display: grid; justify-items: center; min-width: 64px; padding: 10px 12px 8px; border-radius: 14px; background: rgba(20, 18, 27, 0.82); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: var(--on-night); line-height: 1; }
+  .ev-date .d { font-family: var(--font-display); font-size: 2.4rem; font-weight: 400; color: var(--neon); }
+  .ev-date .m { font-family: var(--font-label); text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.06em; margin-top: 4px; }
+  .ev-date .y { font-family: var(--font-label); font-size: 0.68rem; color: var(--on-night-2); margin-top: 2px; }
   .ev-body { padding: 16px 0 6px; display: grid; gap: 6px; align-content: start; }
   .ev-title { font-size: clamp(1.6rem, 1.3rem + 1vw, 2.2rem); margin: 6px 0 0; transition: color 160ms; }
-  .ev-tag { margin: 0; font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--gold-ink); font-weight: 500; }
-  .ev-meta { margin: 0; display: flex; gap: 8px; align-items: center; color: var(--ink-2); font: 500 0.78rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.02em; }
+  .ev-tag { margin: 0; font-family: var(--font-label); font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold-ink); font-weight: 500; }
+  .ev-meta { margin: 0; display: flex; gap: 8px; align-items: center; color: var(--ink-2); font: 500 0.78rem var(--font-label); text-transform: uppercase; letter-spacing: 0.06em; }
   .ev-body .badge { justify-self: start; }
   .ev-link:hover .link-arrow span { text-decoration: underline; }
 </style>

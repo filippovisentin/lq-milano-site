@@ -16,7 +16,7 @@ const past = events.filter(isPast);
   <PageHero
     title="Eventi"
     eyebrow="Workshop, serate, editoriali dal vivo"
-    lead="Il negozio diventa palcoscenico per giovani creativi, brand emergenti e serate tra amici del vintage."
+    lead="Workshop, serate e presentazioni di brand nuovi, in negozio."
     image={media.eventsBanner}
     imageAlt="Il negozio LQ Milano allestito, con capi e accessori colorati"
     position="center 60%"
@@ -29,7 +29,7 @@ const past = events.filter(isPast);
       <div class="empty" hidden={upcoming.length > 0}>
         <Icon name="calendar" />
         <div>
-          <p><strong>Al momento non ci sono eventi in programma.</strong> I prossimi appuntamenti vengono annunciati su Instagram: seguici per non perderli.</p>
+          <p><strong>Nessun evento in calendario.</strong> Li annunciamo prima su Instagram.</p>
           <div class="empty-cta">
             <a class="btn" href={site.social.instagram} target="_blank" rel="noopener"><Icon name="instagram" class="icon-sm" /> Seguici su Instagram</a>
             <a class="btn btn-ghost" href="/servizi#workshop">Proponi un workshop</a>
@@ -56,14 +56,14 @@ const past = events.filter(isPast);
   .evs:empty { display: none; }
   .ev-head { display: grid; gap: 6px 24px; align-items: end; padding-top: 18px; border-top: 1px solid var(--line); margin-bottom: clamp(24px, 4vw, 48px); }
   .ev-head h2 { font-size: clamp(2.6rem, 1.6rem + 4vw, 5.6rem); margin: 0; }
-  .ev-count { margin: 0; font: 500 0.78rem var(--font-mono); text-transform: uppercase; color: var(--ink-2); }
+  .ev-count { margin: 0; font: 500 0.78rem var(--font-label); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); }
   @media (min-width: 768px) { .ev-head { grid-template-columns: 1fr auto; } .ev-head .eyebrow { grid-column: 1 / -1; } }
   .empty { display: flex; gap: 16px; align-items: flex-start; padding: 24px; background: var(--night); color: var(--on-night); border-radius: var(--radius-card); max-width: 820px; }
   .empty p { color: var(--on-night-2); }
   .empty strong { color: var(--on-night); }
   .empty > :global(svg) { color: var(--neon); flex: none; }
-  .empty .btn-ghost { --fg: var(--on-night); --bd: rgba(244, 236, 221, 0.6); }
+  .empty .btn-ghost { --fg: var(--on-night); --bd: rgba(242, 239, 232, 0.6); }
   .empty .btn { --bg: var(--neon); --fg: var(--night); --bd: var(--neon); }
-  .empty .btn.btn-ghost { --bg: transparent; --fg: var(--on-night); --bd: rgba(244, 236, 221, 0.6); }
+  .empty .btn.btn-ghost { --bg: transparent; --fg: var(--on-night); --bd: rgba(242, 239, 232, 0.6); }
   .empty-cta { display: flex; flex-wrap: wrap; gap: 10px; }
 </style>

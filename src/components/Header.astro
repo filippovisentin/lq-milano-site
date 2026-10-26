@@ -2,6 +2,7 @@
 import NeonLogo from './NeonLogo.astro';
 import Icon from './Icon.astro';
 import { mainNav, isActive } from '../lib/nav';
+import Tbc from './Tbc.astro';
 import site from '../data/site.json';
 const path = decodeURI(Astro.url.pathname).replace(/\/$/, '') || '/';
 ---
@@ -50,7 +51,7 @@ const path = decodeURI(Astro.url.pathname).replace(/\/$/, '') || '/';
     </nav>
 
     <div class="tools">
-      <a class="icon-btn account" href="/account" aria-label="Accedi o registrati" aria-current={path === '/account' ? 'page' : undefined}>
+      <a class="icon-btn account" href="/account" aria-label="Accedi" aria-current={path === '/account' ? 'page' : undefined}>
         <Icon name="user" />
       </a>
       <button class="icon-btn cart-btn" type="button" aria-haspopup="dialog" aria-controls="cart-drawer" data-open-cart>
@@ -69,7 +70,6 @@ const path = decodeURI(Astro.url.pathname).replace(/\/$/, '') || '/';
   </div>
   <nav class="drawer-body" aria-label="Menu principale">
     <ul class="m-list">
-      <li><a href="/" aria-current={path === '/' ? 'page' : undefined}>Home</a></li>
       {mainNav.map((item) =>
         'children' in item ? (
           <li>
@@ -88,9 +88,9 @@ const path = decodeURI(Astro.url.pathname).replace(/\/$/, '') || '/';
       )}
     </ul>
     <div class="m-secondary">
-      <a class="btn btn-ghost btn-block" href="/account"><Icon name="user" class="icon-sm" /> Accedi o registrati</a>
+      <a class="btn btn-ghost btn-block" href="/account"><Icon name="user" class="icon-sm" /> Accedi</a>
       <a class="btn btn-gold btn-block" href={site.whatsapp} rel="noopener" target="_blank"><Icon name="whatsapp" class="icon-sm" /> Scrivici su WhatsApp</a>
-      <p class="m-addr"><Icon name="pin" class="icon-sm" /> {site.address.street}, {site.address.postcode} {site.address.city}</p>
+      <p class="m-addr"><Icon name="pin" class="icon-sm" /> Via Venini 54, {site.address.area} · aperto oggi <Tbc q="orari di apertura">10:30–19:30</Tbc></p>
     </div>
   </nav>
 </dialog>
@@ -98,18 +98,18 @@ const path = decodeURI(Astro.url.pathname).replace(/\/$/, '') || '/';
 <style>
   .site-header {
     position: sticky; top: 0; z-index: var(--z-header);
-    background: rgba(23, 20, 17, 0.94);
+    background: rgba(20, 18, 27, 0.94);
     backdrop-filter: saturate(1.2) blur(10px);
     -webkit-backdrop-filter: saturate(1.2) blur(10px);
     color: var(--on-night);
-    border-bottom: 1px solid rgba(244, 236, 221, 0.08);
+    border-bottom: 1px solid rgba(242, 239, 232, 0.08);
     padding-top: env(safe-area-inset-top);
   }
   .bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: var(--header-h); gap: 8px; }
   .brand { justify-self: center; text-decoration: none; display: inline-flex; border-radius: 8px; }
   .brand :global(.neon-logo) { --fs: 1.3rem; }
   .menu-btn { justify-self: start; width: auto; padding: 0 12px 0 10px; border-radius: 999px; gap: 8px; display: inline-flex; font-weight: 600; font-size: 0.92rem; }
-  .icon-btn:hover { background: rgba(244, 236, 221, 0.09); }
+  .icon-btn:hover { background: rgba(242, 239, 232, 0.09); }
   .tools { justify-self: end; display: flex; gap: 2px; }
   .account { display: none; }
   .primary { display: none; }
@@ -133,9 +133,9 @@ const path = decodeURI(Astro.url.pathname).replace(/\/$/, '') || '/';
     .primary > ul > li { position: relative; display: flex; align-items: center; }
     .primary > ul > li > a {
       display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 999px;
-      text-decoration: none; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.03em; color: var(--on-night-2); transition: color var(--t-fast), background var(--t-fast);
+      text-decoration: none; font-family: var(--font-label); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--on-night-2); transition: color var(--t-fast), background var(--t-fast);
     }
-    .primary > ul > li > a:hover { color: var(--on-night); background: rgba(244, 236, 221, 0.07); }
+    .primary > ul > li > a:hover { color: var(--on-night); background: rgba(242, 239, 232, 0.07); }
     .primary > ul > li > a:active { transform: scale(0.96); }
     .primary > ul > li > a { position: relative; }
     .primary a[aria-current='page'] { color: var(--on-night); }
@@ -182,24 +182,24 @@ const path = decodeURI(Astro.url.pathname).replace(/\/$/, '') || '/';
   @starting-style { :global(.drawer[open]::backdrop) { opacity: 0; } }
   :global(.drawer-head) {
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: calc(12px + env(safe-area-inset-top)) 16px 12px 20px; border-bottom: 1px solid rgba(244, 236, 221, 0.1);
+    padding: calc(12px + env(safe-area-inset-top)) 16px 12px 20px; border-bottom: 1px solid rgba(242, 239, 232, 0.1);
   }
   :global(.drawer-right .drawer-head) { border-color: var(--line); }
   :global(.drawer-body) { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 8px 20px calc(24px + env(safe-area-inset-bottom)); }
 
   .drawer .brand :global(.neon-logo) { --fs: 1.25rem; }
   .m-list { list-style: none; padding: 0; margin: 0; }
-  .m-list > li { border-bottom: 1px solid rgba(244, 236, 221, 0.1); }
+  .m-list > li { border-bottom: 1px solid rgba(242, 239, 232, 0.1); }
   .m-list a, .m-group summary {
     display: flex; align-items: center; justify-content: space-between; min-height: 56px; text-decoration: none;
-    font-family: var(--font-display); font-size: 1.9rem; font-weight: 800; text-transform: uppercase; color: var(--on-night);
+    font-family: var(--font-display); font-size: 1.9rem; font-weight: 400; color: var(--on-night);
   }
   .m-list a[aria-current='page'] { color: var(--gold); }
   .m-group summary { list-style: none; cursor: pointer; }
   .m-group summary::-webkit-details-marker { display: none; }
   .m-group summary :global(svg) { transition: transform var(--t-fast); }
   .m-group[open] summary :global(svg) { transform: rotate(180deg); }
-  .m-group ul { list-style: none; padding: 0 0 12px 12px; margin: 0; border-left: 1px solid rgba(216, 183, 90, 0.4); }
+  .m-group ul { list-style: none; padding: 0 0 12px 12px; margin: 0; border-left: 1px solid rgba(114, 106, 142, 0.4); }
   .m-group ul a { font-family: var(--font-body); font-size: 1rem; min-height: 46px; color: var(--on-night-2); }
   .m-secondary { display: grid; gap: 10px; margin-top: 24px; }
   .m-addr { display: flex; gap: 8px; align-items: center; color: var(--on-night-2); font-size: 0.92rem; margin: 6px 0 0; }

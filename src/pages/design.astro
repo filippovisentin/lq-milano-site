@@ -1,0 +1,215 @@
+---
+// Design set proposal: palette from the LQ logo (violet L, green Q, black
+// MILANO), type and derived tokens, shown on real components. Not linked from
+// the menu. Tokens are scoped to .ds so the live site is untouched until approved.
+import '../styles/global.css';
+import '@fontsource-variable/jost/wght.css';
+import NeonLogo from '../components/NeonLogo.astro';
+import { media } from '../lib/media';
+
+const scales = [
+  { name: 'Violetto', key: 'violet', note: 'dalla L del logo', steps: [
+    ['50', '#f1eff6'], ['100', '#e2deec'], ['300', '#b9b0dc'], ['500', '#726a8e'], ['700', '#4b4467'], ['900', '#221d33'] ] },
+  { name: 'Verde', key: 'green', note: 'dalla Q del logo', steps: [
+    ['50', '#eaf4ec'], ['100', '#d3eada'], ['300', '#9be3ad'], ['500', '#6fb27d'], ['700', '#2f6b43'], ['900', '#16301f'] ] },
+  { name: 'Neutri', key: 'neutral', note: 'carta del logo + nero di MILANO', steps: [
+    ['carta', '#f6f3ec'], ['carta-2', '#ece7dc'], ['linea', '#ddd7ca'], ['inchiostro-2', '#55524b'], ['inchiostro', '#1a1919'], ['notte', '#14121b'] ] },
+];
+
+const roles = [
+  ['--accent', 'violet-500', 'Link, pulsanti principali, focus', '4,6:1 su carta · testo bianco 5,0:1'],
+  ['--accent-ink', 'violet-700', 'Hover, testo violetto piccolo', '8,2:1 su carta'],
+  ['--highlight', 'green-500', 'Badge “Nuovo”, prezzi e luce su fondo notte', '7,4:1 su notte · testo nero 7,0:1'],
+  ['--highlight-ink', 'green-700', 'Verde come testo su carta (disponibile, ok)', '5,7:1 su carta'],
+  ['--neon', 'green-300', 'Insegna al neon, bagliori', '12,4:1 su notte'],
+  ['--neon-2', 'violet-300', 'Seconda riga dell’insegna, dettagli notte', '9,1:1 su notte'],
+  ['--night', 'notte #14121b', 'Fondo delle sezioni notte (nero violaceo, non più marrone)', 'carta su notte 16:1'],
+];
+const store = media.storefront.src;
+---
+<!doctype html>
+<html lang="it" class="js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex" />
+    <title>Design set · LQ Milano</title>
+    <link rel="icon" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/favicon.svg`} type="image/svg+xml" />
+  </head>
+  <body class="ds" data-label="jost">
+    <header class="ds-top">
+      <p class="lbl">LQ Milano · Design set v1 · 26.10.2026</p>
+      <h1 class="disp">Verde<br /><span class="v">&amp; violetto</span></h1>
+      <p class="lead">Palette presa dal logo: la <b class="v">L violetta</b>, la <b class="g">Q verde</b> e il nero di MILANO su carta. Niente più arancione. Titoli e corpo restano in Archivo; le etichette diventano spaziate come “MILANO”.</p>
+      <div class="toggle" role="group" aria-label="Font delle etichette">
+        <span class="lbl">Etichette:</span>
+        <button type="button" data-set="jost" aria-pressed="true">A · Jost spaziato</button>
+        <button type="button" data-set="mono" aria-pressed="false">B · Plex Mono (attuale)</button>
+      </div>
+    </header>
+
+    <section class="blk">
+      <h2 class="lbl">01 · Colori</h2>
+      {scales.map((s) => (
+        <div class="scale">
+          <p class="scale-h"><b>{s.name}</b> <span>{s.note}</span></p>
+          <ul>
+            {s.steps.map(([k, hex]) => (
+              <li><span class="sw" style={`background:${hex}`}></span><span class="lbl">{k}</span><code>{hex}</code></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </section>
+
+    <section class="blk">
+      <h2 class="lbl">02 · Ruoli</h2>
+      <table class="roles">
+        <thead><tr><th>Token</th><th>Valore</th><th>Uso</th><th>Contrasto</th></tr></thead>
+        <tbody>{roles.map(([t, v, u, c]) => <tr><td><code>{t}</code></td><td>{v}</td><td>{u}</td><td>{c}</td></tr>)}</tbody>
+      </table>
+      <p class="note">Regola: il verde del logo non si usa mai come testo su carta (2,3:1, illeggibile): su carta si usa <code>green-700</code>. Il violetto del logo invece passa da solo.</p>
+    </section>
+
+    <section class="blk">
+      <h2 class="lbl">03 · Tipografia</h2>
+      <div class="type">
+        <div><p class="lbl">Titoli · LQ Display (Archivo extra-condensato, 900, maiuscolo)</p><p class="disp t1">Pezzi unici</p><p class="disp t2">Il negozio di NoLo</p></div>
+        <div><p class="lbl">Corpo · Archivo 400/600</p><p class="body">Selezioniamo capi vintage e di designer, uno per uno, nel nostro concept store in via Padova. Ogni pezzo è misurato, fotografato e descritto da noi.</p></div>
+        <div><p class="lbl">Etichette, prezzi, pulsanti · <span class="which"></span></p><p class="lbl big">Nuovi arrivi — Giacche — € 180</p></div>
+      </div>
+    </section>
+
+    <section class="blk">
+      <h2 class="lbl">04 · Componenti</h2>
+      <div class="row">
+        <a class="btn primary" href="#">Vai al negozio</a>
+        <a class="btn ghost" href="#">Prenota una visita</a>
+        <a class="btn green" href="#">Aggiungi al carrello</a>
+        <a class="link" href="#">Scopri i servizi →</a>
+      </div>
+      <div class="row">
+        <span class="tag new">Nuovo</span><span class="tag">Taglia M</span><span class="tag vio">Su misura</span><span class="tag ok">Disponibile</span>
+      </div>
+      <div class="cards">
+        {['Giacca Yohji Yamamoto', 'Kilt Junya Watanabe', 'Cappotto Schneiders'].map((t, i) => (
+          <article class="card">
+            <div class="ph" style={i === 0 ? `background-image:url('${store}')` : ''}>{i === 1 && <span class="tag new on">Nuovo</span>}</div>
+            <p class="lbl">Giacche · Taglia {['M', '46', 'L'][i]}</p>
+            <h3>{t}</h3>
+            <p class="lbl price">€ {[420, 260, 380][i]}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="night" style={`--img:url('${store}')`}>
+      <div class="night-in">
+        <h2 class="lbl">05 · Notte (hero, insegna, concept store)</h2>
+        <div class="neon-wrap"><NeonLogo size="xl" /></div>
+        <p class="disp t2">Via Padova, Milano</p>
+        <div class="row">
+          <a class="btn green" href="#">Vieni a trovarci</a>
+          <a class="btn ghost-night" href="#">Orari</a>
+          <span class="tag new">Aperto ora</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="blk">
+      <h2 class="lbl">06 · Derivazioni</h2>
+      <ul class="rules">
+        <li><b>Spaziature</b> invariate (4 → 96 px), <b>angoli</b> squadrati 0/2 px come ora.</li>
+        <li><b>Focus</b>: anello violetto 2 px + 2 px di distanza; su notte anello verde.</li>
+        <li><b>Selezione testo</b>: fondo violet-100. <b>Linee</b>: neutro “linea”, mai colorate.</li>
+        <li><b>Insegna</b>: prima riga verde, seconda violetta, come L e Q del logo.</li>
+        <li><b>Favicon</b>: L violetta + Q verde su notte (sostituisce quello arancione).</li>
+        <li><b>Stati</b>: ok = green-700, errore = rosso #a3271b (invariato), avviso = ink su green-100.</li>
+        <li><b>Proporzione</b>: 80% carta e inchiostro, 15% violetto, 5% verde. Il verde è la “luce”, il violetto la “voce”.</li>
+      </ul>
+    </section>
+
+    <script>
+      const body = document.body;
+      const which = document.querySelector('.which')!;
+      const names: Record<string, string> = { jost: 'Jost 500, maiuscolo, spaziatura 0,22em', mono: 'IBM Plex Mono 500' };
+      const set = (v: string) => {
+        body.dataset.label = v;
+        which.textContent = names[v];
+        document.querySelectorAll<HTMLButtonElement>('[data-set]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.set === v)));
+      };
+      document.querySelectorAll<HTMLButtonElement>('[data-set]').forEach((b) => b.addEventListener('click', () => set(b.dataset.set!)));
+      set('jost');
+    </script>
+
+    <style is:global>
+      .ds {
+        --violet-50: #f1eff6; --violet-100: #e2deec; --violet-300: #b9b0dc; --violet-500: #726a8e; --violet-700: #4b4467; --violet-900: #221d33;
+        --green-50: #eaf4ec; --green-100: #d3eada; --green-300: #9be3ad; --green-500: #6fb27d; --green-700: #2f6b43; --green-900: #16301f;
+        --paper: #f6f3ec; --paper-2: #ece7dc; --surface: #fffdf8; --line: #ddd7ca; --ink: #1a1919; --ink-2: #55524b;
+        --night: #14121b; --night-2: #1f1b29; --on-night: #f2efe8; --on-night-2: #c3bdd0;
+        --accent: var(--violet-500); --accent-ink: var(--violet-700);
+        --highlight: var(--green-500); --highlight-ink: var(--green-700);
+        --neon: var(--green-300); --neon-glow: rgba(111, 178, 125, 0.85); --neon-core: #f1fff4; --neon-2: var(--violet-300);
+        --font-label: 'Jost Variable', 'Futura', 'Avenir Next', sans-serif;
+        background: var(--paper); color: var(--ink); font-family: var(--font-body); margin: 0;
+      }
+      .ds[data-label='mono'] { --font-label: var(--font-label); }
+      .ds ::selection { background: var(--violet-100); }
+      .ds :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .ds .night :focus-visible { outline-color: var(--neon); }
+      .ds .lbl { font-family: var(--font-label); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.22em; color: var(--ink-2); margin: 0 0 var(--s-3); }
+      .ds[data-label='mono'] .lbl { letter-spacing: 0.06em; }
+      .ds .disp { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; line-height: 0.88; margin: 0; }
+      .ds .v { color: var(--accent); } .ds .g { color: var(--highlight-ink); }
+      .ds-top, .blk { max-width: var(--max); margin: 0 auto; padding: var(--s-8) var(--gutter); border-bottom: 1px solid var(--line); }
+      .ds-top h1 { font-size: clamp(4rem, 2rem + 11vw, 11rem); margin: var(--s-4) 0 var(--s-5); }
+      .lead { max-width: 60ch; font-size: 1.15rem; line-height: 1.55; }
+      .toggle { display: flex; gap: var(--s-2); align-items: center; flex-wrap: wrap; margin-top: var(--s-5); }
+      .toggle .lbl { margin: 0; }
+      .toggle button { font: 500 0.8rem var(--font-label); text-transform: uppercase; letter-spacing: 0.1em; padding: 10px 14px; border: 1px solid var(--ink); background: transparent; color: var(--ink); border-radius: 2px; cursor: pointer; }
+      .toggle button[aria-pressed='true'] { background: var(--ink); color: var(--paper); }
+      .scale { margin-bottom: var(--s-6); }
+      .scale-h span { color: var(--ink-2); margin-left: var(--s-2); }
+      .scale ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--s-3); }
+      .sw { display: block; height: 84px; border: 1px solid rgba(0, 0, 0, 0.08); margin-bottom: var(--s-2); }
+      .scale li .lbl { margin: 0; } .scale code { font-size: 0.8rem; }
+      .roles { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+      .roles th { text-align: left; font: 500 0.72rem var(--font-label); text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink-2); }
+      .roles td, .roles th { padding: 12px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+      .blk { overflow-x: auto; }
+      .note { color: var(--ink-2); max-width: 70ch; }
+      .type { display: grid; gap: var(--s-7); }
+      .t1 { font-size: clamp(3.5rem, 2rem + 7vw, 8rem); } .t2 { font-size: clamp(2rem, 1.4rem + 3vw, 3.6rem); }
+      .body { max-width: 60ch; font-size: 1.1rem; line-height: 1.6; margin: 0; }
+      .lbl.big { font-size: 1rem; color: var(--ink); }
+      .row { display: flex; flex-wrap: wrap; gap: var(--s-4); align-items: center; margin-bottom: var(--s-5); }
+      .btn { font: 500 0.82rem var(--font-label); text-transform: uppercase; letter-spacing: 0.16em; padding: 15px 22px; border-radius: 2px; text-decoration: none; border: 1px solid transparent; transition: background var(--t-fast) var(--ease-soft), color var(--t-fast) var(--ease-soft); }
+      .btn.primary { background: var(--accent); color: #fff; } .btn.primary:hover { background: var(--accent-ink); }
+      .ds .btn.ghost { background: transparent; border-color: var(--ink); color: var(--ink); } .btn.ghost:hover { background: var(--ink); color: var(--paper); }
+      .btn.green { background: var(--highlight); color: var(--ink); } .btn.green:hover { background: var(--green-300); }
+      .ds .btn.ghost-night { background: transparent; border-color: var(--on-night-2); color: var(--on-night); }
+      .link { color: var(--accent); font-weight: 600; text-underline-offset: 4px; }
+      .link:hover { color: var(--accent-ink); }
+      .tag { font: 500 0.7rem var(--font-label); text-transform: uppercase; letter-spacing: 0.16em; padding: 6px 10px; border: 1px solid var(--line); border-radius: 2px; color: var(--ink-2); }
+      .tag.new { background: var(--highlight); border-color: var(--highlight); color: var(--ink); }
+      .tag.vio { background: var(--violet-50); border-color: var(--violet-100); color: var(--accent-ink); }
+      .tag.ok { color: var(--highlight-ink); border-color: var(--green-100); background: var(--green-50); }
+      .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--s-5); margin-top: var(--s-6); }
+      .card .ph { aspect-ratio: 3 / 4; background: #f0ece4 center / cover; position: relative; margin-bottom: var(--s-3); }
+      .card .tag.on { position: absolute; top: 12px; left: 12px; }
+      .ds .card h3 { font-family: var(--font-body); text-transform: none; letter-spacing: 0; line-height: 1.3; font-size: 1.05rem; margin: 0 0 var(--s-2); font-weight: 600; }
+      .card .price { color: var(--ink); }
+      .card:hover h3 { color: var(--accent); }
+      .night { background: linear-gradient(rgba(20, 18, 27, 0.82), rgba(20, 18, 27, 0.92)), var(--img) center / cover; color: var(--on-night); }
+      .night-in { max-width: var(--max); margin: 0 auto; padding: var(--s-9) var(--gutter); }
+      .night .lbl { color: var(--on-night-2); }
+      .night .t2 { color: var(--on-night); margin: var(--s-6) 0; }
+      .neon-wrap .l2 { --neon: var(--violet-300); --neon-glow: rgba(167, 159, 208, 0.85); }
+      .neon-wrap .neon-logo { text-shadow: 0 0 1px #fff, 0 0 0.06em var(--neon), 0 0 0.14em var(--neon), 0 0 0.32em var(--neon-glow), 0 0 0.7em var(--neon-glow); -webkit-text-stroke: 0.006em rgba(220, 255, 230, 0.9); }
+      .neon-wrap .l2 { text-shadow: 0 0 1px #fff, 0 0 0.06em var(--neon), 0 0 0.14em var(--neon), 0 0 0.32em var(--neon-glow), 0 0 0.7em var(--neon-glow); color: #f6f2ff; }
+      .rules { line-height: 1.7; max-width: 75ch; padding-left: 1.1em; }
+      @media (max-width: 600px) { .roles td:nth-child(4), .roles th:nth-child(4) { display: none; } }
+    </style>
+  </body>
+</html>

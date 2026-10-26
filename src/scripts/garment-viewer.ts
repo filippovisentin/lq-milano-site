@@ -191,7 +191,7 @@ export async function mountViewer(host: HTMLElement, opts: ViewerOptions): Promi
   const key = new DirectionalLight(0xfff0dc, 1.7); key.position.set(1.6, 2.2, 3); scene.add(key);
   const fill = new DirectionalLight(0xe6ecff, 0.45); fill.position.set(-2.5, 0.4, 1.4); scene.add(fill);
   const backL = new DirectionalLight(0xfff0dc, 1.3); backL.position.set(-1.2, 1.8, -3); scene.add(backL);
-  const rim = new DirectionalLight(0xff6a33, 0.85); rim.position.set(2.6, 0.6, -1.6); scene.add(rim); // the shop's neon
+  const rim = new DirectionalLight(0x6fb27d, 0.85); rim.position.set(2.6, 0.6, -1.6); scene.add(rim); // the shop's neon
 
   const tex = (img: HTMLImageElement): Texture => {
     const t = new TextureLoader().load(img.src);

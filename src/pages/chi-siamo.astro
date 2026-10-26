@@ -31,7 +31,7 @@ import site from '../data/site.json';
           <li>Noleggio per film e serie TV</li>
         </ul>
         <div class="prose">
-          <p>Nata e cresciuta a Milano, Lea Quattrocchi è un organizzatore di campagne vendite ed eventi con una carriera ricca e diversificata. È la titolare del brand LQ Milano, un marchio conosciuto per offrire customizzazioni vintage. Dentro lo showroom si occupa principalmente di vendere e di gestire le collaborazioni con i brand.</p>
+          <p>Nata e cresciuta a Milano, Lea Quattrocchi è un’organizzatrice di campagne vendite ed eventi con una carriera ricca e diversificata. È la titolare del brand LQ Milano, un marchio conosciuto per offrire customizzazioni vintage. Dentro lo showroom si occupa principalmente di vendere e di gestire le collaborazioni con i brand.</p>
           <p>La sua passione per il design e la moda l’ha portata a diventare un’esperta in vintage. Nel cuore di Nolo, un quartiere emergente di Milano, Lea possiede uno spazio che è un punto di riferimento per artisti, designer e creativi di ogni genere. In particolare, collabora strettamente con artisti dell’Accademia delle Belle Arti di Brera, favorendo collaborazioni che danno vita a eventi unici e memorabili.</p>
           <p>Lea collabora anche con Green Planner, un’importante realtà che si occupa di sostenibilità e innovazione. Grazie a questa collaborazione, è in grado di organizzare eventi che non solo sono esteticamente piacevoli e ben progettati, ma anche rispettosi dell’ambiente e sostenibili.</p>
           <p>Il suo spazio a Nolo è anche un punto di riferimento per le produzioni cinematografiche. Grazie alla sua vasta esperienza e alla capacità di creare ambienti suggestivi, Lea noleggia le sue creazioni per film e serie TV, contribuendo a dare un tocco unico e autentico alle produzioni.</p>
@@ -106,20 +106,20 @@ import site from '../data/site.json';
   .portrait { margin: 0; }
   .portrait :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; filter: saturate(0.92) contrast(1.04); }
   .portrait { position: relative; }
-  .portrait::after { content: attr(data-n); position: absolute; left: 0; bottom: 0; padding: 8px 12px; background: var(--night); color: var(--neon); font: 500 0.76rem var(--font-mono); text-transform: uppercase; }
+  .portrait::after { content: attr(data-n); position: absolute; left: 0; bottom: 0; padding: 8px 12px; background: var(--night); color: var(--neon); font: 500 0.76rem var(--font-label); text-transform: uppercase; letter-spacing: 0.06em; }
   .bio h2 { font-size: clamp(3rem, 1.8rem + 5vw, 6.5rem); line-height: 0.82; margin: 8px 0 20px; }
   .facts { margin: 0 0 24px; }
   .bio .prose { margin-bottom: 16px; }
   .partners { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
   @media (min-width: 800px) { .partners { grid-template-columns: 1fr 1fr; } }
   .partner { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; padding: 18px 0; border-top: 1px solid var(--line-strong); text-decoration: none; }
-  .partner strong { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; text-transform: uppercase; line-height: 1; }
+  .partner strong { font-family: var(--font-display); font-size: 1.6rem; font-weight: 400; line-height: 1; }
   .partner:hover strong { color: var(--neon-ink); }
   .p-logos { display: flex; gap: 10px; align-items: center; }
   .p-logos :global(.p-logo) { width: 130px; height: auto; }
   .p-logos :global(.p-cover) { width: 64px; height: 64px; object-fit: cover; }
   .p-text { display: grid; }
-  .p-text span { color: var(--ink-2); font: 500 0.76rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.02em; margin-top: 6px; }
+  .p-text span { color: var(--ink-2); font: 500 0.76rem var(--font-label); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 6px; }
   @media (max-width: 520px) { .partner { grid-template-columns: 1fr auto; } .p-logos { grid-column: 1 / -1; } }
   .ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 40px; }
 </style>

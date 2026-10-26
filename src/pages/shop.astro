@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import ProductCard from '../components/ProductCard.astro';
 import Icon from '../components/Icon.astro';
-import { listProducts, CATEGORIES, SHOW_3D } from '../lib/catalog';
+import { listProducts, CATEGORIES, SHOW_3D, eraDecade, decadeLabel } from '../lib/catalog';
 
 export const prerender = false;
 const products = listProducts();
@@ -13,19 +13,21 @@ const sizeOrder = (s: string) => {
   return i >= 0 ? i : 100 + Number.parseFloat(s) || 999;
 };
 const sizes = [...new Set(products.map((p) => p.size).filter(Boolean) as string[])].sort((a, b) => sizeOrder(a) - sizeOrder(b));
+const decades = [...new Set(products.map((p) => eraDecade(p.details.anni)).filter((d): d is number => d !== null))].sort((a, b) => a - b);
 const PAGE = 12;
 const inStockCount = products.filter((p) => p.available && p.quantity > 0).length;
+const soldCount = products.length - inStockCount;
 const catCount = (c: string) => products.filter((p) => p.category === c).length;
 ---
-<Base title="Shop" description={`Shop online di LQ Milano: ${products.length} capi vintage selezionati a mano, dagli anni ’60 ai 2000. Pezzi unici con misure e stato verificati.`}>
+<Base title="Shop" description={`Shop online di LQ Milano: ${products.length} capi vintage dagli anni ’60 ai primi 2000. Ogni scheda ha misure, materiale, stato e difetti.`}>
   <header class="shop-head night">
     <div class="container">
       <nav aria-label="Percorso"><ol class="breadcrumb"><li><a href="/">Home</a></li><li aria-current="page">Shop</li></ol></nav>
       <div class="head-row">
         <h1 class="shop-title">Shop</h1>
         <div class="head-side">
-          <p class="head-count"><span class="dot" aria-hidden="true"></span> <span class="tabular">{inStockCount}</span> capi disponibili · pezzi unici</p>
-          <p class="head-lead">Capi vintage selezionati a mano a NoLo, dagli anni ’60 ai primi 2000. Misure, materiale e stato sono indicati in ogni scheda.</p>
+          <p class="head-count"><span class="dot" aria-hidden="true"></span> <span class="tabular">{inStockCount}</span> capi online</p>
+          <p class="head-lead">Dagli anni ’60 ai primi 2000. Ogni scheda ha misure a capo steso, materiale, stato e difetti. Quello che non vedi online lo trovi in negozio.</p>
         </div>
       </div>
       {SHOW_3D && <p class="hint-3d"><Icon name="cube" class="icon-sm" /> I capi con il badge <strong>3D</strong> si possono ruotare a 360°.</p>}
@@ -37,12 +39,13 @@ const catCount = (c: string) => products.filter((p) => p.category === c).length;
       <div class="search">
         <label for="q" class="sr-only">Cerca nello shop</label>
         <Icon name="search" class="icon-sm" />
-        <input id="q" name="q" class="input" type="search" placeholder="Cerca un capo, un brand…" autocomplete="off" enterkeyhint="search" />
+        <input id="q" name="q" class="input" type="search" placeholder="Cerca un capo o un marchio" autocomplete="off" enterkeyhint="search" />
       </div>
       <div class="filter-row">
         <div class="chips" role="group" aria-label="Categoria">
           <button type="button" class="tab" data-cat="" aria-pressed="true">Tutto <sup class="tabular">{products.length}</sup></button>
           {usedCats.map((c) => <button type="button" class="tab" data-cat={c} aria-pressed="false">{c} <sup class="tabular">{catCount(c)}</sup></button>)}
+          {soldCount > 0 && <button type="button" class="tab" data-cat="__sold" aria-pressed="false">Venduti <sup class="tabular">{soldCount}</sup></button>}
         </div>
         <div class="selects">
           <label class="sel">
@@ -53,12 +56,18 @@ const catCount = (c: string) => products.filter((p) => p.category === c).length;
             </select>
           </label>
           <label class="sel">
+            <span class="sr-only">Epoca</span>
+            <select class="select" name="era" data-era>
+              <option value="">Tutte le epoche</option>
+              {decades.map((d) => <option value={String(d)}>{decadeLabel(d)}</option>)}
+            </select>
+          </label>
+          <label class="sel">
             <span class="sr-only">Ordina per</span>
             <select class="select" name="sort" data-sort>
-              <option value="">In evidenza</option>
-              <option value="price-asc">Prezzo crescente</option>
-              <option value="price-desc">Prezzo decrescente</option>
-              <option value="name">Nome A–Z</option>
+              <option value="">Ultimi arrivi</option>
+              <option value="price-asc">Prezzo più basso</option>
+              <option value="price-desc">Prezzo più alto</option>
             </select>
           </label>
         </div>
@@ -78,8 +87,8 @@ const catCount = (c: string) => products.filter((p) => p.category === c).length;
     </div>
 
     <div class="empty" data-empty hidden>
-      <p class="h3">Nessun capo corrisponde alla ricerca.</p>
-      <p class="muted">Prova un altro termine o togli qualche filtro. Cerchi qualcosa di preciso? Scrivici: arrivano capi nuovi in negozio ogni settimana.</p>
+      <p class="h3">Nessun capo con questi filtri.</p>
+      <p class="muted">Togli la taglia o l’epoca per vederne di più.</p>
       <button type="button" class="btn btn-ghost" data-reset>Azzera filtri</button>
     </div>
 
@@ -92,12 +101,12 @@ const catCount = (c: string) => products.filter((p) => p.category === c).length;
 
 <style>
   .shop-head { position: relative; overflow: hidden; isolation: isolate; padding: 18px 0 clamp(28px, 4vw, 48px); }
-  .shop-head::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(40% 90% at 18% 70%, rgba(255, 91, 36, 0.2), transparent 70%); }
+  .shop-head::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(40% 90% at 18% 70%, rgba(111, 178, 125, 0.2), transparent 70%); }
   .shop-head .breadcrumb { color: var(--on-night-2); }
   .head-row { display: grid; gap: 18px 48px; align-items: end; }
   .shop-title { font-size: clamp(5rem, 2.4rem + 13vw, 15rem); line-height: 0.78; margin: 0; }
   .head-side { display: grid; gap: 10px; max-width: 46ch; padding-bottom: 8px; }
-  .head-count { display: inline-flex; align-items: center; gap: 10px; margin: 0; font: 500 0.8rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em; color: var(--on-night); }
+  .head-count { display: inline-flex; align-items: center; gap: 10px; margin: 0; font: 500 0.8rem var(--font-label); text-transform: uppercase; letter-spacing: 0.06em; color: var(--on-night); }
   .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--neon); box-shadow: 0 0 10px var(--neon-glow); }
   .head-lead { margin: 0; color: var(--on-night-2); }
   @media (min-width: 900px) { .head-row { grid-template-columns: auto 1fr; } }
@@ -110,8 +119,8 @@ const catCount = (c: string) => products.filter((p) => p.category === c).length;
   .search { position: relative; }
   .search :global(svg) { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ink-2); pointer-events: none; }
   /* iOS-style search field: filled, fully rounded */
-  .search .input { min-height: 44px; padding-left: 42px; border: 1px solid transparent; border-radius: var(--radius-pill); background: rgba(37, 37, 31, 0.07); font-size: 0.98rem; }
-  .search .input:focus { background: var(--surface); border-color: var(--line-strong); box-shadow: 0 0 0 4px rgba(255, 91, 36, 0.14); }
+  .search .input { min-height: 44px; padding-left: 42px; border: 1px solid transparent; border-radius: var(--radius-pill); background: rgba(26, 25, 25, 0.07); font-size: 0.98rem; }
+  .search .input:focus { background: var(--surface); border-color: var(--line-strong); box-shadow: 0 0 0 4px rgba(114, 106, 142, 0.18); }
   .filter-row { display: grid; gap: 10px; }
   .chips { display: flex; gap: 6px; overflow-x: auto; padding: 4px; margin: -4px; scrollbar-width: none; }
   .chips::-webkit-scrollbar { display: none; }
@@ -125,29 +134,29 @@ const catCount = (c: string) => products.filter((p) => p.category === c).length;
   .tab:hover { color: var(--ink); border-color: var(--ink); }
   .tab:active { transform: scale(0.96); transition-duration: var(--t-press); }
   .tab[aria-pressed='true'] { color: var(--paper); background: var(--ink); border-color: var(--ink); }
-  .tab[aria-pressed='true'] sup { color: #ffb08f; }
+  .tab[aria-pressed='true'] sup { color: var(--neon); }
   .selects .select { border-radius: var(--radius-pill); font: 500 0.92rem var(--font-body); min-height: 44px; padding-left: 16px; background-color: transparent; }
   @media (max-width: 899px) { .selects .select { font-size: 0.86rem; padding-left: 14px; padding-right: 32px; background-position: right 12px center; } }
-  .selects { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .selects { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
   @media (min-width: 900px) {
     .tools { grid-template-columns: minmax(240px, 420px) 1fr; align-items: center; gap: 4px 24px; }
     .filter-row { display: contents; }
     .selects { grid-column: 2; grid-row: 1; justify-self: end; }
     .chips { grid-column: 1 / -1; grid-row: 2; }
-    .selects { grid-template-columns: auto auto; }
+    .selects { grid-template-columns: auto auto auto; }
     .select { min-width: 190px; }
   }
   .count-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 14px 0 18px; }
-  .count { margin: 0; color: var(--ink-2); font: 500 0.8rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.03em; }
+  .count { margin: 0; color: var(--ink-2); font: 500 0.8rem var(--font-label); text-transform: uppercase; letter-spacing: 0.06em; }
   /* iOS segmented control */
-  .view { display: inline-flex; gap: 2px; padding: 3px; border-radius: var(--radius-pill); background: rgba(37, 37, 31, 0.07); }
+  .view { display: inline-flex; gap: 2px; padding: 3px; border-radius: var(--radius-pill); background: rgba(26, 25, 25, 0.07); }
   .view-btn {
     min-height: 38px; padding: 0 16px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--ink-2);
     font: 500 0.9rem var(--font-body);
     transition: background-color 200ms var(--ease-soft), color 200ms var(--ease-soft), box-shadow 200ms var(--ease-soft), transform 160ms var(--ease-out); -webkit-tap-highlight-color: transparent;
   }
   .view-btn:active { transform: scale(0.96); transition-duration: var(--t-press); }
-  .view-btn[aria-pressed='true'] { color: var(--ink); background: var(--surface); box-shadow: 0 1px 2px rgba(37, 37, 31, 0.1), 0 3px 8px rgba(37, 37, 31, 0.08); }
+  .view-btn[aria-pressed='true'] { color: var(--ink); background: var(--surface); box-shadow: 0 1px 2px rgba(26, 25, 25, 0.1), 0 3px 8px rgba(26, 25, 25, 0.08); }
   .products { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 14px; }
   @media (max-width: 339px) { .products { grid-template-columns: 1fr; } }
   @media (min-width: 640px) { .products { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px 20px; } }
@@ -167,6 +176,7 @@ const catCount = (c: string) => products.filter((p) => p.category === c).length;
   const cards = [...grid.querySelectorAll<HTMLElement>('[data-product]')];
   const q = root.querySelector<HTMLInputElement>('#q')!;
   const sizeSel = root.querySelector<HTMLSelectElement>('[data-size]')!;
+  const eraSel = root.querySelector<HTMLSelectElement>('[data-era]')!;
   const sortSel = root.querySelector<HTMLSelectElement>('[data-sort]')!;
   const catBtns = [...root.querySelectorAll<HTMLButtonElement>('[data-cat]')];
   const countEl = root.querySelector<HTMLElement>('[data-count]')!;
@@ -180,10 +190,11 @@ const catCount = (c: string) => products.filter((p) => p.category === c).length;
     q: params.get('q') ?? '',
     cat: params.get('cat') ?? '',
     size: params.get('taglia') ?? '',
+    era: params.get('epoca') ?? '',
     sort: params.get('ordina') ?? '',
     shown: Math.max(PAGE, Number(params.get('n')) || PAGE),
   };
-  q.value = state.q; sizeSel.value = state.size; sortSel.value = state.sort;
+  q.value = state.q; sizeSel.value = state.size; eraSel.value = state.era; sortSel.value = state.sort;
 
   const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
@@ -192,7 +203,8 @@ const catCount = (c: string) => products.filter((p) => p.category === c).length;
     const terms = norm(state.q).split(/\s+/).filter(Boolean);
     let list = cards.filter((c) => {
       const d = c.dataset;
-      if (state.cat && d.category !== state.cat) return false;
+      if (state.cat === '__sold' ? d.available !== '0' : state.cat && d.category !== state.cat) return false;
+      if (state.era && d.era !== state.era) return false;
       if (state.size && d.size !== state.size) return false;
       if (terms.length && !terms.every((t) => norm(d.title! + ' ' + d.category).includes(t))) return false;
       return true;
@@ -200,14 +212,13 @@ const catCount = (c: string) => products.filter((p) => p.category === c).length;
     const by = {
       'price-asc': (a: HTMLElement, b: HTMLElement) => +a.dataset.price! - +b.dataset.price!,
       'price-desc': (a: HTMLElement, b: HTMLElement) => +b.dataset.price! - +a.dataset.price!,
-      name: (a: HTMLElement, b: HTMLElement) => a.dataset.title!.localeCompare(b.dataset.title!, 'it'),
-    }[state.sort] ?? ((a: HTMLElement, b: HTMLElement) => +a.dataset.order! - +b.dataset.order!);
+    }[state.sort] ?? ((a: HTMLElement, b: HTMLElement) => b.dataset.created!.localeCompare(a.dataset.created!) || +a.dataset.order! - +b.dataset.order!);
     // sold pieces go last, but stay visible
     list.sort((a, b) => +b.dataset.available! - +a.dataset.available! || by(a, b));
     cards.forEach((c) => (c.hidden = true));
     list.forEach((c, i) => { grid.append(c); c.hidden = i >= state.shown; });
     const n = list.length;
-    countEl.textContent = n === cards.length && !state.q && !state.cat && !state.size ? `${n} capi` : `${n} ${n === 1 ? 'capo trovato' : 'capi trovati'}`;
+    countEl.textContent = n === cards.length && !state.q && !state.cat && !state.size && !state.era ? `${n} capi` : `${n} ${n === 1 ? 'capo trovato' : 'capi trovati'}`;
     empty.hidden = n > 0;
     moreWrap.hidden = n <= state.shown;
     progress.textContent = `Stai vedendo ${Math.min(n, state.shown)} di ${n}`;
@@ -215,6 +226,7 @@ const catCount = (c: string) => products.filter((p) => p.category === c).length;
     if (state.q) p.set('q', state.q);
     if (state.cat) p.set('cat', state.cat);
     if (state.size) p.set('taglia', state.size);
+    if (state.era) p.set('epoca', state.era);
     if (state.sort) p.set('ordina', state.sort);
     if (state.shown > PAGE) p.set('n', String(state.shown));
     const url = `${location.pathname}${p.size ? `?${p}` : ''}`;
@@ -225,6 +237,7 @@ const catCount = (c: string) => products.filter((p) => p.category === c).length;
   let t: number;
   q.addEventListener('input', () => { clearTimeout(t); t = window.setTimeout(() => { state.q = q.value.trim(); state.shown = PAGE; apply(); }, 160); });
   sizeSel.addEventListener('change', () => { state.size = sizeSel.value; state.shown = PAGE; apply(); });
+  eraSel.addEventListener('change', () => { state.era = eraSel.value; state.shown = PAGE; apply(); });
   sortSel.addEventListener('change', () => { state.sort = sortSel.value; apply(); });
   catBtns.forEach((b) => b.addEventListener('click', () => { state.cat = b.dataset.cat ?? ''; state.shown = PAGE; apply(); }));
   moreBtn.addEventListener('click', () => {
@@ -235,8 +248,8 @@ const catCount = (c: string) => products.filter((p) => p.category === c).length;
     (visible[firstNew]?.querySelector('a') as HTMLElement | null)?.focus({ preventScroll: true });
   });
   root.querySelector('[data-reset]')!.addEventListener('click', () => {
-    state = { q: '', cat: '', size: '', sort: '', shown: PAGE };
-    q.value = ''; sizeSel.value = ''; sortSel.value = '';
+    state = { q: '', cat: '', size: '', era: '', sort: '', shown: PAGE };
+    q.value = ''; sizeSel.value = ''; eraSel.value = ''; sortSel.value = '';
     apply();
   });
 

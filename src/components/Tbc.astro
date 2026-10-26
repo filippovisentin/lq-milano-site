@@ -1,0 +1,13 @@
+---
+// "Da confermare": wraps a fact still to be checked with Lea (hours, returns,
+// shipping...). In dev it is outlined and shows the question on hover; in the
+// built site it renders as plain text. List: docs/copy/2026-10-26-testi-prima-dopo.md §10.
+interface Props { q: string }
+const { q } = Astro.props;
+const dev = import.meta.env.DEV;
+---
+{dev ? <mark class="tbc" title={`Da confermare con Lea: ${q}`} data-tbc={q}><slot /></mark> : <slot />}
+
+<style>
+  .tbc { background: rgba(185, 176, 220, 0.25); color: inherit; outline: 1.5px dashed var(--violet-500); outline-offset: 2px; border-radius: 2px; cursor: help; }
+</style>
