@@ -7,7 +7,7 @@
 // git-ignored. Restart the server afterwards.
 import { fileURLToPath } from 'node:url';
 process.chdir(fileURLToPath(new URL('..', import.meta.url)));
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { chmodSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { scryptSync, randomBytes, randomInt } from 'node:crypto';
 
 const user = process.argv[2] ?? 'lqmilano';
@@ -24,7 +24,10 @@ const hash = `scrypt$${salt}$${scryptSync(pw, salt, 64).toString('hex')}`;
 const lines = existsSync('.env') ? readFileSync('.env', 'utf8').split(/\r?\n/) : [];
 const keep = lines.filter((l) => l && !/^(ADMIN_USER|ADMIN_PASSWORD_HASH|SESSION_SECRET)=/.test(l));
 keep.push(`ADMIN_USER=${user}`, `ADMIN_PASSWORD_HASH=${hash}`, `SESSION_SECRET=${randomBytes(48).toString('base64url')}`);
-writeFileSync('.env', keep.join('\n') + '\n');
+// .env (password hash, SESSION_SECRET) and the credentials file are owner-only;
+// the mode option only applies on creation, so chmod existing files too.
+writeFileSync('.env', keep.join('\n') + '\n', { mode: 0o600 });
+chmodSync('.env', 0o600);
 writeFileSync('ADMIN-CREDENZIALI.txt', [
   'Accesso amministratore LQ Milano',
   '',
@@ -35,5 +38,6 @@ writeFileSync('ADMIN-CREDENZIALI.txt', [
   'Tienila riservata. Per cambiarla: npm run admin:create -- <utente> <nuova-password>',
   'Questo file non viene caricato su GitHub (.gitignore).',
   '',
-].join('\n'));
+].join('\n'), { mode: 0o600 });
+chmodSync('ADMIN-CREDENZIALI.txt', 0o600);
 console.log(`Amministratore "${user}" creato. Credenziali in ADMIN-CREDENZIALI.txt`);

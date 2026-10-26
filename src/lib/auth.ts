@@ -56,6 +56,11 @@ export function readSession(cookies: AstroCookies): { user: string } | null {
 }
 export const clearSession = (cookies: AstroCookies) => cookies.delete(COOKIE, { path: '/' });
 
+// Cookies get `Secure` when the request URL is https (directly, or through a
+// proxy listed in LQ_ALLOWED_DOMAINS at build time) or when LQ_COOKIE_SECURE=1,
+// for a TLS proxy whose scheme the app cannot see.
+export const secureCookies = (url: URL) => url.protocol === 'https:' || process.env.LQ_COOKIE_SECURE === '1';
+
 // naive in-memory brute-force brake: 8 failures per IP per 15 minutes
 const fails = new Map<string, { n: number; t: number }>();
 export function tooManyAttempts(ip: string) {

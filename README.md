@@ -27,6 +27,8 @@ Foto ideali: capo intero, centrato, sfondo chiaro e uniforme, fronte e retro con
 - `data/3d/` — modelli 3D generati
 In produzione `data/` deve stare su un **disco persistente** (o `LQ_DATA_DIR`) e va incluso nei backup.
 
+Dietro un proxy HTTPS (Render, Railway, nginx...) imposta **al momento della build** `LQ_ALLOWED_DOMAINS=www.lqmilano.it,lqmilano.it`, altrimenti l'admin rifiuta ogni salvataggio (403) e i cookie non sono `Secure`. Usalo solo se il proxy riscrive `X-Forwarded-For`. In alternativa per i soli cookie: `LQ_COOKIE_SECURE=1`. `.env` e `ADMIN-CREDENZIALI.txt` vengono creati leggibili solo dal proprietario.
+
 ## Hosting
 Serve un hosting Node con disco persistente (es. Render, Railway, Fly.io, un VPS). Cloudflare Pages da solo non basta più: il pannello riceve upload e genera il 3D sul server.
 
