@@ -1,6 +1,5 @@
 ---
 import Icon from './Icon.astro';
-import Tbc from './Tbc.astro';
 ---
 <dialog class="drawer drawer-right" id="cart-drawer" aria-labelledby="cart-title">
   <div class="drawer-head">
@@ -18,7 +17,7 @@ import Tbc from './Tbc.astro';
   </div>
   <div class="cart-foot" data-cart-foot>
     <div class="row"><span>Subtotale</span><strong class="tabular" data-cart-subtotal>0,00 €</strong></div>
-    <p class="fine">Spedizione e totale li vedi al passo successivo. <Tbc q="riserva del capo nel carrello">Il capo resta tuo per 15 minuti.</Tbc></p>
+    <p class="fine">Spedizione e totale li vedi al passo successivo.</p>
     <button class="btn btn-lg btn-block" type="button" data-checkout>Vai al pagamento <Icon name="arrow" class="icon-sm" /></button>
     <a class="btn btn-ghost btn-block" href="/cart-page">Vedi carrello completo</a>
   </div>

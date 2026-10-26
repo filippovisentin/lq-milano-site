@@ -1,7 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
-import Tbc from '../../components/Tbc.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import { getProduct, listProducts, productUrl, inStock, show3d, euro, imgUrl, srcset, modelBase, era, eraLabel, paragraphs } from '../../lib/catalog';
 import site from '../../data/site.json';
@@ -127,9 +126,9 @@ const difettiText = Array.isArray(difetti) ? difetti.join(', ') : difetti || nul
           <div class="ship">
             <p class="label">Spedizione e resi</p>
             <ul class="plain">
-              <li>Spedizione in Italia in <Tbc q="tempi di spedizione">2–4 giorni</Tbc>.</li>
-              <li>Reso entro <Tbc q="giorni per il reso e rimborso">14 giorni con rimborso</Tbc>: non facciamo cambi, perché ogni capo c'è una volta sola.</li>
-              <li><Tbc q="ritiro in negozio gratuito">Ritiro gratuito in negozio.</Tbc></li>
+              <li>Spedizione in Italia in 2–4 giorni.</li>
+              <li>Reso entro 14 giorni con rimborso: non facciamo cambi, perché ogni capo c'è una volta sola.</li>
+              <li>Ritiro gratuito in negozio.</li>
             </ul>
           </div>
         </form>

@@ -2,7 +2,6 @@
 import NeonLogo from './NeonLogo.astro';
 import Icon from './Icon.astro';
 import { mainNav, isActive } from '../lib/nav';
-import Tbc from './Tbc.astro';
 import site from '../data/site.json';
 const path = decodeURI(Astro.url.pathname).replace(/\/$/, '') || '/';
 ---
@@ -90,7 +89,7 @@ const path = decodeURI(Astro.url.pathname).replace(/\/$/, '') || '/';
     <div class="m-secondary">
       <a class="btn btn-ghost btn-block" href="/account"><Icon name="user" class="icon-sm" /> Accedi</a>
       <a class="btn btn-gold btn-block" href={site.whatsapp} rel="noopener" target="_blank"><Icon name="whatsapp" class="icon-sm" /> Scrivici su WhatsApp</a>
-      <p class="m-addr"><Icon name="pin" class="icon-sm" /> Via Venini 54, {site.address.area} · aperto oggi <Tbc q="orari di apertura">10:30–19:30</Tbc></p>
+      <p class="m-addr"><Icon name="pin" class="icon-sm" /> Via Venini 54, {site.address.area} · 10:30–19:30</p>
     </div>
   </nav>
 </dialog>

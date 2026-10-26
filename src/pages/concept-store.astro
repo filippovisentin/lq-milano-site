@@ -4,7 +4,6 @@ import Pic from '../components/Pic.astro';
 import Icon from '../components/Icon.astro';
 import NeonLogo from '../components/NeonLogo.astro';
 import MapEmbed from '../components/MapEmbed.astro';
-import Tbc from '../components/Tbc.astro';
 import { media, rooms } from '../lib/media';
 import site from '../data/site.json';
 
@@ -56,7 +55,7 @@ const details = [
             <h2 id={`${r.id}-t`} class="stop-t">{r.title}</h2>
             {(copy[r.id]?.tag !== undefined ? copy[r.id].tag : r.tag) && <p class="stop-tag">{copy[r.id]?.tag !== undefined ? copy[r.id].tag : r.tag}</p>}
             {r.id === 'corridoio'
-              ? <p class="stop-text">Nel corridoio stampiamo le grafiche di LQ sui capi che scegli, <Tbc q="stampa mentre aspetti?">mentre aspetti</Tbc>.</p>
+              ? <p class="stop-text">Nel corridoio stampiamo le grafiche di LQ sui capi che scegli, mentre aspetti.</p>
               : <p class="stop-text">{copy[r.id]?.text ?? r.text}</p>}
             {links[r.id] && <a class="link-arrow" href={links[r.id].href}><span>{links[r.id].label}</span><Icon name="arrow" class="icon-sm" /></a>}
           </article>

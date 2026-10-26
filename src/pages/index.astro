@@ -5,7 +5,6 @@ import NeonLogo from '../components/NeonLogo.astro';
 import Icon from '../components/Icon.astro';
 import ProductCard from '../components/ProductCard.astro';
 import MapEmbed from '../components/MapEmbed.astro';
-import Tbc from '../components/Tbc.astro';
 import { listProducts, listEvents, inStock, isPast, eventUrl, fmtDay, fmtMonth, fmtTime } from '../lib/catalog';
 import { media, rooms } from '../lib/media';
 import site from '../data/site.json';
@@ -25,7 +24,6 @@ const services = [
   { id: 'upcycling', title: 'Upcycling e sartoria', text: 'Capi vintage rifatti con tessuti di recupero, nel laboratorio del negozio.' },
   { id: 'workshop', title: 'Eventi e workshop', text: 'Uno spazio nel negozio per artisti e brand emergenti.' },
 ];
-const dev = import.meta.env.DEV;
 const aboutAntonio = 'Antonio cerca i capi uomo: per lui moda e musica vanno insieme.';
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
@@ -115,7 +113,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         <p class="label"><span class="idx">04</span> Le persone</p>
         <h2 id="people-title" class="sr-only">Le persone di LQ Milano</h2>
         <div class="quote reveal">
-          <p>{dev ? <>A NoLo dal <Tbc q="anno di apertura a NoLo">[anno]</Tbc>. Ci passano artisti, costumisti e chi cerca un capo che non trova altrove.</> : <>A NoLo, in via Venini. Ci passano artisti, costumisti e chi cerca un capo che non trova altrove.</>}</p>
+          <p>A NoLo, in via Venini. Ci passano artisti, costumisti e chi cerca un capo che non trova altrove.</p>
           <p class="who"><strong>Lea Quattrocchi</strong> · titolare, campagne vendita ed eventi</p>
         </div>
         <div class="quote reveal">

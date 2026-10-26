@@ -147,6 +147,8 @@ Tutto ciò che segnalo con **[da confermare]** è un fatto che non posso inventa
 
 ## 10. Da chiedere a Lea prima di pubblicare
 
+**Aggiornamento 26/10:** confermati da Filippo tutti i valori proposti (orari 10:30–19:30, spedizione 2–4 giorni, reso 14 giorni con rimborso, ritiro gratuito, M1 Turro / Gorla, noleggio su appuntamento, risposta in giornata, archivio anni '50–2000, stampa mentre aspetti). Tolti dal sito: la riserva di 15 minuti nel carrello (la funzione non esiste) e l'anno di apertura (nessun dato). "Aperto oggi" nel menu è diventato solo l'orario, perché non tiene conto del giorno di chiusura.
+
 1. Orari di apertura e giorno di chiusura
 2. Resi: entro quanti giorni, rimborso sì/no, chi paga la spedizione
 3. Tempi e costi di spedizione, ritiro in negozio

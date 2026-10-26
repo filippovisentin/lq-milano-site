@@ -3,7 +3,6 @@ import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import Icon from '../components/Icon.astro';
-import Tbc from '../components/Tbc.astro';
 import { media } from '../lib/media';
 
 // Copy preserved verbatim from the original Servizi page; CTAs keep their
@@ -60,7 +59,7 @@ const services = [
               <p class="svc-k"><Icon name={s.icon} class="icon-sm" /> Servizio 0{i + 1} di 0{services.length}</p>
               <h2 class="svc-t">{s.title}</h2>
               {s.text.map((t) => <p>{t}</p>)}
-              {s.id === 'noleggio' && <p>Capi e accessori <Tbc q="arco di epoche dell'archivio">dagli anni '50 ai 2000</Tbc> per film, teatro, shooting e video. Ci dici scena ed epoca, noi prepariamo una selezione.</p>}
+              {s.id === 'noleggio' && <p>Capi e accessori dagli anni '50 ai 2000 per film, teatro, shooting e video. Ci dici scena ed epoca, noi prepariamo una selezione.</p>}
               {s.extra && <p><a href={s.extra.href}>{s.extra.label}</a></p>}
               <a class="btn" href={s.href}>{s.cta} <Icon name="arrow" class="icon-sm" /></a>
             </div>

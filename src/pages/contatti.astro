@@ -3,7 +3,6 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import Icon from '../components/Icon.astro';
 import MapEmbed from '../components/MapEmbed.astro';
-import Tbc from '../components/Tbc.astro';
 import { media } from '../lib/media';
 import site from '../data/site.json';
 
@@ -28,11 +27,11 @@ const topics = [
 
   <section class="section">
     <div class="container">
-      <p class="fast">Il modo più veloce è WhatsApp: rispondiamo <Tbc q="tempi di risposta su WhatsApp">in giornata</Tbc>.</p>
+      <p class="fast">Il modo più veloce è WhatsApp: rispondiamo in giornata.</p>
       <dl class="practical">
-        <div><dt>Orari</dt><dd><Tbc q="orari di apertura e giorno di chiusura">10:30–19:30</Tbc></dd></div>
-        <div><dt>Fermata</dt><dd><Tbc q="fermata della metro">M1 Turro / Gorla</Tbc></dd></div>
-        <div><dt>Noleggio</dt><dd>Per il noleggio <Tbc q="serve prenotare?">prenota un appuntamento</Tbc>.</dd></div>
+        <div><dt>Orari</dt><dd>10:30–19:30</dd></div>
+        <div><dt>Fermata</dt><dd>M1 Turro / Gorla</dd></div>
+        <div><dt>Noleggio</dt><dd>Per il noleggio prenota un appuntamento.</dd></div>
       </dl>
     </div>
     <div class="container contact-grid">
